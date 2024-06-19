@@ -3,144 +3,134 @@
 
 <head>
   <meta charset="UTF-8">
-  <!--동적인 검색창을 위해 메타정보 불러옴-->
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <!-- 웹 페이지 이름 삽입 -->
-  <title>경상남도 진주시 토지적성플랫폼</title>
+  <title>전국 캠핑장 웹 공간정보시스템</title>
   <link rel="stylesheet" href="node_modules/ol/ol.css">
-  <!-- 구글 링크 붙여넣기, 폰트 설정(https://fonts.google.com)-->
+  <!-- 구글 링크 붙여넣기 -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Gowun+Dodum&
-    display=swap" rel="stylesheet">
-
-  <!--검색창 이미지-->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-
-
-
-
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
 </head>
 
 <body>
-  <!-- class : 여러번 사용 가능, id: 일회용 -->
   <div class="container">
-    <!-- lx, 경남 진주시 로고 사진 -->
-    <div class="area">
-      <div id="header">
-        <div id="lxLogo" onClick="window.location.reload()" style="cursor: pointer;">
+    <!-- 웹 페이지 제목 부분 작성 -->
+    <div id="header">
+      <div class="topDecal"></div>
+      <div id="campsiteLogo"></div>
+      <!-- <h1> 전국 캠핑장 웹 공간정보시스템</h1> -->
+    </div> <!-- header 닫힘 -->
+    <br>
+    <!-- 컨텐츠 부분을 메뉴 1, 메뉴 2, 지도로 3 부분으로 나눌 예정 -->
+    <div id="contents">
+      <div id="menu1">
+        <div class="contents1">
+          <h3> 캠핑장 지도</h3>
+          <p> 전국 캠핑장 위치를 확인하실 수 있습니다.</p>
         </div>
-        <div id="jinjuLogo" onClick="window.location.reload()" style="cursor: pointer;"></div>
-
-
-
-
-
-        <!-- 동적인 검색창 -->
-        <div class="container1">
-          <div class="icon">
-            <i class="search fa fa-search"></i>
-          </div>
-          <div class="input">
-            <input type="text" placeholder="주소입력" id="search">
-            <i class="clear fa fa-times"></i>
-          </div>
-        </div>
-
-
-        <!-- 행정구역 명에 대한 -->
-        <div class="ymname">
-          <h3 id="ymname1"> 행정 구역명</h3>
-          <ul class="ymList">
-            <li><span id="ym01">문산읍</span></li>
-            <li><span id="ym02">내동면</span></li>
-            <li><span id="ym03">정촌면</span></li>
-            <li><span id="ym04">금곡면</span></li>
-            <li><span id="ym05">진성면</span></li>
-            <li><span id="ym06">일반성면</span></li>
-            <li><span id="ym07">이반성면</span></li>
-            <li><span id="ym08">사봉면</span></li>
-            <li><span id="ym09">지수면</span></li>
-            <li><span id="ym10">대곡면</span></li>
-            <li><span id="ym11">금산면</span></li>
-            <li><span id="ym12">집현면</span></li>
-            <li><span id="ym13">미천면</span></li>
-            <li><span id="ym14">명석면</span></li>
-            <li><span id="ym15">대평면</span></li>
-            <li><span id="ym16">수곡면</span></li>
-            
-            <li><span href="#" id="ym17">진주시가</span></li>
-              <ul class="ymList2">
-                <li><span href="#" id="dong1">귀곡동&middot;판문동</span></li>
-                <li><span href="#" id="dong2">이현동&middot;유곡동&middot;상봉동</span></li>
-                <li><span href="#" id="dong3">하촌동&middot;장재동&middot;봉래동&middot;</span></li>
-                <li><span href="#" id="dong4">평거동&middot;신안동</span></li>
-                <li><span href="#" id="dong5">봉곡동&middot;인사동&middot;주약동</span></li>
-                <li><span href="#" id="dong6">계동&middot;중안동&middot;본성동</span></li>
-                <li><span href="#" id="dong7">평안동&middot;대안동&middot;동성동</span></li>
-                <li><span href="#" id="dong8">수정동&middot;장대동&middot;옥봉동</span></li>
-                <li><span href="#" id="dong9">초전동&middot;하대동</span></li>
-                <li><span href="#" id="dong10">망경동&middot;강남동&middot;칠암동</span></li>
-                <li><span href="#" id="dong11">상대동&middot;상평동</span></li>
-                <li><span href="#" id="dong12">남성동&middot;가좌동</span></li>
-                <li><span href="#" id="dong13">호탄동&middot;충무공동</span></li>
-              </ul>
+        <br>
+        <div class="contents2">
+          <h3> 지역별 검색</h3>
+          <ul class="campsiteList">
+            <!-- &middot;은 글자 중간에 가운데 점을 찍는 html 특수문자  -->
+            <li> <span id="dong01">호탄동</span></li>
+            <li> <span id="dong02">평거동</span></li>
+            <li> <span id="sido03">강원도</span></li>
+            <li> <span id="sido04">대구&middot;경북</span></li>
+            <li> <span id="sido05">부산&middot;울산&middot;경남</span></li>
+            <li> <span id="sido06">전북</span></li>
+            <li> <span id="sido07">전남&middot;광주</span></li>
+            <li> <span id="sido08">제주도</span></li>
           </ul>
         </div>
-      </div>
-    </div>
+        <br>
+        <div class="contents3">
+          <h3> 업종별 검색</h3>
+          <ul class="campsiteList">
+            <li> <span id="induty01">일반야영장</span></li>
+            <li> <span id="induty02">자동차야영장</span></li>
+            <li> <span id="induty03">글램핑</span></li>
+            <li> <span id="induty04">카라반</span></li>
+          </ul>
+        </div>
+        <br>
+        <div class="contents4">
+          <h3> 테마별 검색</h3>
+          <ul class="campsiteList">
+            <li> <span id="theme01">가을단풍명소</span></li>
+            <li> <span id="theme02">걷기길</span></li>
+            <li> <span id="theme03">겨울눈꽃명소</span></li>
+            <li> <span id="theme04">낚시</span></li>
+            <li> <span id="theme05">봄꽃여행</span></li>
+            <li> <span id="theme06">수상레저</span></li>
+            <li> <span id="theme07">스키</span></li>
+            <li> <span id="theme08">액티비티</span></li>
+            <li> <span id="theme09">여름물놀이</span></li>
+            <li> <span id="theme10">일몰명소</span></li>
+            <li> <span id="theme11">일출명소</span></li>
+            <li> <span id="theme12">항공레저</span></li>
+          </ul>
+        </div>
 
-    <!-- 맵 영역 -->
-    <div id="mapArea">
-      <div id="map">
-        <div id="info"></div>
-      </div>
-    </div>
-  </div>
 
-  <!-- popup의 모양 정의 --> <!-- 주석다는 것 : comment, annotation -->
+      </div> <!-- menu1 닫힘 -->
+      <div id="menu2">
+        <div class="contents1">
+          <h3> 토지 정보 </h3><br>
+          PNU : <div style="display: inline-block;" id="pnu"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br><br>
+          소재지 : <div style="display: inline-block;" id="do"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br><br>
+          대장구분 : <div style="display: inline-block;" id="cada"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br><br>
+          지번 : <div style="display: inline-block;" id="jibun"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br><br>
+          지목 : <div style="display: inline-block;" id="jimok"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br><br>
+          면적(㎡) : <div style="display: inline-block;" id="area"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br><br>
+          공시지가(원) : <div style="display: inline-block;" id="price"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br><br>
+          소유구분 : <div style="display: inline-block;" id="owner"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br><br>
+          소유권변동사유 : <div style="display: inline-block;" id="owner_re"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br><br>
+          소유권변동일자 : <div style="display: inline-block;" id="owner_da"></div>
+          <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+        </div>
+
+      </div> <!-- menu2 닫힘 -->
+      <div id="mapArea">
+        <div id="map">
+          <div id="info"></div>
+          <span id="status">&nbsp;</span>
+             </div>
+        </div>
+      </div> <!-- mapArea 닫힘 -->
+    </div> <!-- contents 닫힘 -->
+  </div> <!-- container 닫힘 -->
+  <!-- popup 관련 영역 추가 
+  <div id="popup" class="ol-popup">
+    <a href="#" id="popup-closer" class="ol-popup-closer"></a>
+    <div id="popup-content"></div>
+  </div>   popup 닫힘 -->
   <div id="popup">
-    <span href="" id="campinfo_link">
-      <h3 id="info-title"></h3>
-    </span>
-    <img id="firstimage" width="390px">
-    <br>
-    <span id="lineintro"></span>
+    <a href="" id="jinju_link" target="_blank"><h3 id="info-title"></h3></a>
+    <table>
+      <tr> 
+        <td>지표별 평가점수 </td>
+        <td><input type="number" min="0" max="100" id="sub"></td>
+      </tr>
+      <tr> 
+        <td>특성별 적성값 </td>
+        <td><input type="number" min="0" max="100" id="sub"></td>
+      </tr>
+      <tr> 
+        <td>종합 적성값 </td>
+        <td><input type="number" min="0" max="100" id="sub"></td>
+      </tr>
+    </table>
   </div>
-
-
-
-
-  <!-- 동적검색착을 위한 script-->
-  <script>
-    let search = document.querySelector(".search");
-    let clear = document.querySelector(".clear");
-
-    search.onclick = function () {
-      document.querySelector(".container1").classList.toggle('active');
-    }
-    clear.onclick = function () {
-      document.getElementById("search").value = "";
-    }
-
-    // 하위 목록 보이게 설정
-    document.getElementById("ym17").onclick = function () {
-      if(document.getElementsByClassName("ymList2")[0].style.display == 'none') {
-        document.getElementsByClassName("ymList2")[0].style.display = 'block'
-      }else {
-        document.getElementsByClassName("ymList2")[0].style.display = 'none'; 
-      }
-    }
-
-    
-
-  
-  </script>
-
-
   <script type="module" src="./main.js"></script>
 </body>
-
 </html>

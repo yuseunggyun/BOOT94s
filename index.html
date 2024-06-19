@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!--동적인 검색창을 위해 메타정보 불러옴-->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- 웹 페이지 이름 삽입 -->
+  <title>경상남도 진주시 토지적성플랫폼</title>
+  <link rel="stylesheet" href="node_modules/ol/ol.css">
+  <!-- 구글 링크 붙여넣기, 폰트 설정(https://fonts.google.com)-->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Gowun+Dodum&
+    display=swap" rel="stylesheet">
+
+  <!--검색창 이미지-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
+
+
+</head>
+
+<body>
+  <!-- class : 여러번 사용 가능, id: 일회용 -->
+  <div class="container">
+    <!-- lx, 경남 진주시 로고 사진 -->
+    <div class="area">
+      <div id="header">
+        <div id="lxLogo" onClick="window.location.reload()" style="cursor: pointer;">
+        </div>
+        <div id="jinjuLogo" onClick="window.location.reload()" style="cursor: pointer;"></div>
+
+
+
+
+
+        <!-- 동적인 검색창 -->
+        <div class="container1">
+          <div class="icon">
+            <i class="search fa fa-search"></i>
+          </div>
+          <div class="input">
+            <input type="text" placeholder="주소입력" id="search">
+            <i class="clear fa fa-times"></i>
+          </div>
+        </div>
+
+
+        <!-- 행정구역 명에 대한 -->
+        <div class="ymname">
+          <h3 id="ymname1"> 행정 구역명</h3>
+          <ul class="ymList">
+            <li><span id="ym01">문산읍</span></li>
+            <li><span id="ym02">내동면</span></li>
+            <li><span id="ym03">정촌면</span></li>
+            <li><span id="ym04">금곡면</span></li>
+            <li><span id="ym05">진성면</span></li>
+            <li><span id="ym06">일반성면</span></li>
+            <li><span id="ym07">이반성면</span></li>
+            <li><span id="ym08">사봉면</span></li>
+            <li><span id="ym09">지수면</span></li>
+            <li><span id="ym10">대곡면</span></li>
+            <li><span id="ym11">금산면</span></li>
+            <li><span id="ym12">집현면</span></li>
+            <li><span id="ym13">미천면</span></li>
+            <li><span id="ym14">명석면</span></li>
+            <li><span id="ym15">대평면</span></li>
+            <li><span id="ym16">수곡면</span></li>
+            
+            <li><span href="#" id="ym17">진주시가</span></li>
+              <ul class="ymList2">
+                <li><span href="#" id="dong1">귀곡동&middot;판문동</span></li>
+                <li><span href="#" id="dong2">이현동&middot;유곡동&middot;상봉동</span></li>
+                <li><span href="#" id="dong3">하촌동&middot;장재동&middot;봉래동&middot;</span></li>
+                <li><span href="#" id="dong4">평거동&middot;신안동</span></li>
+                <li><span href="#" id="dong5">봉곡동&middot;인사동&middot;주약동</span></li>
+                <li><span href="#" id="dong6">계동&middot;중안동&middot;본성동</span></li>
+                <li><span href="#" id="dong7">평안동&middot;대안동&middot;동성동</span></li>
+                <li><span href="#" id="dong8">수정동&middot;장대동&middot;옥봉동</span></li>
+                <li><span href="#" id="dong9">초전동&middot;하대동</span></li>
+                <li><span href="#" id="dong10">망경동&middot;강남동&middot;칠암동</span></li>
+                <li><span href="#" id="dong11">상대동&middot;상평동</span></li>
+                <li><span href="#" id="dong12">남성동&middot;가좌동</span></li>
+                <li><span href="#" id="dong13">호탄동&middot;충무공동</span></li>
+              </ul>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 맵 영역 -->
+    <div id="mapArea">
+      <div id="map">
+        <div id="info"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- popup의 모양 정의 --> <!-- 주석다는 것 : comment, annotation -->
+  <div id="popup">
+    <span href="" id="campinfo_link">
+      <h3 id="info-title"></h3>
+    </span>
+    <img id="firstimage" width="390px">
+    <br>
+    <span id="lineintro"></span>
+  </div>
+
+
+
+
+  <!-- 동적검색착을 위한 script-->
+  <script>
+    let search = document.querySelector(".search");
+    let clear = document.querySelector(".clear");
+
+    search.onclick = function () {
+      document.querySelector(".container1").classList.toggle('active');
+    }
+    clear.onclick = function () {
+      document.getElementById("search").value = "";
+    }
+
+    // 하위 목록 보이게 설정
+    document.getElementById("ym17").onclick = function () {
+      if(document.getElementsByClassName("ymList2")[0].style.display == 'none') {
+        document.getElementsByClassName("ymList2")[0].style.display = 'block'
+      }else {
+        document.getElementsByClassName("ymList2")[0].style.display = 'none'; 
+      }
+    }
+
+    
+
+  
+  </script>
+
+
+  <script type="module" src="./main.js"></script>
+</body>
+
+</html>

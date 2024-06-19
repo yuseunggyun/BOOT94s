@@ -210,14 +210,13 @@ function calculateSum(){
 
   selectedFeatures.forEach(function (feature) {
   if (sum < 30) {
-    
     feature.setStyle(StyleLow);
   } else if (sum > 30 && sum < 60) {
     feature.setStyle(StyleMedium);
   } else {
     feature.setStyle(StyleHigh);
   }
-});
+  });
 }
 
 // a DragBox interaction used to select features by drawing boxes
@@ -228,6 +227,15 @@ const dragBox = new DragBox({
 map.addInteraction(dragBox);
 
 dragBox.on('boxend', function () {
+  selectedFeatures.forEach(function (feature) {
+    if (sum < 30) {
+      feature.setStyle(StyleLow);
+    } else if (sum > 30 && sum < 60) {
+      feature.setStyle(StyleMedium);
+    } else {
+      feature.setStyle(StyleHigh);
+    }
+  });
   const boxExtent = dragBox.getGeometry().getExtent();
 
   // if the extent crosses the antimeridian process each world separately

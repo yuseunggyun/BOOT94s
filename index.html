@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 웹 페이지 이름 삽입 -->
+  <title>전국 캠핑장 웹 공간정보시스템</title>
+  <link rel="stylesheet" href="node_modules/ol/ol.css">
+    <!-- 구글 링크 붙여넣기 -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&family=Gowun+Dodum&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <div class="container">
+    <!-- 웹 페이지 제목 부분 작성 -->
+    <div id="header">
+      <div class="topDecal"></div>
+      <div id="campsiteLogo"></div>
+      <!-- <h1> 전국 캠핑장 웹 공간정보시스템</h1> -->
+    </div> <!-- header 닫힘 -->
+    <br>
+    <!-- 컨텐츠 부분을 메뉴 1, 메뉴 2, 지도로 3 부분으로 나눌 예정 -->
+    <div id="contents">
+      <input type="checkbox" id="menuicon">
+      <label for="menuicon">
+        <img src='11.png' width = "30" height="40">
+      </label>
+      <div class="sidebar">
+        
+      </div>
+
+      
+
+      
+      <div id="menu2">
+        <div class="contents1">
+          <h3> 통합 검색</h3>
+          <p> 통합검색을 하실 수 있습니다.</p><br>
+          <h3> 지역별 검색</h3>
+        <ul class="campsiteList">
+          <!-- &middot;은 글자 중간에 가운데 점을 찍는 html 특수문자  -->
+          <li> <span id="sido01">가가가가&middot;경기&middot;인천</span></li>
+          <li> <span id="sido02">대전&middot;충남&middot;충북&middot;세종</span></li>
+          <li> <span id="sido03">강원도</span></li>
+          <li> <span id="sido04">대구&middot;경북</span></li>
+          <li> <span id="sido05">부산&middot;울산&middot;경남</span></li>
+          <li> <span id="sido06">전북</span></li>
+          <li> <span id="sido07">전남&middot;광주</span></li>
+          <li> <span id="sido08">제주도</span></li>
+        </ul>
+        <br>
+
+        <h3> 업종별 검색</h3>
+        <ul class="campsiteList">
+          <li> <span id="induty01">일반야영장</span></li>
+          <li> <span id="induty02">자동차야영장</span></li>
+          <li> <span id="induty03">글램핑</span></li>
+          <li> <span id="induty04">카라반</span></li>
+        </ul>
+        <br>
+
+        <h3> 테마별 검색</h3>
+        <ul class="campsiteList">
+          <li> <span id="theme01">가을단풍명소</span></li>
+          <li> <span id="theme02">걷기길</span></li>
+          <li> <span id="theme03">겨울눈꽃명소</span></li>
+          <li> <span id="theme04">낚시</span></li>
+          <li> <span id="theme05">봄꽃여행</span></li>
+          <li> <span id="theme06">수상레저</span></li>
+          <li> <span id="theme07">스키</span></li>
+          <li> <span id="theme08">액티비티</span></li>
+          <li> <span id="theme09">여름물놀이</span></li>
+          <li> <span id="theme10">일몰명소</span></li>
+          <li> <span id="theme11">일출명소</span></li>
+          <li> <span id="theme12">항공레저</span></li>
+        </ul> 
+        </div>
+
+
+      </div> <!-- menu2 닫힘 -->
+      <div id="mapArea">
+        <div id="map">
+          <div id="info"></div>
+          <span id="status">&nbsp;</span>
+             </div>
+        </div>
+      </div> <!-- mapArea 닫힘 -->
+    </div> <!-- contents 닫힘 -->
+  </div> <!-- container 닫힘 -->
+  <!-- popup 관련 영역 추가 -->
+  <div id="popup">
+    <a href="" id="campinfo_link"><h3 id="info-title"></h3></a>
+    <img id="firstimage" width="390px">
+    <br>
+    <span id="lineintro"></span>
+  </div>
+  <script type="module" src="./main.js"></script>
+</html>
+
+
+
+

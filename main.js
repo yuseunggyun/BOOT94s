@@ -184,25 +184,6 @@ const selectedStyle = new Style({
   }),
 });
 
-// JQuery를 이용하여 HTML 입력 값(SUM) 가져옴
-function calculateSum(){
-  var sub1 = parseFloat($('#sub1').val());
-  var sub2 = parseFloat($('#sub2').val());
-  var sub3 = parseFloat($('#sub3').val());
-
-  var sum = sub1 + sub2 + sub3;
-
-  $('#result').text('합계: ' + sum);
-
-  if (sum < 30) {
-    vectorLayer.setStyle(StyleLow);
-  } else if (sum > 30 && sum < 60) {
-    vectorLayer.setStyle(StyleMedium);
-  } else {
-    vectorLayer.setStyle(StyleHigh);
-  }
-}
-
 // 클릭이벤트 처리 선택도구
 const select = new Select({
   style: function (feature) {
@@ -215,6 +196,29 @@ const select = new Select({
 map.addInteraction(select);
 
 const selectedFeatures = select.getFeatures();
+
+
+// JQuery를 이용하여 HTML 입력 값(SUM) 가져옴
+function calculateSum(){
+  var sub1 = parseFloat($('#sub1').val());
+  var sub2 = parseFloat($('#sub2').val());
+  var sub3 = parseFloat($('#sub3').val());
+
+  var sum = sub1 + sub2 + sub3;
+
+  $('#result').text('합계: ' + sum);
+
+  selectedFeatures.forEach(function (feature) {
+  if (sum < 30) {
+    
+    feature.setStyle(StyleLow);
+  } else if (sum > 30 && sum < 60) {
+    feature.setStyle(StyleMedium);
+  } else {
+    feature.setStyle(StyleHigh);
+  }
+});
+}
 
 // a DragBox interaction used to select features by drawing boxes
 const dragBox = new DragBox({

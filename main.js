@@ -47,9 +47,43 @@ function makeFilter(method) {
   return filter;
 }
 
-const style = new Style({
+const defaultStyle = new Style({
   fill: new Fill({
     color: 'rgba(255, 0, 0, 0.5)',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(0, 0, 0, 1.0)',
+    width: 1,
+  }),
+});
+
+const StyleLow = new Style({
+  fill: new Fill({
+    color: 'rgba(0, 255, 0, 0.5)',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(0, 0, 0, 1.0)',
+    width: 1,
+  }),
+});
+
+const StyleMedium = new Style({
+  fill: new Fill({
+    color: 'rgba(0, 0, 255, 0.5)',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(0, 0, 0, 1.0)',
+    width: 1,
+  }),
+});
+
+const StyleHigh = new Style({
+  fill: new Fill({
+    color: 'rgba(255, 255, 0, 0.5)',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(0, 0, 0, 1.0)',
+    width: 1,
   }),
 });
 
@@ -58,8 +92,8 @@ const vectorLayer = new VectorLayer({
   source: wfsSource,
   style: function (feature) {
     const color = feature.get('COLOR_BIO') || 'rgba(0, 255, 0, 0.5)';
-    style.getFill().setColor(color);
-    return style;
+    defaultStyle.getFill().setColor(color);
+    return defaultStyle;
   },
 });
 
@@ -163,6 +197,14 @@ function calculateSum(){
   var sum = sub1 + sub2 + sub3;
 
   $('#result').text('합계: ' + sum);
+
+  if (sum < 30) {
+    vectorLayer.setStyle(StyleLow);
+  } else if (sum > 30 && sum < 60) {
+    vectorLayer.setStyle(StyleMedium);
+  } else {
+    vectorLayer.setStyle(StyleHigh);
+  }
 }
 
 // 클릭이벤트 처리 선택도구

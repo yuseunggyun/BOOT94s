@@ -1,0 +1,229 @@
+@import "node_modules/ol/ol.css";
+
+/* 전역적 스타일 정의 */
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Gamja Flower";
+  font-size: 1.03em;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+/* 주요 레이아웃 정의 */
+.container {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+#header {
+  height: 80px;
+  background: #fff;
+  border-bottom: 1px solid #d4d4d4;
+}
+
+#contents {
+  position: absolute;
+  top: 90px;
+  /* bottom: 20px; */
+  left: 0;
+  right: 0;
+}
+
+
+/* DIV영역 여러개를 나란히 놓으려면, float 속성을 이용 */
+
+#menu2 {
+  width: 20%;
+  height: 100%;
+  float: left;
+  border-right: 1px solid #d4d4d4;
+  padding: 5px;
+  z-index:10;
+}
+
+#mapArea {
+  position: absolute;
+  height: 200%;
+  left:21%;
+  top: 0;
+  right: 0;
+  bottom: 0;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+  z-index: 3;
+}
+
+/* 헤더 부분 스타일 설정 */
+.topDecal {
+  background: #175381;
+  height: 15px;
+  width: 100%;
+}
+
+#campsiteLogo {
+  background-image: url('./images/logo.png');
+  height: 50%;
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* 영역 안에 포함되도록 사이즈 조절 */
+  background-position: center center;
+  margin: 15px 0 0 50px;
+}
+
+/* menuContents 부분 중에서 목록(ul) 부분 스타일 설정 */
+*/ ul.campsiteList,
+table.campsiteTable {
+  background: #efefef;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+ul.campsiteList li {
+  list-style: none;
+  border-top: 1px solid #fff;
+  padding: 1px 20px;
+  cursor: pointer;
+}
+
+ul.campsiteList li:first-child {
+  border-top: none;
+  /* 첫번째는 예외 */
+}
+
+ul.campsiteList li:hover {
+  background: #0f3a63;
+  color: #fff;
+}
+
+ul.campsiteList li:hover,
+ul.campsiteList li:hover {
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+/* menuContents 부분 중에서 테이블 부분 스타일 설정 */
+table.campsiteTable {
+  /* margin: auto; */
+  width: 100%;
+  border-collapse: collapse;
+  /* color: #333; */
+  border-radius: .4em;
+  overflow: hidden;
+}
+
+table.campsiteTable tr {
+  border-color: #bfbfbf;
+  border-top: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-bottom: 1px solid #ddd;
+  background-color: #f5f9fc;
+}
+
+
+table.campsiteTable th {
+  border-color: #428bca;
+}
+
+table.campsiteTable td {
+  display: block;
+}
+
+table.campsiteTable th,
+td {
+  padding: .1em .7em;
+}
+
+table.campsiteTable td:first-child {
+  margin-top: .5em;
+}
+
+table.campsiteTable td:last-child {
+  margin-bottom: .5em;
+}
+
+table.campsiteTable td:before {
+
+  font-weight: bold;
+  width: 120px;
+  display: inline-block;
+  color: #000;
+}
+
+
+table.campsiteTable th:first-child {
+  border-top: none;
+  background: #428bca;
+  color: #fff;
+}
+
+
+table.campsiteTable tr:nth-child(even) {
+  background-color: #D6EEEE;
+}
+
+table.campsiteTable th {
+  text-align: left;
+  font-weight: bold;
+}
+
+table.campsiteTable td {
+  text-align: left;
+}
+
+/* (info 스타일 추가) */
+#info {
+  position: absolute;
+  display: inline-block;
+  height: auto;
+  width: auto;
+  z-index: 100;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px;
+  left: 50%;
+  transform: translateX(3%);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#popup {
+  width: 400px;
+  height: 430px;
+  padding: 5px;
+  border: 1px solid rgba(128, 128, 128, 0);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: rgb(168, 229, 252);
+}
+
+/* *메뉴바 생성*/
+input[id="menuicon"] {display:none;}
+input[id="menuicon"] + label {display:block;width:30px;height:20px;position:fixed; top:calc(50%); left:21%; transition:all .35s; cursor:pointer; z-index:2;}
+input[id="menuicon"] + label span {display:block;position:absolute;width:100%;height:5px;border-radius:30px;background:#000000;transition:all .35s;}
+input[id="menuicon"] + label span:nth-child(1) {top:0;}
+/* input[id="menuicon"] + label span:nth-child(2) {top:50%;transform:translateY(-50%);}  */
+/* input[id="menuicon"] + label span:nth-child(3) {bottom:0;} */
+input[id="menuicon"]:checked + label {z-index:2; left:34%; transform:rotate(180deg);}
+input[id="menuicon"]:checked + label span {background:#000000;}
+input[id="menuicon"]:checked + label span:nth-child(1) {top:50%;transform:translateY(-50%) rotate(180deg);}
+/* input[id="menuicon"]:checked + label span:nth-child(2) {opacity:0;}
+input[id="menuicon"]:checked + label span:nth-child(3) {bottom:50%;transform:translateY(50%) rotate(-45deg);} */
+
+
+div[class="sidebar"] {width:250px;height:100%;background:#854040;position:fixed;top:10%;left:-10px;z-index:100;transition:all .35s;}
+input[id="menuicon"]:checked + label + div {left:21%;}
+

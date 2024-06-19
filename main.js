@@ -57,7 +57,7 @@ const style = new Style({
 const vectorLayer = new VectorLayer({
   source: wfsSource,
   style: function (feature) {
-    const color = feature.get('COLOR_BIO') || 'rgba(0, 0, 255, 0.5)';
+    const color = feature.get('COLOR_BIO') || 'rgba(0, 255, 0, 0.5)';
     style.getFill().setColor(color);
     return style;
   },
@@ -154,10 +154,21 @@ const selectedStyle = new Style({
   }),
 });
 
+// JQuery를 이용하여 HTML 입력 값(SUM) 가져옴
+function calculateSum(){
+  var sub1 = parseFloat($('#sub1').val());
+  var sub2 = parseFloat($('#sub2').val());
+  var sub3 = parseFloat($('#sub3').val());
+
+  var sum = sub1 + sub2 + sub3;
+
+  $('#result').text('합계: ' + sum);
+}
+
 // 클릭이벤트 처리 선택도구
 const select = new Select({
   style: function (feature) {
-    const color = feature.get('COLOR_BIO') || 'rgba(255, 0, 0, 0.5';
+    const color = feature.get('COLOR_BIO') || 'rgba(108, 169, 131, 0.5';
     selectedStyle.getFill().setColor(color);
     return selectedStyle;
   },
@@ -340,5 +351,12 @@ map.on('click', (e) =>
       $('#owner_da').text(clickedFeature10);
       $('#owner_da').attr('data-clicked-feature-jinju_ch_2', clickedFeature10);
     })
+
+    $(document).ready(function(){
+      $('#inputForm').on('submit', function(event){
+        event.preventDefault();
+        calculateSum();
+      });
+    });    
   });
 });

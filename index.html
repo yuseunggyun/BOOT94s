@@ -116,19 +116,8 @@
   </div>   popup 닫힘 -->
   <div id="popup">
     <a href="" id="jinju_link" target="_blank"><h3 id="info-title"></h3></a>
-    <script>
-      var sum;
-      function calculateSum(){
-        var sub1 = parseFloat(document.getElementById("sub1").value);
-        var sub2 = parseFloat(document.getElementById("sub2").value);
-        var sub3 = parseFloat(document.getElementById("sub3").value);
-
-        var sum = sub1 + sub2 + sub3;
-
-        document.getElementById("result").innerText = "Sum: " + sum;
-      }
-    </script>
-    <form onsubmit="event.preventDefault(); calculateSum();">
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <form id="inputForm">
       <table>
         <tr>
           <td><label for="sub1">지표별 평가점수 :</label></td>

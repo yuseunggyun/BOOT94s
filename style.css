@@ -1,0 +1,235 @@
+@import "node_modules/ol/ol.css";
+
+/* 전역적 스타일 정의 */
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Gamja Flower";
+  font-size: 1.03em;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+}
+
+/* 주요 레이아웃 정의 */
+.container {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+
+.area {
+  float: left;
+  position: relative;
+  /* z-index: 30; */
+  width: 313px;
+  height: 100%;
+  /* background-color: #98e4b1; */
+  /* 아래 분기 선 설정*/
+  border-bottom: 1px solid #d4d4d4;
+}
+
+/* 
+#contents {
+  position: absolute;
+  top: 90px;
+  /* bottom: 20px; 
+  float: left;
+  left: 0;
+  right: 0;
+} */
+
+#header {
+  float: left;
+  width: 313px;
+  height: 100%;
+  background: #ffffff;
+  /*분리선*/
+  /* border-bottom: 1px solid #d4d4d4; */
+}
+
+
+
+
+/* 동적 검색 스타일*/
+.container1 {
+  width: 60px;
+  height: 60px;
+  /*검색창 모서리 볼더값*/
+  border-radius: 15px;
+  /* background: rgb(255, 255, 0); */
+  border: 3px solid rgba(0, 152, 129, 1);
+  position: relative;
+  transition: 0.7s;
+  overflow: hidden;
+  left: 5px;
+}
+
+.container1.active {
+  width: 300px;
+}
+
+.container1 .icon {
+  position: absolute;
+  left: 30px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.container1 .icon .search {
+   font-size: 21px;
+   cursor: pointer;
+   color: rgba(0, 152, 129, 1);
+}
+
+.container1 .input {
+  position: relative;
+  width: 200px;
+  height: 60px;
+  left: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container1 .input input {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  font-size: 18px;
+  outline: none;
+}
+
+.container1 .input .clear {
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  font-size: 20px;
+  color: rgba(0, 152, 129, 1);
+}
+
+/*행정구역명 밑으로에 대한 영역*/
+.ymname {
+  float: left;
+  width: 313px;
+  height: 100%;
+  background: rgba(255, 255, 255, 1);
+   /* 위 오른 아래 왼쪽 */
+}
+
+
+/*행정구역명 스타일 적용*/
+#ymname1 {
+  text-align: center;
+  font-size: 1.6rem;
+  /* 위 오른 아래 왼쪽 */
+  margin: 10px 0px 10px 0px;
+}
+
+
+
+/* 읍면 스타일 및 호버에 설정 */
+ul.ymList {
+  background: #efefef;
+  border: 1px solid #ccc;
+  border-radius: 13px;
+  margin: 20px 0;
+}
+
+ul.ymList li {
+  list-style: none;
+  border-top: 1px solid #fff;
+  padding: 1px 35px;
+  cursor: pointer;
+}
+
+ul.ymList li:first-child {
+  border-top: none;
+  /* 첫번째는 예외 */
+}
+
+ul.ymList li:hover {
+  background: rgba(0, 152, 129, 1);
+  color: #fff;
+}
+
+ul.ymList li:hover {
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+  border-bottom-left-radius: 13px;
+  border-bottom-right-radius: 13px;
+}
+
+
+
+/* 전주시가 하위 리스트 숨김*/
+.ymname .ymList2 {
+  display: none;
+}  
+
+
+
+
+
+
+
+
+
+#mapArea {
+  position: absolute;
+  height: 100%;
+  left:313px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  border-left: 2px solid  rgba(0, 152, 129, 1);
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* 헤더 부분 스타일 설정 */
+
+#lxLogo {
+  background-image: url('./lxland.png');
+  height: 100px;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+
+  /* 영역 안에 포함되도록 사이즈 조절 */
+  /* background-position: center center; */
+  margin: 15px 20px -56px 20px;
+}
+
+#jinjuLogo {
+  background-image: url('./jinju.png');
+  height: 55px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* 영역 안에 포함되도록 사이즈 조절 */
+  /* background-position: center center; */
+  /* 위 오른 아래 왼쪽 */
+  margin: 5px 45px 0px 45px;
+}
+
+/* #popup {
+  width: 400px;
+  height: 430px;
+  padding: 5px;
+  border: 1px solid rgba(128, 128, 128, 0);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: rgb(168, 229, 252);
+} */

@@ -150,7 +150,7 @@ const selectedStyle = new Style({
   }),
   stroke: new Stroke({
     color: 'rgba(255, 255, 255, 0.7)',
-    width: 2,
+    width: 3,
   }),
 });
 

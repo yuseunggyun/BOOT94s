@@ -90,11 +90,7 @@ const StyleHigh = new Style({
 // Vector 레이어 생성
 const vectorLayer = new VectorLayer({
   source: wfsSource,
-  style: function (feature) {
-    const color = feature.get('COLOR_BIO') || 'rgba(0, 255, 0, 0.5)';
-    defaultStyle.getFill().setColor(color);
-    return defaultStyle;
-  },
+  style: defaultStyle,
 });
 
 let newWfsSource;

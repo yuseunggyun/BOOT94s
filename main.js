@@ -43,7 +43,7 @@ const wfsSource = new VectorSource
 (
   {
     format: new GeoJSON(),
-    url: encodeURI(g_url + "/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=" + makeFilter() )
+    url: encodeURI(g_url + "/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=2000&outputFormat=application/json&CQL_FILTER=" + makeFilter() )
   }
 );
 
@@ -67,7 +67,7 @@ const WfsLayer = new VectorLayer
          fill: new Fill
          (
            {
-             color: 'rgba(245, 193, 73, 0.4)'
+             color: 'rgba(255, 0, 0, 1)'
            }
          )
        }
@@ -88,18 +88,6 @@ const osmLayer = new TileLayer
     source: new OSM()
   }
 );
-
-
-// 전주시가 사이드바 하위 메뉴 크릭하면 나오고 클릭하면 사라지는 기능
-function toggleSubMenu(submenuId) {
-  var submenu = document.getElementById(submenuId);
-  if (submenu.style.display === 'block') {
-    submenu.style.display = 'none';
-  } else {
-    submenu.style.display = 'block';
-  }
-}
-
 
 
 

@@ -114,27 +114,13 @@ wfsLayer = new VectorLayer({
   source: wfsSource,
 });
 
-// 점에 hover 시 굵게 표시
+// 폴리곤에 hover 시 굵게 표시
 const mouseHoverSelect = new Select({
   condition: pointerMove,
   style: new Style({
     stroke: new Stroke({
       color: 'rgba(0, 0, 255, 1.0)',
-      width: 20
-    }),
-    fill: new Fill({
-      color: 'rgba(0, 0, 255, 0.5)'
-    })
-  })
-});
-
-// 점 클릭 시 굵게 표시
-const mouseClickSelect = new Select({
-  condition: click,
-  style: new Style({
-    stroke: new Stroke({
-      color: 'rgba(0, 0, 255, 1.0)',
-      width: 5
+      width: 3
     }),
     fill: new Fill({
       color: 'rgba(0, 0, 255, 0.5)'
@@ -170,9 +156,11 @@ const map = new Map({
     center: fromLonLat([128.1298, 35.2052]),
     zoom: 10,
     constrainRotation: 16,
-    interactions: defaults().extend([mouseHoverSelect, mouseClickSelect])
+    interactions: defaults().extend([mouseHoverSelect])
   }),
 });
+
+map.addInteraction(mouseHoverSelect);
 
 const selectedStyle = new Style({
   fill: new Fill({

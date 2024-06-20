@@ -1,5 +1,5 @@
 // OpenLayers > Examples > WFS
-// GeoServer에 있는 camping을 벡터파일로 서비스 후 꾸미기
+// GeoServer에 있는 진주 연속지적도를 벡터파일로 서비스 후 꾸미기
 
 import './style.css';
 import { Map, View } from 'ol';
@@ -38,11 +38,94 @@ let wfsLayer = null;
 function makeFilter(method) {
   let filter = "";
 
-  if ('dong01' == method)
-    filter = "jinju_do_1 LIKE '%호탄동%'";
+  // 읍면 지역 필터
+  if ('ym01' == method)
+    filter = "jinju_do_1 LIKE '%문산읍%'";
 
-  else if ('dong02' == method)
-    filter = "jinju_do_1 LIKE '%평거동%'";
+  else if ('ym02' == method)
+    filter = "jinju_do_1 LIKE '%내동면%'";
+
+  else if ('ym03' == method)
+    filter = "jinju_do_1 LIKE '%정촌면%'";
+
+  else if ('ym04' == method)
+    filter = "jinju_do_1 LIKE '%금곡면%'";
+
+  else if ('ym05' == method)
+    filter = "jinju_do_1 LIKE '%진성면%'";
+
+  else if ('ym06' == method)
+    filter = "jinju_do_1 LIKE '%일반성면%'";
+
+  else if ('ym07' == method)
+    filter = "jinju_do_1 LIKE '%이반성면%'";
+
+  else if ('ym08' == method)
+    filter = "jinju_do_1 LIKE '%사봉면%'";
+
+  else if ('ym09' == method)
+    filter = "jinju_do_1 LIKE '%지수면%'";
+
+  else if ('ym10' == method)
+    filter = "jinju_do_1 LIKE '%대곡면%'";
+
+  else if ('ym11' == method)
+    filter = "jinju_do_1 LIKE '%금산면%'";
+
+  else if ('ym12' == method)
+    filter = "jinju_do_1 LIKE '%집현면%'";
+
+  else if ('ym13' == method)
+    filter = "jinju_do_1 LIKE '%미천면%'";
+
+  else if ('ym14' == method)
+    filter = "jinju_do_1 LIKE '%명석면%'";
+
+  else if ('ym15' == method)
+    filter = "jinju_do_1 LIKE '%대평면%'";
+
+  else if ('ym16' == method)
+    filter = "jinju_do_1 LIKE '%수곡면%'";
+
+  // 동지역 필터
+  else if ('dong1' == method)
+    filter = "jinju_do_1 LIKE '%귀곡동%' OR jinju_do_1 LIKE '%판문동%'";
+
+  else if ('dong2' == method)
+    filter = "jinju_do_1 LIKE '%이현동%' OR jinju_do_1 LIKE '%유곡동%' OR jinju_do_1 LIKE '%상봉동%'";
+
+  else if ('dong3' == method)
+    filter = "jinju_do_1 LIKE '%하촌동%' OR jinju_do_1 LIKE '%장재동%' OR jinju_do_1 LIKE '%봉래동%'";
+
+  else if ('dong4' == method)
+    filter = "jinju_do_1 LIKE '%평거동%' OR jinju_do_1 LIKE '%신안동%'";
+
+  else if ('dong5' == method)
+    filter = "jinju_do_1 LIKE '%봉곡동%' OR jinju_do_1 LIKE '%인사동%' OR jinju_do_1 LIKE '%주약동%'";
+
+  else if ('dong6' == method)
+    filter = "jinju_do_1 LIKE '%계동%' OR jinju_do_1 LIKE '%중안동%' OR jinju_do_1 LIKE '%본성동%'";
+
+  else if ('dong7' == method)
+    filter = "jinju_do_1 LIKE '%평안동%' OR jinju_do_1 LIKE '%대안동%' OR jinju_do_1 LIKE '%동성동%'";
+
+  else if ('dong8' == method)
+    filter = "jinju_do_1 LIKE '%수정동%' OR jinju_do_1 LIKE '%장대동%' OR jinju_do_1 LIKE '%옥봉동%'";
+
+  else if ('dong9' == method)
+    filter = "jinju_do_1 LIKE '%초전동%' OR jinju_do_1 LIKE '%하대동%'";
+
+  else if ('dong10' == method)
+    filter = "jinju_do_1 LIKE '%망경동%' OR jinju_do_1 LIKE '%강남동%' OR jinju_do_1 LIKE '%칠암동%'";
+
+  else if ('dong11' == method)
+    filter = "jinju_do_1 LIKE '%상대동%' OR jinju_do_1 LIKE '%상평동%'";
+
+  else if ('dong12' == method)
+    filter = "jinju_do_1 LIKE '%남성동%' OR jinju_do_1 LIKE '%가좌동%'";
+
+  else if ('dong13' == method)
+    filter = "jinju_do_1 LIKE '%호탄동%' OR jinju_do_1 LIKE '%충무공동%'";
 
   return filter;
 }
@@ -50,7 +133,7 @@ function makeFilter(method) {
 // 나중에 조건에 따라 스타일을 다르게 주기 위해 스타일 개별 지정
 const defaultStyle = new Style({
   fill: new Fill({
-    color: 'rgba(255, 0, 0, 0.5)',
+    color: 'rgba(75, 240, 26, 0.5)',
   }),
   stroke: new Stroke({
     color: 'rgba(0, 0, 0, 1.0)',
@@ -58,9 +141,10 @@ const defaultStyle = new Style({
   }),
 });
 
-const StyleLow = new Style({
+// 0~30 스타일
+const Style0030 = new Style({
   fill: new Fill({
-    color: 'rgba(0, 255, 0, 0.5)',
+    color: 'rgba(251, 199, 28, 0.5)',
   }),
   stroke: new Stroke({
     color: 'rgba(0, 0, 0, 1.0)',
@@ -68,9 +152,10 @@ const StyleLow = new Style({
   }),
 });
 
-const StyleMedium = new Style({
+// 31~60 스타일
+const Style3160 = new Style({
   fill: new Fill({
-    color: 'rgba(0, 0, 255, 0.5)',
+    color: 'rgba(251, 121, 28, 0.5)',
   }),
   stroke: new Stroke({
     color: 'rgba(0, 0, 0, 1.0)',
@@ -78,9 +163,10 @@ const StyleMedium = new Style({
   }),
 });
 
-const StyleHigh = new Style({
+// 61~100 스타일
+const Style6100 = new Style({
   fill: new Fill({
-    color: 'rgba(255, 255, 0, 0.5)',
+    color: 'rgba(251, 28, 28, 0.5)',
   }),
   stroke: new Stroke({
     color: 'rgba(0, 0, 0, 1.0)',
@@ -102,7 +188,7 @@ function makeWFSSource(method) {
       {
         format: new GeoJSON(),
         url: encodeURI(g_url + "/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature" +
-          "&typeName=jinjuWS:jj&maxFeatures=1896&outputFormat=application/json&CQL_FILTER=" + makeFilter(method))
+          "&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=" + makeFilter(method))
       }
     );
 
@@ -115,7 +201,7 @@ wfsLayer = new VectorLayer({
   source: wfsSource,
 });
 
-// popup 창 설정을 위해서 변수 추가
+// popup 창 설정
 const popup = document.getElementById('popup');
 
 const overlay = new Overlay({
@@ -136,11 +222,12 @@ const mouseHoverSelect = new Select({
       width: 3
     }),
     fill: new Fill({
-      color: 'rgba(0, 0, 255, 0.5)'
+      color: 'rgba(79, 252, 211, 0.5)'
     })
   })
 });
 
+// OSM 지도를 osmLayer 변수에 담기
 const osmLayer = new TileLayer({
   source: new OSM()
 });
@@ -148,8 +235,8 @@ const osmLayer = new TileLayer({
 // 지도 생성
 const map = new Map({
   layers: [
-    osmLayer,   // 배경 지도 레이어
-    vectorLayer // 피처 레이어
+    osmLayer,   // 배경 지도
+    vectorLayer // 백터 레이어
   ],
   target: 'map',
   overlays: [overlay],
@@ -202,11 +289,11 @@ function calculateSum(){
 // Select 객체를 조건에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
   if (sum < 30) {
-    feature.setStyle(StyleLow);
+    feature.setStyle(Style0030);
   } else if (sum > 30 && sum < 60) {
-    feature.setStyle(StyleMedium);
+    feature.setStyle(Style3160);
   } else {
-    feature.setStyle(StyleHigh);
+    feature.setStyle(Style6100);
   }
   });
 }
@@ -223,13 +310,15 @@ map.addInteraction(dragBox);
 dragBox.on('boxend', function () {
   selectedFeatures.forEach(function (feature) {
     if (sum < 30) {
-      feature.setStyle(StyleLow);
+      feature.setStyle(Style0030);
     } else if (sum > 30 && sum < 60) {
-      feature.setStyle(StyleMedium);
+      feature.setStyle(Style3160);
     } else {
-      feature.setStyle(StyleHigh);
+      feature.setStyle(Style6100);
     }
   });
+
+  // DragBox 부분은 geoserver에서 제공하는 문서를 보고 참고함.
   const boxExtent = dragBox.getGeometry().getExtent();
 
   // if the extent crosses the antimeridian process each world separately
@@ -251,20 +340,9 @@ dragBox.on('boxend', function () {
           feature.getGeometry().intersectsExtent(extent),
       );
 
-    // features that intersect the box geometry are added to the
-    // collection of selected features
-
-    // if the view is not obliquely rotated the box geometry and
-    // its extent are equalivalent so intersecting features can
-    // be added directly to the collection
     const rotation = map.getView().getRotation();
     const oblique = rotation % (Math.PI / 2) !== 0;
 
-    // when the view is obliquely rotated the box extent will
-    // exceed its geometry so both the box and the candidate
-    // feature geometries are rotated around a common anchor
-    // to confirm that, with the box geometry aligned with its
-    // extent, the geometries intersect
     if (oblique) {
       const anchor = [0, 0];
       const geometry = dragBox.getGeometry().clone();
@@ -302,14 +380,124 @@ selectedFeatures.on(['add', 'remove'], function () {
   }
 });
 
-document.getElementById('dong01').onclick = () => {
-  console.log('dong01 clicked');
-  makeWFSSource('dong01');
+// 읍면 사이드바 클릭 시 이벤트 발생
+document.getElementById('ym01').onclick = () => {
+  // console.log('ym01 clicked');
+  makeWFSSource('ym01');
 }
 
-document.getElementById('dong02').onclick = () => {
-  console.log('dong02 clicked');
-  makeWFSSource('dong02');
+document.getElementById('ym02').onclick = () => {
+  makeWFSSource('ym02');
+}
+
+document.getElementById('ym03').onclick = () => {
+  makeWFSSource('ym03');
+}
+
+document.getElementById('ym04').onclick = () => {
+  makeWFSSource('ym04');
+}
+
+document.getElementById('ym05').onclick = () => {
+  makeWFSSource('ym05');
+}
+
+document.getElementById('ym06').onclick = () => {
+  makeWFSSource('ym06');
+}
+
+document.getElementById('ym07').onclick = () => {
+  makeWFSSource('ym07');
+}
+
+document.getElementById('ym08').onclick = () => {
+  makeWFSSource('ym08');
+}
+
+document.getElementById('ym09').onclick = () => {
+  makeWFSSource('ym09');
+}
+
+document.getElementById('ym10').onclick = () => {
+  makeWFSSource('ym10');
+}
+
+document.getElementById('ym11').onclick = () => {
+  makeWFSSource('ym11');
+}
+
+document.getElementById('ym12').onclick = () => {
+  makeWFSSource('ym12');
+}
+
+document.getElementById('ym13').onclick = () => {
+  makeWFSSource('ym13');
+}
+
+document.getElementById('ym14').onclick = () => {
+  makeWFSSource('ym14');
+}
+
+document.getElementById('ym15').onclick = () => {
+  makeWFSSource('ym15');
+}
+
+document.getElementById('ym16').onclick = () => {
+  makeWFSSource('ym16');
+}
+
+// 동 사이드바 클릭 시 이벤트 발생
+document.getElementById('dong1').onclick = () => {
+  // console.log('dong1 clicked');
+  makeWFSSource('dong1');
+}
+
+document.getElementById('dong2').onclick = () => {
+  makeWFSSource('dong2');
+}
+
+document.getElementById('dong3').onclick = () => {
+  makeWFSSource('dong3');
+}
+
+document.getElementById('dong4').onclick = () => {
+  makeWFSSource('dong4');
+}
+
+document.getElementById('dong5').onclick = () => {
+  makeWFSSource('dong5');
+}
+
+document.getElementById('dong6').onclick = () => {
+  makeWFSSource('dong6');
+}
+
+document.getElementById('dong7').onclick = () => {
+  makeWFSSource('dong7');
+}
+
+document.getElementById('dong8').onclick = () => {
+  makeWFSSource('dong8');
+}
+
+document.getElementById('dong9').onclick = () => {
+  makeWFSSource('dong9');
+}
+
+document.getElementById('dong10').onclick = () => {
+  makeWFSSource('dong10');
+}
+
+document.getElementById('dong11').onclick = () => {
+  makeWFSSource('dong11');
+}
+
+document.getElementById('dong12').onclick = () => {
+  makeWFSSource('dong12');
+}
+
+document.getElementById('dong13').onclick = () => {
+  makeWFSSource('dong13');
 }
 
 // 지도 클릭 이벤트. 오버레이를 처리
@@ -323,19 +511,18 @@ map.on('click', (e) =>
     // 점찍은 곳의 자료를 찾아냄. geoserver에서는 WFS를 위해 위치 정보 뿐 아니라 메타데이터도 같이 보내고 있음
     map.forEachFeatureAtPixel(e.pixel, (feature, layer) =>
       {
-        // point와 같이 넘어온 메타데이터 값을 찾음
+        // 점찍은 곳에 넘어온 메타데이터 값을 찾음
         let clickedFeatureID = feature.get('id');
         let clickedFeaturePNU = feature.get('pnu');
 
         // 메타데이터를 오버레이 하기 위한 div에 적음
-        // document.getElementById("info-title").innerHTML = clickedFeatureName;
         document.getElementById("info-title").innerHTML = "[" + clickedFeaturePNU + "] "
         document.getElementById("jinju_link").href = "./detail.jsp?id=" + clickedFeatureID;
 
     // 오버레이 창을 띄움
     overlay.setPosition(e.coordinate);
 
-    // JQUERY를 이용한 CONTENT1 창에 정보 표시
+    // JQUERY를 이용한 area1 창에 정보 표시
     $(document).ready(function(){
       var clickedFeature1 = feature.get('pnu');
       $('#pnu').text(clickedFeature1);
@@ -368,8 +555,8 @@ map.on('click', (e) =>
 
     $(document).ready(function(){
       var clickedFeature6 = feature.get('jinju_area');
-      $('#area').text(clickedFeature6);
-      $('#area').attr('data-clicked-feature-jinju_area', clickedFeature6);
+      $('#are').text(clickedFeature6);
+      $('#are').attr('data-clicked-feature-jinju_area', clickedFeature6);
     })
 
     $(document).ready(function(){

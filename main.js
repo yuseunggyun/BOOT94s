@@ -211,13 +211,15 @@ function calculateSum(){
   });
 }
 
-// a DragBox interaction used to select features by drawing boxes
+// 보조키(Ctrl)를 사용한 DragBox 기능
 const dragBox = new DragBox({
   condition: platformModifierKeyOnly,
 });
 
+// DragBox 활성화
 map.addInteraction(dragBox);
 
+// Drag하여 Select한 객체를 조건에 따라 다른 색상을 줌
 dragBox.on('boxend', function () {
   selectedFeatures.forEach(function (feature) {
     if (sum < 30) {

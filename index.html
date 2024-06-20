@@ -121,18 +121,34 @@
       <table>
         <tr>
           <td><label for="sub1">지표별 평가점수 :</label></td>
-          <td><input type="number" id="sub1" name="sub1" min="0" max="100" style=width:50px></td>
+          <td><input type="number" id="sub1" name="sub1" min="0" max="100" style="width:50px" oninput="validateInput(this)"></td>
         </tr>
         <tr>
           <td><label for="sub2">특성별 적성값 :</label></td>
-          <td><input type="number" id="sub2" name="sub2" min="0" max="100"  style=width:50px></td>
+          <td><input type="number" id="sub2" name="sub2" min="0" max="100" style="width:50px" oninput="validateInput(this)"></td>
         </tr>
         <tr>
           <td><label for="sub3">종합 적성값 :</label></td>
-          <td><input type="number" id="sub3" name="sub3" min="0" max="100"  style=width:50px></td>
+          <td><input type="number" id="sub3" name="sub3" min="0" max="100" style="width:50px" oninput="validateInput(this)"></td>
         </tr>
       </table>
       <button type="submit">입력</button>
+      <!-- 입력한 값이 0 ~ 100 사이의 값이 아닐 경우 알림 창이 뜨게함-->
+      <script>
+        function validateInput(input){
+          const value = input.value;
+
+          if (value === '') {
+            return;
+          }
+          const numericValue = Number(value);
+
+          if (isNaN(numericValue) || numericValue < input.min || numericValue > input.max) {
+            input.value = '';
+            alert('0 ~ 100 사이의 값으로 입력해주세요');
+          }
+        }
+      </script>
     </form>
     <p id="result"></p>
   </div>

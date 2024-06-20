@@ -284,7 +284,7 @@ function calculateSum(){
 
   var sum = sub1 + sub2 + sub3;
 
-  $('#result').text('합계: ' + sum);
+  $('#result').text('총합: ' + sum);
 
 // Select 객체를 조건에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
@@ -506,7 +506,7 @@ map.on('click', (e) =>
     console.log(e);
 
     // 일단 창을 닫음. 이렇게 하면 자료가 없는 곳을 찍으면 창이 닫히는 효과가 나옴
-    overlay.setPosition(undefined);
+    // overlay.setPosition(undefined);
 
     // 점찍은 곳의 자료를 찾아냄. geoserver에서는 WFS를 위해 위치 정보 뿐 아니라 메타데이터도 같이 보내고 있음
     map.forEachFeatureAtPixel(e.pixel, (feature, layer) =>
@@ -520,7 +520,7 @@ map.on('click', (e) =>
         document.getElementById("jinju_link").href = "./detail.jsp?id=" + clickedFeatureID;
 
     // 오버레이 창을 띄움
-    overlay.setPosition(e.coordinate);
+    // overlay.setPosition(e.coordinate);
 
     // JQUERY를 이용한 area1 창에 정보 표시
     $(document).ready(function(){

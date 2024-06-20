@@ -213,7 +213,7 @@ table.ymList2 td:hover {
   
 }
 
-#insidebar1 {
+.insidebar {
   text-align: center;
   font-size: 1.3rem;
   /* 위 오른 아래 왼쪽 */
@@ -231,6 +231,10 @@ ul.sideinfo {
   width: 288px;
   height: 77.5%;
 
+}
+
+#score {
+  font-size: 0.9rem;
 }
 
 #mapArea {

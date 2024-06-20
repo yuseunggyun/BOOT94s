@@ -47,6 +47,7 @@ function makeFilter(method) {
   return filter;
 }
 
+// 나중에 조건에 따라 스타일을 다르게 주기 위해 스타일 개별 지정
 const defaultStyle = new Style({
   fill: new Fill({
     color: 'rgba(255, 0, 0, 0.5)',
@@ -114,7 +115,19 @@ wfsLayer = new VectorLayer({
   source: wfsSource,
 });
 
-// 폴리곤에 hover 시 굵게 표시
+// popup 창 설정을 위해서 변수 추가
+const popup = document.getElementById('popup');
+
+const overlay = new Overlay({
+  element: popup,
+  autoPan: {
+    animation: {
+      duration: 250,
+    },
+  },
+});
+
+// Mouse Hover 스타일
 const mouseHoverSelect = new Select({
   condition: pointerMove,
   style: new Style({
@@ -128,18 +141,6 @@ const mouseHoverSelect = new Select({
   })
 });
 
-// popup 창 설정을 위해서 변수 추가
-const popup = document.getElementById('popup');
-
-const overlay = new Overlay({
-  element: popup,
-  autoPan: {
-    animation: {
-      duration: 250,
-    },
-  },
-});
-
 const osmLayer = new TileLayer({
   source: new OSM()
 });
@@ -147,7 +148,7 @@ const osmLayer = new TileLayer({
 // 지도 생성
 const map = new Map({
   layers: [
-    osmLayer,    // 배경 지도 레이어
+    osmLayer,   // 배경 지도 레이어
     vectorLayer // 피처 레이어
   ],
   target: 'map',
@@ -160,6 +161,7 @@ const map = new Map({
   }),
 });
 
+// Mouse Hover 활성화
 map.addInteraction(mouseHoverSelect);
 
 const selectedStyle = new Style({
@@ -172,7 +174,7 @@ const selectedStyle = new Style({
   }),
 });
 
-// 클릭이벤트 처리 선택도구
+// Select 도구
 const select = new Select({
   style: function (feature) {
     const color = feature.get('COLOR_BIO') || 'rgba(108, 169, 131, 0.5';
@@ -181,10 +183,11 @@ const select = new Select({
   },
 });
 
+// Select 활성화
 map.addInteraction(select);
 
+// Select 피처 값 가져오기
 const selectedFeatures = select.getFeatures();
-
 
 // JQuery를 이용하여 HTML 입력 값(SUM) 가져옴
 function calculateSum(){
@@ -196,6 +199,7 @@ function calculateSum(){
 
   $('#result').text('합계: ' + sum);
 
+// Select 객체를 조건에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
   if (sum < 30) {
     feature.setStyle(StyleLow);

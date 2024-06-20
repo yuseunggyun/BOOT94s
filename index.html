@@ -36,6 +36,7 @@
             <i class="clear fa fa-times"></i>
           </div>
         </div>
+
         <!-- 행정구역 명에 대한 -->
         <div class="ymname">
           <h3 id="ymname1"> 행정 구역명</h3>
@@ -74,7 +75,8 @@
               <td><span id="ym16">수곡면</span></td>
             </tr>
             <tr>
-              <td colspan="2"><span id="ym17">진주시가</span></td>
+              <td><span id="ym17">진주시가</span></td>
+              <td id="information"><span>상세정보</span></td>
             </tr>
           </table>
           <table class="ymList2">
@@ -123,13 +125,16 @@
     </div>
     <!-- 사이드바 영역 -->
     <div class="area1">
-      <input type="checkbox" id="menuicon">
-      <label for="menuicon">
-        <img src='11.png' width="30" height="40">
-      </label>
       <div class="sidebar">
-        <h1 id="insidebar"> 토지정보표시</h1>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
+        <br>
         <ul class="sideinfo">
+          <h1 id="insidebar"> 토지정보표시</h1>
           <br>
           <br>
           <br>
@@ -178,13 +183,16 @@
     }
 
     // 사이드바 목록 보이게 설정
-    document.getElementById("menuicon").onclick = function () {
+    document.getElementById("information").onclick = function () {
       if (document.getElementsByClassName("sidebar")[0].style.display == 'block') {
         document.getElementsByClassName("sidebar")[0].style.display = 'none'
       } else {
         document.getElementsByClassName("sidebar")[0].style.display = 'block';
       }
     }
+
+
+
 
 
 

@@ -127,7 +127,7 @@ body {
 /*행정구역명 밑으로에 대한 영역*/
 .ymname {
   float: left;
-  width: 315px;
+  width: 312.5px;
   height: 81%;
   z-index: 2;
   background: rgba(255, 255, 255, 1);
@@ -157,12 +157,12 @@ table.ymList {
   background: #efefef;
   border: 1px solid #ccc;
   margin: 0px 0;
-  font-size: 0.97em;
+  font-size: 0.96em;
 }
 
 table.ymList td {
   list-style: none;
-  padding: 2px 43.6px;
+  padding: 2px 43.35px;
   cursor: pointer;
 }
 
@@ -237,33 +237,15 @@ table.ymList2 td:hover {
 
 
 
-/* *메뉴바 생성*/
-input[id="menuicon"] {display:none;}
-input[id="menuicon"] + label {display:block;width:30px;height:20px;position:fixed; top:calc(50%); left:14.85%; transition:all .35s; cursor:pointer; z-index:10;}
-input[id="menuicon"] + label span {display:block;position:relative;width:100%;height:5px;border-radius:30px;background:#000000;transition:all .35s;}
-input[id="menuicon"] + label span:nth-child(1) {top:0;}
-/* input[id="menuicon"] + label span:nth-child(2) {top:50%;transform:translateY(-50%);}  */
-/* input[id="menuicon"] + label span:nth-child(3) {bottom:0;} */
-input[id="menuicon"]:checked + label {z-index:2; left:30%; transform:rotate(180deg);}
-input[id="menuicon"]:checked + label span {background:#000000;}
-input[id="menuicon"]:checked + label span:nth-child(1) {top:25%;transform: rotate(180deg);}
-/* input[id="menuicon"]:checked + label span:nth-child(2) {opacity:0;}
-input[id="menuicon"]:checked + label span:nth-child(3) {bottom:50%;transform:translateY(50%) rotate(-45deg);} */
 
-
-div[class="sidebar"] {width:238px;height:100%;background:#ffffff;float: left;z-index:2;transition:all .1000s; margin: 0px 0; padding: 10px;border-right: 2px solid  rgba(0, 152, 129, 1);
-}
-
-
-input[id="menuicon"]:checked + label + div {left:16.527%;}
-
-
-
+/*사이드바 목록 숨김*/
 .sidebar {
   display: none;
   list-style-type: none;
   /* 위 오른 아래 왼쪽 */
   margin: 0px 0px 0px 0px;
+  border-left: 2px solid rgba(0, 152, 129, 1);
+  z-index: 1px;
 }  
 
 
@@ -271,11 +253,14 @@ input[id="menuicon"]:checked + label + div {left:16.527%;}
 .area1 {
   float: left;
   display: flex;
-  width: 238px;
+  width: 30%;
   height: 100%;
   top: 0;
-  /* bottom: 20px; */
-
+  z-index: 3;
+  position: relative;
+  margin: 0px 0px 0px 1px;
+  /* background-color: white; */
+  
 }
 
 #insidebar {
@@ -290,9 +275,11 @@ input[id="menuicon"]:checked + label + div {left:16.527%;}
 ul.sideinfo {
   background: #efefef;
   border: 2px solid rgb(0,152,129);
-  border-radius: 13px;
-  margin: 15px 0;
+  /* border-radius: 13px; */
+  margin: 9px 0;
   padding: 10px;
+  width: 150%;
+  height: 77.5%;
 
 }
 

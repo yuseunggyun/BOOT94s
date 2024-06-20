@@ -513,10 +513,11 @@ map.on('click', (e) =>
       {
         // 점찍은 곳에 넘어온 메타데이터 값을 찾음
         let clickedFeatureID = feature.get('id');
-        let clickedFeaturePNU = feature.get('pnu');
+        let clickedFeaturejinju_do_1 = feature.get('jinju_do_1');
+        let clickedFeaturejinju_jibu = feature.get('jinju_jibu');
 
         // 메타데이터를 오버레이 하기 위한 div에 적음
-        document.getElementById("info-title").innerHTML = "[" + clickedFeaturePNU + "] "
+        document.getElementById("info-title").innerHTML = "[" + clickedFeaturejinju_do_1 + " " + clickedFeaturejinju_jibu + "]"
         document.getElementById("jinju_link").href = "./detail.jsp?id=" + clickedFeatureID;
 
     // 오버레이 창을 띄움

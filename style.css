@@ -216,6 +216,8 @@ table.ymList2 td:hover {
 .insidebar {
   text-align: center;
   font-size: 1.3rem;
+  color: rgb(35,160,250);
+  background-color: rgba(252, 209, 79, 0.7);
   /* 위 오른 아래 왼쪽 */
   margin: 10px 0px 10px 0px;
   float: top;
@@ -223,6 +225,7 @@ table.ymList2 td:hover {
 
 ul.sideinfo {
   font-size: 1.0rem;
+  line-height: 2.0;
   background: #efefef;
   border: 2px solid rgb(0,152,129);
   /* border-radius: 13px; */

@@ -10,6 +10,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <!-- 최신버전의 JQUERY 불러오기 -->
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
 
   <!--검색창 이미지-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">  
@@ -30,21 +32,13 @@
             <i class="search fa fa-search"></i>
           </div>
           <div class="input_search">
-            <input type="text" placeholder="주소입력" id="searchInput">
-            <i class="clear fa fa-times" id="clearSearch"></i>
+            <input type="text" placeholder="주소입력" id="search">
+            <i class="clear fa fa-times"></i>
           </div>
         </div>
 
-        <div id="search-results">
-          <form>
-            <select size='5'>
-            <option value='1'>이름</option>
-            </select>
-            </form>
-          <!-- 검색 결과를 표시할 공간-->
-        </div>
-
-
+        <div id="search-results"></div>
+    
         <!-- 행정구역 리스트 -->
         <div class="ymname">
           <h3 id="ymname1"> 행정 구역명</h3>
@@ -137,30 +131,20 @@
         <br><br><br><br><br><br><br>
         <ul class="sideinfo">
           <h2 class="insidebar"> 필지 정보 </h2>
-          PNU : <div style="display: inline-block;" id="pnu"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
-          소재지 : <div style="display: inline-block;" id="do"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
-          대장구분 : <div style="display: inline-block;" id="cada"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
-          지번 : <div style="display: inline-block;" id="jibun"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
-          지목 : <div style="display: inline-block;" id="jimok"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
-          면적(㎡) : <div style="display: inline-block;" id="are"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
-          공시지가(원) : <div style="display: inline-block;" id="price"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
-          소유구분 : <div style="display: inline-block;" id="owner"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
-          소유권변동사유 : <div style="display: inline-block;" id="owner_re"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
-          소유권변동일자 : <div style="display: inline-block;" id="owner_da"></div>
-          <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+          <div class="landinfo">
+          PNU : <div style="display: inline-block;" id="pnu"></div><br>
+          소재지 : <div style="display: inline-block;" id="do"></div><br>
+          대장구분 : <div style="display: inline-block;" id="cada"></div><br>
+          지번 : <div style="display: inline-block;" id="jibun"></div><br>
+          지목 : <div style="display: inline-block;" id="jimok"></div><br>
+          면적(㎡) : <div style="display: inline-block;" id="are"></div><br>
+          공시지가(원) : <div style="display: inline-block;" id="price"></div><br>
+          소유구분 : <div style="display: inline-block;" id="owner"></div><br>
+          소유권변동사유 : <div style="display: inline-block;" id="owner_re"></div><br>
+          소유권변동일자 : <div style="display: inline-block;" id="owner_da"></div><br>
+          </div>
           <h2 class="insidebar"> 점수 입력 </h2>
           <div id="score">
-            <a href="" id="jinju_link" target="_blank"><h3 id="info-title"></h3></a>
-            <script src="http://code.jquery.com/jquery-latest.min.js"></script>
             <form id="inputForm">
               <table>
                 <tr>
@@ -210,16 +194,70 @@
     
   <!-- 동적검색을 위한 script -->
   <script>
-    let search = document.querySelector(".search");
-    let clear = document.querySelector(".clear");
+    let searchIcon = document.querySelector(".search");
+    let clearIcon = document.querySelector(".clear");
+    let searchInput = document.getElementById("search");
+    let searchResults = document.getElementById("search-results");    
 
-    search.onclick = function () {
+    searchIcon.onclick = function () {
       document.querySelector(".container1").classList.toggle('active');
     }
-    clear.onclick = function () {
-      document.getElementById("search").value = "";
+
+    clearIcon.onclick = function () {
+      searchInput.value = "";
+      searchResults.innerHTML = "";
     }
 
+    searchInput.onchange = function () {
+    let query = searchInput.value.trim();
+    if (query) {
+        fetchResults(query);
+    } else {
+        searchResults.innerHTML = "<p>주소를 입력하세요.</p>";
+    }
+  }
+
+    // 검색 결과를 토지 정보에 띄우기
+    function fetchResults(query) {
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", `search.jsp?address=${encodeURIComponent(query)}`, true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기
+            
+            if (data.length >= 10) {
+              let pnu = data[0];
+              let doValue = data[1];
+              let cada = data[2];
+              let jibun = data[3];
+              let jimok = data[4];
+              let are = data[5];
+              let price = data[6];
+              let owner = data[7];
+              let owner_re = data[8];
+              let owner_da = data[9];
+
+              let html = `
+              PNU : <div style="display: inline-block;" id="pnu">${pnu}</div><br>
+              소재지 : <div style="display: inline-block;" id="do">${doValue}</div><br>
+              대장구분 : <div style="display: inline-block;" id="cada">${cada}</div><br>
+              지번 : <div style="display: inline-block;" id="jibun">${jibun}</div><br>
+              지목 : <div style="display: inline-block;" id="jimok">${jimok}</div><br>
+              면적(㎡) : <div style="display: inline-block;" id="are">${are}</div><br>
+              공시지가(원) : <div style="display: inline-block;" id="price">${price}</div><br>
+              소유구분 : <div style="display: inline-block;" id="owner">${owner}</div><br>
+              소유권변동사유 : <div style="display: inline-block;" id="owner_re">${owner_re}</div><br>
+              소유권변동일자 : <div style="display: inline-block;" id="owner_da">${owner_da}</div><br>
+              `;
+
+              let insidebar = document.querySelector(".landinfo");
+              insidebar.innerHTML = html;
+              }
+          }
+        };
+      xhr.send();
+  }
     // 하위 목록 보이게 설정
     document.getElementById("ym17").onclick = function () {
       if (document.getElementsByClassName("ymList2")[0].style.display == 'none') {
@@ -237,10 +275,6 @@
         document.getElementsByClassName("sidebar")[0].style.display = 'block';
       }
     }
-
-
-
-
   </script>  
   <script type="module" src="./main.js"></script>
 </body>

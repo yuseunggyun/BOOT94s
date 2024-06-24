@@ -384,13 +384,14 @@ selectedFeatures.on(['add', 'remove'], function () {
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
 
+
 // 검색어 입력 시 이벤트 처리
 searchInput.addEventListener('input', function() {
   const searchText = searchInput.value.trim();
 
   // 입력이 없으면 검색 결과 창을 비움
 
-  
+
 
   // GeoServer에서 검색할 때 필요한 URL 생성
   const geoServerUrl = 'http://localhost:42888/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=';
@@ -454,8 +455,15 @@ function displaySearchResults(data) {
     map.getLayers().pop();
     map.addLayer(vectorLayer1);
 
+
+const extent = vectorSource1.getExtent();
+const size = map.getSize();
+
+const padding = [100, 100, 100, 100];
+
+
     // 선택한 feature를 확대
-    map.getView().fit(vectorSource1.getExtent(), { size: map.getSize(), padding: [50, 50, 50, 50], maxZoom: 17 });
+    map.getView().fit(extent, { size: size, padding: padding });
   });
   html += '</ul>';
 

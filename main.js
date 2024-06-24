@@ -385,6 +385,7 @@ const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
 
 let selectedFeatureExtent = null;
+let selectedListItem = null; // 현재 선택된 li 요소를 저장하는 변수
 
 // 검색어 입력 시 이벤트 처리
 searchInput.addEventListener('input', function() {
@@ -433,15 +434,48 @@ function displaySearchResults(data) {
     if (count >= maxResults) return;
 
     const name = feature.properties.jinju_do_2;
-    html += '<li>' + name + '</li>';
+    html += `<li data-index="${count}">${name}</li>`; // li 요소에 데이터 인덱스를 추가
+    count++;
+  });
+
+  html += '</ul>';
+  searchResults.innerHTML = html;
+
+  // 검색 결과 li 요소 클릭 시 처리
+  const lis = searchResults.querySelectorAll('li');
+  lis.forEach(li => {
+    li.addEventListener('click', function() {
+      const index = parseInt(li.getAttribute('data-index'));
+      const selectedFeature = data.features[index]; // 선택된 feature 가져오기
+      handleListItemClick(li, selectedFeature); // 클릭된 항목 처리 함수 호출
+    });
+  });
+}
+
+// 클릭된 항목 처리 함수
+function handleListItemClick(li, feature) {
+  // 이전에 클릭된 항목의 배경색 초기화
+  if (selectedListItem) {
+    selectedListItem.style.backgroundColor = '';
+  }
+
+  // 현재 클릭된 항목의 배경색 변경
+  li.style.backgroundColor = 'rgba(0, 0, 255, 0.2)';
+  selectedListItem = li;
+
+  // 선택된 feature의 extent로 지도를 확대
+  zoomToSelectedFeature(feature);
+}
 
 
-     // GeoJSON 형식의 feature를 생성
-     const geojsonFeature = {
-      'type': 'Feature',
-      'geometry': feature.geometry,
-      'properties': feature.properties
-    };
+// 선택된 feature의 extent로 지도를 확대하는 함수
+function zoomToSelectedFeature(feature) {
+  const geojsonFeature = {
+    'type': 'Feature',
+    'geometry': feature.geometry,
+    'properties': feature.properties
+  };
+
 
     // 지도에 feature를 추가
     const vectorSource1 = new VectorSource({
@@ -468,16 +502,13 @@ function displaySearchResults(data) {
 
 const extent = vectorSource1.getExtent();
     // 선택된 feature가 있을 때만 지도를 확대
-    if (extent && extent.length === 4 && count === 0) {
+    if (extent && extent.length === 4) {
       selectedFeatureExtent = extent; // 선택된 필지의 extent를 저장
       map.getView().fit(extent, { size: map.getSize(), padding: [150, 150, 150, 150]});
     }
-    count++;
-  });
-  html += '</ul>';
 
-  searchResults.innerHTML = html;
 }
+
 
 // 검색창 내용이 삭제될 때의 처리
 searchInput.addEventListener('change', function() {
@@ -486,9 +517,16 @@ searchInput.addEventListener('change', function() {
   if (searchText === '') {
     // 검색어가 없으면 선택된 필지의 extent로 지도를 확대
     if (selectedFeatureExtent) {
-      map.getView().fit(selectedFeatureExtent, { size: map.getSize(), padding: [150, 150, 150, 150]});
+      map.getView().fit(selectedFeatureExtent, { size: map.getSize(), padding: [150, 150, 150, 150] });
+    }
+
+    // 이전에 클릭된 항목의 배경색 초기화
+    if (selectedListItem) {
+      selectedListItem.style.backgroundColor = '';
+      selectedListItem = null;
     }
   }
+
 });
 
 // 읍면 사이드바 클릭 시 이벤트 발생

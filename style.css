@@ -1,0 +1,318 @@
+@import "node_modules/ol/ol.css";
+
+/* 전역적 스타일 정의 */
+* {
+  margin: 0;
+  padding: 0;
+  font-family: "Noto Sans KR";
+  font-size: 1.015em;
+  font-optical-sizing: auto;
+  font-weight: weight;
+  font-style: normal;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+}
+
+/* 주요 레이아웃 정의 */
+.container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%
+}
+
+.area {
+  float: left;
+  position: relative;
+  /* z-index: 30; */
+  width: 313px;
+  height: 100%;
+  /* background-color: #98e4b1; */
+  /* 아래 분기 선 설정*/
+  border-bottom: 1px solid #d4d4d4;
+  z-index:3;
+}
+
+#header {
+  float: left;
+  width: 313px;
+  height: 100%;
+  background: #ffffff;
+  /*분리선*/
+  /* border-bottom: 1px solid #d4d4d4; */
+}
+
+/* 동적 검색 스타일*/
+.container1 {
+  width: 50px;
+  height: 50px;
+  /*검색창 모서리 볼더값*/
+  border-radius: 15px;
+  /* background: rgb(255, 255, 0); */
+  border: 3px solid rgba(0, 152, 129, 1);
+  position: relative;
+  transition: 0.7s;
+  overflow: hidden;
+  left: 5px;
+}
+
+.container1.active {
+  width: 300px;
+}
+
+.container1 .icon {
+  position: absolute;
+  left: 25px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.container1 .icon .search {
+   font-size: 21px;
+   cursor: pointer;
+   color: rgba(0, 152, 129, 1);
+}
+
+.container1 .input_search {
+  position: relative;
+  width: 210px;
+  height: 50px;
+  left: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.container1 .input_search input {
+  position: absolute;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  font-size: 18px;
+  outline: none;
+}
+
+.container1 .input_search .clear {
+  position: absolute;
+  right: -25px;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  font-size: 20px;
+  color: rgba(0, 152, 129, 1);
+}
+
+/*행정구역명 밑으로에 대한 영역*/
+.ymname {
+  float: left;
+  width: 312.5px;
+  height: 81%;
+  z-index: 2;
+  background: rgba(255, 255, 255, 1);
+   /* 위 오른 아래 왼쪽 */
+}
+
+/*행정구역명 스타일 적용*/
+#ymname1 {
+  text-align: center;
+  font-size: 1.6rem;
+  /* 위 오른 아래 왼쪽 */
+  background-color: #efefef;
+  border: 0.3px solid #ccc;
+  margin: 10px 0px 0px 0px;
+}
+
+/*읍면 스타일 및 호버 스타일 설정*/
+table.ymList {
+  background: #efefef;
+  border: 1px solid #ccc;
+  margin: 0px 0;
+  font-size: 0.96em;
+}
+
+table.ymList td {
+  list-style: none;
+  padding: 2px 43.35px;
+  cursor: pointer;
+}
+
+table.ymList td:hover {
+  background: rgba(0, 152, 129, 1);
+  color: #fff;
+}
+
+table.ymList td:hover {
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+  border-bottom-left-radius: 13px;
+  border-bottom-right-radius: 13px;
+}
+
+/*진주 시가 스타일 및 하위 호버 스타일 설정*/
+table.ymList2 {
+  background: #cfcfcf;
+  border-top: 2px solid rgba(0, 152, 129, 1);
+  margin: 0px 0;
+  font-size: 0.9em;
+}
+
+table.ymList2 td {
+  list-style: none;
+  padding: 2.45px 75.7px;
+  cursor: pointer;
+}
+
+
+table.ymList2 td:hover {
+  background: rgba(0, 152, 129, 1);
+  color: #fff;
+}
+
+table.ymList2 td:hover {
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+  border-bottom-left-radius: 13px;
+  border-bottom-right-radius: 13px;
+}
+
+/* 전주시가 하위 리스트 숨김*/
+.ymname .ymList2 {
+  display: none;
+  list-style-type: none;
+  /* 위 오른 아래 왼쪽 */
+  margin: 0px 0px 0px 0px;
+}
+
+/*사이드바 목록 숨김*/
+.sidebar {
+  display: none;
+  list-style-type: none;
+  /* 위 오른 아래 왼쪽 */
+  margin: 0px 0px 0px 0px;
+  border-left: 2px solid rgba(0, 152, 129, 1);
+  z-index: 1px;
+}
+
+.area1 {
+  float: left;
+  display: flex;
+  width: 30%;
+  height: 100%;
+  top: 0;
+  z-index: 3;
+  position: relative;
+  margin: 0px 0px 0px 1px;
+  /* background-color: white; */
+  
+}
+
+.insidebar {
+  text-align: center;
+  font-size: 1.3rem;
+  color: rgb(35,160,250);
+  background-color: rgba(252, 209, 79, 0.7);
+  /* 위 오른 아래 왼쪽 */
+  margin: 10px 0px 10px 0px;
+  float: top;
+}
+
+ul.sideinfo {
+  font-size: 1.0rem;
+  line-height: 2.0;
+  background: #efefef;
+  border: 2px solid rgb(0,152,129);
+  /* border-radius: 13px; */
+  margin: 9px 0;
+  padding: 10px;
+  width: 288px;
+  height: 77.5%;
+
+}
+
+#score {
+  font-size: 0.9rem;
+}
+
+#mapArea {
+  position: absolute;
+  height: 100%;
+  left:315px;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  border-left: 2px solid  rgba(0, 152, 129, 1);
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* 헤더 부분 스타일 설정 */
+
+#lxLogo {
+  background-image: url('./lxland.png');
+  height: 100px;
+  background-repeat: no-repeat;
+  background-size: contain;
+
+  /* 영역 안에 포함되도록 사이즈 조절 */
+  /* background-position: center center; */
+  margin: 15px 20px -56px 20px;
+}
+
+#jinjuLogo {
+  background-image: url('./jinju.png');
+  height: 55px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  /* 영역 안에 포함되도록 사이즈 조절 */
+  /* background-position: center center; */
+  /* 위 오른 아래 왼쪽 */
+  margin: 5px 45px 0px 45px;
+}
+
+/* (info 스타일 추가) */
+#info {
+  position: absolute;
+  display: inline-block;
+  height: auto;
+  width: auto;
+  z-index: 100;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 5px;
+  left: 50%;
+  transform: translateX(3%);
+  visibility: hidden;
+  pointer-events: none;
+}
+
+#popup {
+  font-size: 0.9em;
+  width: 250px;
+  height: 160px;
+  padding: 5px;
+  border: 1px solid rgba(128, 128, 128, 0);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: rgba(168, 229, 252, 0.5);  
+}
+
+
+#search-results li:hover {
+  background-color: rgba(0, 0, 255, 0.2); /* 마우스를 올렸을 때의 배경색 */
+  cursor: pointer; /* 마우스 커서를 포인터(pointer)로 변경 */
+}

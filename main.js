@@ -384,13 +384,17 @@ selectedFeatures.on(['add', 'remove'], function () {
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
 
+let selectedFeatureExtent = null;
 
 // 검색어 입력 시 이벤트 처리
 searchInput.addEventListener('input', function() {
   const searchText = searchInput.value.trim();
 
   // 입력이 없으면 검색 결과 창을 비움
-
+  if (searchText === '') {
+    searchResults.innerHTML = '';
+    return; // 검색어가 없으면 더 이상 진행하지 않음
+  }
 
 
   // GeoServer에서 검색할 때 필요한 URL 생성
@@ -457,18 +461,28 @@ function displaySearchResults(data) {
 
 
 const extent = vectorSource1.getExtent();
-const size = map.getSize();
-
-const padding = [100, 100, 100, 100];
-
-
-    // 선택한 feature를 확대
-    map.getView().fit(extent, { size: size, padding: padding });
+    // 선택된 feature가 있을 때만 지도를 확대
+    if (extent && extent.length === 4) {
+      selectedFeatureExtent = extent; // 선택된 필지의 extent를 저장
+      map.getView().fit(extent, { size: map.getSize(), padding: [50, 50, 50, 50]});
+    }
   });
   html += '</ul>';
 
   searchResults.innerHTML = html;
 }
+
+// 검색창 내용이 삭제될 때의 처리
+searchInput.addEventListener('change', function() {
+  const searchText = searchInput.value.trim();
+
+  if (searchText === '') {
+    // 검색어가 없으면 선택된 필지의 extent로 지도를 확대
+    if (selectedFeatureExtent) {
+      map.getView().fit(selectedFeatureExtent, { size: map.getSize(), padding: [50, 50, 50, 50]});
+    }
+  }
+});
 
 // 읍면 사이드바 클릭 시 이벤트 발생
 document.getElementById('ym01').onclick = () => {

@@ -30,10 +30,12 @@
             <i class="search fa fa-search"></i>
           </div>
           <div class="input_search">
-            <input type="text" placeholder="주소입력" id="search">
+            <input type="text" placeholder="id입력" id="search">
             <i class="clear fa fa-times"></i>
           </div>
         </div>
+
+        <div id="searchResults"></div>
     
         <!-- 행정구역 리스트 -->
         <div class="ymname">
@@ -200,14 +202,38 @@
     
   <!-- 동적검색을 위한 script -->
   <script>
-    let search = document.querySelector(".search");
-    let clear = document.querySelector(".clear");
+    let searchIcon = document.querySelector(".search");
+    let clearIcon = document.querySelector(".clear");
+    let searchInput = document.getElementById("search");
+    let searchResults = document.getElementById("searchResults");
 
-    search.onclick = function () {
+    searchIcon.onclick = function () {
       document.querySelector(".container1").classList.toggle('active');
     }
-    clear.onclick = function () {
-      document.getElementById("search").value = "";
+
+    clearIcon.onclick = function () {
+      searchInput.value = "";
+      searchResults.innerHTML = "";
+    }
+
+    searchInput.onchange = function () {
+      let query = searchInput.value.trim();
+      if (query) {
+          fetchResults(query);
+      } else {
+          searchResults.innerHTML = "<p> 검색어를 입력하세요. </p>";
+      }
+    }
+
+    function fetchResults(query) {
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", `search.jsp?query=${encodeURIComponent(query)}`, true);
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            searchResults.innerHTML = xhr.responseText;
+        }
+      };
+      xhr.send();
     }
 
     // 하위 목록 보이게 설정

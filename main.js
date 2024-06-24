@@ -511,17 +511,6 @@ map.on('click', (e) =>
     // 점찍은 곳의 자료를 찾아냄. geoserver에서는 WFS를 위해 위치 정보 뿐 아니라 메타데이터도 같이 보내고 있음
     map.forEachFeatureAtPixel(e.pixel, (feature, layer) =>
       {
-        // 점찍은 곳에 넘어온 메타데이터 값을 찾음
-        let clickedFeatureID = feature.get('id');
-        let clickedFeaturejinju_do_1 = feature.get('jinju_do_1');
-        let clickedFeaturejinju_jibu = feature.get('jinju_jibu');
-
-        // 메타데이터를 오버레이 하기 위한 div에 적음
-        document.getElementById("info-title").innerHTML = "[" + clickedFeaturejinju_do_1 + " " + clickedFeaturejinju_jibu + "]"
-        document.getElementById("jinju_link").href = "./detail.jsp?id=" + clickedFeatureID;
-
-    // 오버레이 창을 띄움
-    // overlay.setPosition(e.coordinate);
 
     // JQUERY를 이용한 area1 창에 정보 표시
     $(document).ready(function(){

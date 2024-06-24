@@ -47,24 +47,16 @@
         // 자료가 1개 밖에 없는 게 확실하니 while이 아닌 if를 쓴다.
         if (rs.next())
         {
-            out.println("<H2>" + rs.getString("pnu") + "</H2>");            
-            out.println("- 소재지: " + rs.getString("jinju_do_1"));
-            out.println("<br>");
-            out.println("- 대장구분: " + rs.getString("jinju_cada"));
-            out.println("<br>");
-            out.println("- 지번: " + rs.getString("jinju_jibu"));
-            out.println("<br>");
-            out.println("- 지목: " + rs.getString("jinju_ji_1"));
-            out.println("<br>");
-            out.println("- 면적(㎡): " + rs.getString("jinju_area"));
-            out.println("<br>");
-            out.println("- 공시지가(원): " + rs.getString("jinju_pric"));
-            out.println("<br>");
-            out.println("- 소유구분: " + rs.getString("jinju_ow_1"));
-            out.println("<br>");
-            out.println("- 소유권변동사유: " + rs.getString("jinju_ch_1"));
-            out.println("<br>");
-            out.println("- 소유권변동일자: " + rs.getString("jinju_ch_2"));
+            out.println(rs.getString("pnu"));            
+            out.println(rs.getString("jinju_do_1"));
+            out.println(rs.getString("jinju_cada"));
+            out.println(rs.getString("jinju_jibu"));
+            out.println(rs.getString("jinju_ji_1"));
+            out.println(rs.getString("jinju_area"));
+            out.println(rs.getString("jinju_pric"));
+            out.println(rs.getString("jinju_ow_1"));
+            out.println(rs.getString("jinju_ch_1"));
+            out.println(rs.getString("jinju_ch_2"));
         } 			
         
         // 검색결과를 담은 rs를 닫는다(검색결과를 담느라 사용했던 (대량의) 메모리 반환)

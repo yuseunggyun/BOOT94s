@@ -129,6 +129,7 @@
         <br><br><br><br><br><br><br>
         <ul class="sideinfo">
           <h2 class="insidebar"> 필지 정보 </h2>
+          <div class="babo">
           PNU : <div style="display: inline-block;" id="pnu"></div>
           <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
           소재지 : <div style="display: inline-block;" id="do"></div>
@@ -149,6 +150,7 @@
           <script src="http://code.jquery.com/jquery-latest.min.js"></script><br>
           소유권변동일자 : <div style="display: inline-block;" id="owner_da"></div>
           <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+          </div>
           <h2 class="insidebar"> 점수 입력 </h2>
           <div id="score">
             <a href="" id="jinju_link" target="_blank"><h3 id="info-title"></h3></a>
@@ -230,9 +232,38 @@
       xhr.open("GET", `detail.jsp?id=${encodeURIComponent(query)}`, true);
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
-            searchResults.innerHTML = xhr.responseText;
-        }
-      };
+            let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기
+            
+            if (data.length >= 10) {
+              let pnu = data[0];
+              let doValue = data[1];
+              let cada = data[2];
+              let jibun = data[3];
+              let jimok = data[4];
+              let are = data[5];
+              let price = data[6];
+              let owner = data[7];
+              let owner_re = data[8];
+              let owner_da = data[9];
+
+              let html = `
+              PNU : <div style="display: inline-block;" id="pnu">${pnu}</div><br>
+              소재지 : <div style="display: inline-block;" id="do">${doValue}</div><br>
+              대장구분 : <div style="display: inline-block;" id="cada">${cada}</div><br>
+              지번 : <div style="display: inline-block;" id="jibun">${jibun}</div><br>
+              지목 : <div style="display: inline-block;" id="jimok">${jimok}</div><br>
+              면적(㎡) : <div style="display: inline-block;" id="are">${are}</div><br>
+              공시지가(원) : <div style="display: inline-block;" id="price">${price}</div><br>
+              소유구분 : <div style="display: inline-block;" id="owner">${owner}</div><br>
+              소유권변동사유 : <div style="display: inline-block;" id="owner_re">${owner_re}</div><br>
+              소유권변동일자 : <div style="display: inline-block;" id="owner_da">${owner_da}</div><br>
+              `;
+
+              let insidebar = document.querySelector(".babo");
+              insidebar.innerHTML = html;
+              }
+          }
+        };
       xhr.send();
   }
     // 하위 목록 보이게 설정

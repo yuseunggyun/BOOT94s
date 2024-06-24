@@ -73,7 +73,7 @@
             </tr>
             <tr>
               <td><button id="ym17">진주시가</button></td>
-              <td id="information"><button>상세정보</button></td>
+              <td id="information"><span>상세정보</span></td>
             </tr>
           </table>
           <table class="ymList2">
@@ -241,24 +241,34 @@
 
     // 읍면동에 대한 부분
     const buttons = document.querySelectorAll('.ymList button');
-     
+
     buttons.forEach(option => {
       option.addEventListener('click', () => {
         buttons.forEach(btn => btn.classList.remove('active1'));
         option.classList.add('active1');
-  });
-});
+      });
+    });
 
+    // 상세정보에 대한 부분
+    const detailButton = document.querySelector('.ymList span');
+
+    detailButton.addEventListener('click', function () {
+      if (detailButton.classList.contains('ym18')) {
+        detailButton.classList.remove('ym18');
+      } else {
+        detailButton.classList.add('ym18');
+      }
+    });
 
     //전주시가에 대한 부분
-    const buttons1 = document.querySelectorAll('.ymList2 button');
-     
-    buttons1.forEach(option => {
+    const buttons2 = document.querySelectorAll('.ymList2 button');
+
+    buttons2.forEach(option => {
       option.addEventListener('click', () => {
-        buttons1.forEach(btn => btn.classList.remove('active2'));
+        buttons2.forEach(btn => btn.classList.remove('active2'));
         option.classList.add('active2');
-  });
-});
+      });
+    });
 
 
   </script>

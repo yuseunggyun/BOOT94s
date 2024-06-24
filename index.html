@@ -213,14 +213,15 @@
     if (query) {
         fetchResults(query);
     } else {
-        searchResults.innerHTML = "<p>ID를 입력하세요.</p>";
+        searchResults.innerHTML = "<p>주소를 입력하세요.</p>";
     }
   }
 
     // 검색 결과를 토지 정보에 띄우기
     function fetchResults(query) {
       let xhr = new XMLHttpRequest();
-      xhr.open("GET", `detail.jsp?id=${encodeURIComponent(query)}`, true);
+      xhr.open("GET", `search.jsp?address=${encodeURIComponent(query)}`, true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기

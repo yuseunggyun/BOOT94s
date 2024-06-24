@@ -261,11 +261,11 @@
     });
 
     //전주시가에 대한 부분
-    const buttons2 = document.querySelectorAll('.ymList2 button');
+    const buttons1 = document.querySelectorAll('.ymList2 button');
 
-    buttons2.forEach(option => {
+    buttons1.forEach(option => {
       option.addEventListener('click', () => {
-        buttons2.forEach(btn => btn.classList.remove('active2'));
+        buttons1.forEach(btn => btn.classList.remove('active2'));
         option.classList.add('active2');
       });
     });

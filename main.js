@@ -382,84 +382,74 @@ selectedFeatures.on(['add', 'remove'], function () {
 
 
 // 검색 창과 관련된 HTML 요소를 가져옴
-const searchInput = document.getElementById('search');
-const searchResults = document.getElementById('search-results');
+document.addEventListener('DOMContentLoaded', function() {
+  const searchResults = document.getElementById('search-results');
+  const selectElement = document.getElementById('searchSelect');
 
-// 이전에 추가한 레이어를 저장할 변수
-let vectorLayers = [];
-let startIndex = 0;
-const resultsPerPage = 5;
-let fullUrl = '';
+  
 
-// 검색어 입력 시 이벤트 처리
-searchInput.addEventListener('input', function() {
-  const searchText = searchInput.value.trim();
+  // 검색어 입력 이벤트 처리
+  searchInput.addEventListener('input', function() {
+    const searchText = searchInput.value.trim();
 
-  // 입력이 없으면 검색 결과 창을 비움
-  if (searchText === '') {
-    clearSearchResults();
-    return;
-  }
+    if (searchText === '') {
+      clearSearch.style.display = 'none'; // 검색어가 없을 때 클리어 아이콘 숨김
+      searchResults.innerHTML = ''; // 검색 결과 초기화
+      return;
+    } else {
+      clearSearch.style.display = 'inline-block'; // 검색어가 있을 때 클리어 아이콘 표시
+    }
+
 
   // GeoServer에서 검색할 때 필요한 URL 생성
   const geoServerUrl = 'http://localhost:42888/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=';
 
-  // 예시로 검색어를 'jinju_do_' 필드로 CQL 필터 생성
-  const searchText1 = searchText + '%'; // searchText1은 입력된 검색어로 시작하는 경우
-  const searchText2 = '%' + searchText; // searchText2는 입력된 검색어로 끝나는 경우
-  const exactValue = searchText; // exactValue는 정확히 입력된 검색어와 일치하는 경우
+    // 검색어를 기반으로 CQL 필터 생성
+    const searchText1 = searchText + '%'; // searchText1은 입력된 검색어로 시작하는 경우
+    const searchText2 = '%' + searchText; // searchText2는 입력된 검색어로 끝나는 경우
+    const exactValue = searchText; // exactValue는 정확히 입력된 검색어와 일치하는 경우
 
-  const filter = "(jinju_do_2 LIKE '%" + searchText1 + "%' OR jinju_do_2 LIKE '%" + searchText2 + "%' OR jinju_do_2 = '" + exactValue + "')";
-  fullUrl = encodeURI(geoServerUrl + filter);
-
-  fetchAndDisplayResults();
-});
+    const filter = "(jinju_do_2 LIKE '%" + searchText1 + "%' OR jinju_do_2 LIKE '%" + searchText2 + "%' OR jinju_do_2 = '" + exactValue + "')";
+    const fullUrl = encodeURI(geoServerUrl + filter);
 
 
-// 마우스 휠 이벤트 처리
-window.addEventListener('wheel', function(event) {
-  // 휠을 내릴 때만 동작
-  if (event.deltaY > 0) {
-    startIndex += resultsPerPage; // 시작 인덱스 증가
-    fetchAndDisplayResults();
-  }
-});
-
-
-
-// 추가 검색 결과 가져오기
-function fetchAndDisplayResults() {
+  // AJAX를 이용해 GeoServer에서 데이터 요청
   fetch(fullUrl)
     .then(response => response.json())
     .then(data => {
-      const limitedData = data.features.slice(startIndex, startIndex + resultsPerPage);
-      displaySearchResults(limitedData);
+
+      // 검색 결과를 처리하고 지도에 표시하는 코드
+      displaySearchResults(data);
     })
     .catch(error => {
       console.error('Error fetching data:', error);
     });
-}
+});
 
+  // 클리어 아이콘 클릭 이벤트 처리
+  clearSearch.addEventListener('click', function() {
+    searchInput.value = ''; // 검색 창 초기화
+    searchResults.innerHTML = ''; // 검색 결과 초기화
+    clearSearch.style.display = 'none'; // 클리어 아이콘 숨김
+  });
 
 // 검색 결과를 처리하고 지도에 표시하는 함수
-function displaySearchResults(limitedData) {
-  clearMapLayers();
+function displaySearchResults(data) {
   // 결과를 화면에 표시할 방법에 따라 처리
-
+  const maxResults = 5;
   let html = '<ul>';
-  limitedData.forEach(feature => {
-    const name = feature.properties.jinju_do_2;
-    html += '<li>' + name + '</li>';
+  for (let i = 0; i < Math.min(maxResults, data.features.length); i++) {
+    const name = data.features[i].properties.jinju_do_2;
+    html += '<li class="searchResultItem">' + name + '</li>';
 
-    
-     // GeoJSON 형식의 feature를 생성
-     const geojsonFeature = {
+    // GeoJSON 형식의 feature를 생성
+    const geojsonFeature = {
       'type': 'Feature',
-      'geometry': feature.geometry,
-      'properties': feature.properties
+      'geometry': data.features[i].geometry,
+      'properties': data.features[i].properties
     };
 
-    // 지도에 feature를 추가
+    // 지도에 feature를 추가하는 코드
     const vectorSource1 = new VectorSource({
       features: (new GeoJSON()).readFeatures(geojsonFeature)
     });
@@ -477,31 +467,109 @@ function displaySearchResults(limitedData) {
       })
     });
 
+    // 기존에 있던 vectorLayer 제거 후 새로운 layer 추가
+    map.getLayers().pop();
     map.addLayer(vectorLayer1);
-    vectorLayers.push(vectorLayer1);
 
+    // 선택한 feature를 확대
     map.getView().fit(vectorSource1.getExtent(), { size: map.getSize(), padding: [50, 50, 50, 50], maxZoom: 17 });
-  });
+  }
   html += '</ul>';
 
+  // 남은 결과가 있으면 더보기 링크 추가
+  if (data.features.length > maxResults) {
+    html += '<a href="#" id="showMoreResults">더보기</a>';
+  }
+
   searchResults.innerHTML = html;
-}
 
-// 지도에 추가된 모든 레이어를 제거하는 함수
-function clearMapLayers() {
-  vectorLayers.forEach(layer => {
-    map.removeLayer(layer);
+  // 각 검색 결과에 클릭 이벤트 추가
+  const searchResultItems = document.querySelectorAll('.searchResultItem');
+  searchResultItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const resultName = item.textContent;
+      console.log('Clicked result:', resultName);
+
+      // 예시: 클릭한 위치를 지도에서 강조하는 함수 호출
+      highlightLocationOnMap(item.textContent);
+    });
   });
-  vectorLayers = []; // 배열 비우기
+
+  // 더보기 링크 클릭 시 나머지 결과 보여주기
+  const showMoreLink = document.getElementById('showMoreResults');
+  if (showMoreLink) {
+    showMoreLink.addEventListener('click', function(event) {
+      event.preventDefault();
+      displayRemainingResults(data, maxResults);
+    });
+  }
 }
 
-// 검색 결과 창을 비우는 함수
-function clearSearchResults() {
-  searchResults.innerHTML = '';
-  clearMapLayers();
+// 남은 검색 결과를 보여주는 함수
+function displayRemainingResults(data, startIndex) {
+  let html = '<ul>';
+  for (let i = startIndex; i < data.features.length; i++) {
+    const name = data.features[i].properties.jinju_do_2;
+    html += '<li class="searchResultItem">' + name + '</li>';
+
+    // GeoJSON 형식의 feature를 생성
+    const geojsonFeature = {
+      'type': 'Feature',
+      'geometry': data.features[i].geometry,
+      'properties': data.features[i].properties
+    };
+
+    // 여기서 지도에 feature를 추가하는 코드 작성 (지도 관련 코드)
+    const vectorSource = new VectorSource({
+      features: (new GeoJSON()).readFeatures(geojsonFeature)
+    });
+
+    const vectorLayer = new VectorLayer({
+      source: vectorSource,
+      style: new Style({
+        stroke: new Stroke({
+          color: 'rgba(0, 0, 255, 1.0)',
+          width: 2
+        }),
+        fill: new Fill({
+          color: 'rgba(79, 252, 211, 0.5)'
+        })
+      })
+    });
+
+    // 기존에 있던 vectorLayer 제거 후 새로운 layer 추가
+    map.getLayers().pop();
+    map.addLayer(vectorLayer);
+
+    // 선택한 feature를 확대
+    map.getView().fit(vectorSource.getExtent(), { size: map.getSize(), padding: [50, 50, 50, 50], maxZoom: 17 });
+  }
+  html += '</ul>';
+
+  searchResults.innerHTML += html;
+
+  // 추가된 결과 항목에 클릭 이벤트를 추가
+  const searchResultItems = document.querySelectorAll('.searchResultItem');
+  searchResultItems.forEach(item => {
+    item.addEventListener('click', function() {
+      const resultName = item.textContent;
+      console.log('Clicked result:', resultName);
+
+      // 클릭한 결과에 대한 추가 동작을 수행할 수 있음 (예: 지도에서 해당 위치를 강조)
+      // 여기에 추가적인 코드를 작성하세요.
+      // 예시: 클릭한 위치를 지도에서 강조하는 함수 호출
+      highlightLocationOnMap(item.textContent);
+    });
+  });
 }
 
-
+// 예시: 지도에서 특정 위치를 강조하는 함수
+function highlightLocationOnMap(locationName) {
+  // 여기에 지도에서 특정 위치를 강조하는 코드를 작성하세요.
+  console.log('Highlighting location on map:', locationName);
+  // 예시: 클릭한 위치를 지도에서 강조하는 코드
+}
+});
 
 // 읍면 사이드바 클릭 시 이벤트 발생
 document.getElementById('ym01').onclick = () => {

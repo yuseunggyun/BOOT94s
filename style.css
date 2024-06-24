@@ -129,7 +129,6 @@ body {
   width: 99.9%;
 }
 
-
 /*읍면 및 버튼 스타일 설정*/
 table.ymList {
   background: #efefef;
@@ -139,33 +138,30 @@ table.ymList {
   text-align: center;
 }
 
+
+
 table.ymList button {
   width: 100%;
-}
-
-button.active1 {
   border: none;
   padding: 2px 43.35px;
+  cursor: pointer;
 }
 
-table.ymList button.active1:focus {
+
+  table.ymList button.active1 {
   border-top-left-radius: 13px;
   border-top-right-radius: 13px;
   border-bottom-left-radius: 13px;
-  border-bottom-right-radius: 13px;
-  background: rgba(0, 152, 129, 1);
+  border-bottom-right-radius: 13px; 
+  background: rgba(0, 152, 129, 1); 
   color: #ffffff;
   padding: 2px 43.35px;
   cursor: pointer;
 }
 
 
-
 /*진주 시가 및 하위 버튼 스타일 설정*/
-table.ymList2 button {
-  width: 100%;
-  text-align: left;
-}
+
 table.ymList2 {
   background: #cfcfcf;
   border-top: 2px solid rgba(0, 152, 129, 1);
@@ -173,13 +169,15 @@ table.ymList2 {
   width : 100.5%;
 }
 
-table.ymList2 button.active2 {
+table.ymList2 button {
   border: none;
   background-color: #cfcfcf;
   padding: 2.45px 76.5px;
+  width: 100%;
+  text-align: left;
 }
 
-table.ymList2 button.active2:focus {
+table.ymList2 button.active2 {
   border-top-left-radius: 13px;
   border-top-right-radius: 13px;
   border-bottom-left-radius: 13px;

@@ -30,7 +30,7 @@
             <i class="search fa fa-search"></i>
           </div>
           <div class="input_search">
-            <input type="text" placeholder="id입력" id="search">
+            <input type="text" placeholder="주소입력" id="search">
             <i class="clear fa fa-times"></i>
           </div>
         </div>
@@ -205,7 +205,7 @@
     let searchIcon = document.querySelector(".search");
     let clearIcon = document.querySelector(".clear");
     let searchInput = document.getElementById("search");
-    let searchResults = document.getElementById("searchResults");
+    let searchResults = document.getElementById("searchResults");    
 
     searchIcon.onclick = function () {
       document.querySelector(".container1").classList.toggle('active');
@@ -217,25 +217,24 @@
     }
 
     searchInput.onchange = function () {
-      let query = searchInput.value.trim();
-      if (query) {
-          fetchResults(query);
-      } else {
-          searchResults.innerHTML = "<p> 검색어를 입력하세요. </p>";
-      }
+    let query = searchInput.value.trim();
+    if (query) {
+        fetchResults(query);
+    } else {
+        searchResults.innerHTML = "<p>ID를 입력하세요.</p>";
     }
+  }
 
     function fetchResults(query) {
       let xhr = new XMLHttpRequest();
-      xhr.open("GET", `search.jsp?query=${encodeURIComponent(query)}`, true);
+      xhr.open("GET", `detail.jsp?id=${encodeURIComponent(query)}`, true);
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             searchResults.innerHTML = xhr.responseText;
         }
       };
       xhr.send();
-    }
-
+  }
     // 하위 목록 보이게 설정
     document.getElementById("ym17").onclick = function () {
       if (document.getElementsByClassName("ymList2")[0].style.display == 'none') {

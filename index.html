@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <!-- 웹 페이지 이름 삽입 -->
+  <title>경상남도 진주시 토지적성평가 플랫폼</title>
+  <link rel="stylesheet" href="node_modules/ol/ol.css">
+  <!-- 구글 링크 붙여넣기 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+  <!-- 최신버전의 JQUERY 불러오기 -->
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+
+  <!--검색창 이미지-->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">  
+</head>
+
+<body>
+  <div class="container">
+    <!-- area 영역(좌1 사이드) -->
+    <div class="area">
+      <!-- 진주 로고 -->
+      <div id="header">
+        <div id="lxLogo" onClick="window.location.reload()" style="cursor: pointer;"></div>
+        <div id="jinjuLogo" onClick="window.location.reload()" style="cursor: pointer;"></div>
+        
+        <!-- 동적인 검색창 -->
+        <div class="container1">
+          <div class="icon">
+            <i class="search fa fa-search"></i>
+          </div>
+          <div class="input_search">
+            <input type="text" placeholder="주소입력" id="search">
+            <i class="clear fa fa-times"></i>
+          </div>
+        </div>
+
+        <div id="search-results"></div>
+    
+        <!-- 행정구역 리스트 -->
+        <div class="ymname">
+          <h3 id="ymname1"> 행정 구역명</h3>
+          <table class="ymList">
+            <tr>
+              <td><span id="ym01">문산읍</span></td>
+              <td><span id="ym02">내동면</span></td>
+            </tr>
+            <tr>
+              <td><span id="ym03">정촌면</span></td>
+              <td><span id="ym04">금곡면</span></td>
+            </tr>
+            <tr>
+              <td><span id="ym05">진성면</span></td>
+              <td><span id="ym06">일반성면</span></td>
+            </tr>
+            <tr>
+              <td><span id="ym07">이반성면</span></td>
+              <td><span id="ym08">사봉면</span></td>
+            </tr>
+            <tr>
+              <td><span id="ym09">지수면</span></td>
+              <td><span id="ym10">대곡면</span></td>
+            </tr>
+            <tr>
+              <td><span id="ym11">금산면</span></td>
+              <td><span id="ym12">집현면</span></td>
+            </tr>
+            <tr>
+              <td><span id="ym13">미천면</span></td>
+              <td><span id="ym14">명석면</span></td>
+            </tr>
+            <tr>
+              <td><span id="ym15">대평면</span></td>
+              <td><span id="ym16">수곡면</span></td>
+            </tr>
+            <tr>
+              <td><span id="ym17">진주시가</span></td>
+              <td id="information"><span>상세정보</span></td>
+            </tr>
+          </table>
+          <table class="ymList2">
+            <tr>
+              <td><span id="dong1">귀곡동&middot;판문동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong2">이현동&middot;유곡동&middot;상봉동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong3">하촌동&middot;장재동&middot;봉래동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong4">평거동&middot;신안동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong5">봉곡동&middot;인사동&middot;주약동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong6">계동&middot;중안동&middot;본성동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong7">평안동&middot;대안동&middot;동성동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong8">수정동&middot;장대동&middot;옥봉동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong9">초전동&middot;하대동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong10">망경동&middot;강남동&middot;칠암동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong11">상대동&middot;상평동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong12">남성동&middot;가좌동</span></td>
+            </tr>
+            <tr>
+              <td><span id="dong13">호탄동&middot;충무공동</span></td>
+            </tr>
+          </table>
+        </div> <!-- ymname 닫힘 -->
+      </div> <!-- header 닫힘 -->
+    </div> <!-- area 닫힘 -->
+    
+    <!-- area1 영역 (좌2 사이드) -->
+    <div class="area1">
+      <div class="sidebar">
+        <br><br><br><br><br><br><br>
+        <ul class="sideinfo">
+          <h2 class="insidebar"> 필지 정보 </h2>
+          <div class="landinfo">
+          PNU : <div style="display: inline-block;" id="pnu"></div><br>
+          소재지 : <div style="display: inline-block;" id="do"></div><br>
+          대장구분 : <div style="display: inline-block;" id="cada"></div><br>
+          지번 : <div style="display: inline-block;" id="jibun"></div><br>
+          지목 : <div style="display: inline-block;" id="jimok"></div><br>
+          면적(㎡) : <div style="display: inline-block;" id="are"></div><br>
+          공시지가(원) : <div style="display: inline-block;" id="price"></div><br>
+          소유구분 : <div style="display: inline-block;" id="owner"></div><br>
+          소유권변동사유 : <div style="display: inline-block;" id="owner_re"></div><br>
+          소유권변동일자 : <div style="display: inline-block;" id="owner_da"></div><br>
+          </div>
+          <h2 class="insidebar"> 점수 입력 </h2>
+          <div id="score">
+            <form id="inputForm">
+              <table>
+                <tr>
+                  <td><label for="sub1">지표별 평가점수 :</label></td>
+                  <td><input type="number" id="sub1" name="sub1" min="0" max="100" style="width:50px" oninput="validateInput(this)"></td>
+                </tr>
+                <tr>
+                  <td><label for="sub2">특성별 적성값 :</label></td>
+                  <td><input type="number" id="sub2" name="sub2" min="0" max="100" style="width:50px" oninput="validateInput(this)"></td>
+                </tr>
+                <tr>
+                  <td><label for="sub3">종합 적성값 :</label></td>
+                  <td><input type="number" id="sub3" name="sub3" min="0" max="100" style="width:50px" oninput="validateInput(this)"></td>
+                </tr>
+              </table>
+              <button type="submit">입력</button>
+              <!-- 입력한 값이 0 ~ 100 사이의 값이 아닐 경우 알림 창이 뜨게함-->
+              <script>
+                function validateInput(input){
+                  const value = input.value;
+        
+                  if (value === '') {
+                    return;
+                  }
+                  const numericValue = Number(value);
+        
+                  if (isNaN(numericValue) || numericValue < input.min || numericValue > input.max) {
+                    input.value = '';
+                    alert('0 ~ 100 사이의 값으로 입력해주세요');
+                  }
+                }
+              </script>
+            </form>
+            <p id="result" style="font-size: 16px;"></p>
+          </div>
+        </ul>
+        
+      </div>
+    </div>
+    <!-- mapArea 영역 (맵) -->
+    <div id="mapArea">
+      <div id="map">
+        <div id="info"></div>
+      </div>
+    </div>
+  </div> <!-- container 닫기 -->
+    
+  <!-- 동적검색을 위한 script -->
+  <script>
+    let searchIcon = document.querySelector(".search");
+    let clearIcon = document.querySelector(".clear");
+    let searchInput = document.getElementById("search");
+    let searchResults = document.getElementById("search-results");    
+
+    searchIcon.onclick = function () {
+      document.querySelector(".container1").classList.toggle('active');
+    }
+
+    clearIcon.onclick = function () {
+      searchInput.value = "";
+      searchResults.innerHTML = "";
+    }
+
+    searchInput.onchange = function () {
+    let query = searchInput.value.trim();
+    if (query) {
+        fetchResults(query);
+    } else {
+        searchResults.innerHTML = "<p>주소를 입력하세요.</p>";
+    }
+  }
+
+    // 검색 결과를 토지 정보에 띄우기
+    function fetchResults(query) {
+      let xhr = new XMLHttpRequest();
+      xhr.open("GET", `search.jsp?address=${encodeURIComponent(query)}`, true);
+      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4 && xhr.status == 200) {
+            let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기
+            
+            if (data.length >= 10) {
+              let pnu = data[0];
+              let doValue = data[1];
+              let cada = data[2];
+              let jibun = data[3];
+              let jimok = data[4];
+              let are = data[5];
+              let price = data[6];
+              let owner = data[7];
+              let owner_re = data[8];
+              let owner_da = data[9];
+
+              let html = `
+              PNU : <div style="display: inline-block;" id="pnu">${pnu}</div><br>
+              소재지 : <div style="display: inline-block;" id="do">${doValue}</div><br>
+              대장구분 : <div style="display: inline-block;" id="cada">${cada}</div><br>
+              지번 : <div style="display: inline-block;" id="jibun">${jibun}</div><br>
+              지목 : <div style="display: inline-block;" id="jimok">${jimok}</div><br>
+              면적(㎡) : <div style="display: inline-block;" id="are">${are}</div><br>
+              공시지가(원) : <div style="display: inline-block;" id="price">${price}</div><br>
+              소유구분 : <div style="display: inline-block;" id="owner">${owner}</div><br>
+              소유권변동사유 : <div style="display: inline-block;" id="owner_re">${owner_re}</div><br>
+              소유권변동일자 : <div style="display: inline-block;" id="owner_da">${owner_da}</div><br>
+              `;
+
+              let insidebar = document.querySelector(".landinfo");
+              insidebar.innerHTML = html;
+              }
+          }
+        };
+      xhr.send();
+  }
+    // 하위 목록 보이게 설정
+    document.getElementById("ym17").onclick = function () {
+      if (document.getElementsByClassName("ymList2")[0].style.display == 'none') {
+        document.getElementsByClassName("ymList2")[0].style.display = 'block'
+      } else {
+        document.getElementsByClassName("ymList2")[0].style.display = 'none';
+      }
+    }
+
+    // 사이드바 목록 보이게 설정
+    document.getElementById("information").onclick = function () {
+      if (document.getElementsByClassName("sidebar")[0].style.display == 'block') {
+        document.getElementsByClassName("sidebar")[0].style.display = 'none'
+      } else {
+        document.getElementsByClassName("sidebar")[0].style.display = 'block';
+      }
+    }
+  </script>  
+  <script type="module" src="./main.js"></script>
+</body>
+</html>

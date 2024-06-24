@@ -137,7 +137,10 @@ table.ymList {
   font-size: 0.96em;
   width : 100.5%;
   text-align: center;
-  
+}
+
+table.ymList button {
+  width: 100%;
 }
 
 button.active1 {
@@ -145,7 +148,7 @@ button.active1 {
   padding: 2px 43.35px;
 }
 
-table.ymList button.active1:focus{
+table.ymList button.active1:focus {
   border-top-left-radius: 13px;
   border-top-right-radius: 13px;
   border-bottom-left-radius: 13px;

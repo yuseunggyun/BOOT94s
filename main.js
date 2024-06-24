@@ -385,13 +385,19 @@ selectedFeatures.on(['add', 'remove'], function () {
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
 
+// 이전에 추가한 레이어를 저장할 변수
+let vectorLayers = [];
+let startIndex = 0;
+const resultsPerPage = 5;
+let fullUrl = '';
+
 // 검색어 입력 시 이벤트 처리
 searchInput.addEventListener('input', function() {
   const searchText = searchInput.value.trim();
 
   // 입력이 없으면 검색 결과 창을 비움
   if (searchText === '') {
-    searchResults.innerHTML = '';
+    clearSearchResults();
     return;
   }
 
@@ -404,26 +410,44 @@ searchInput.addEventListener('input', function() {
   const exactValue = searchText; // exactValue는 정확히 입력된 검색어와 일치하는 경우
 
   const filter = "(jinju_do_2 LIKE '%" + searchText1 + "%' OR jinju_do_2 LIKE '%" + searchText2 + "%' OR jinju_do_2 = '" + exactValue + "')";
-  const fullUrl = encodeURI(geoServerUrl + filter);
+  fullUrl = encodeURI(geoServerUrl + filter);
 
-  // AJAX를 이용해 GeoServer에서 데이터 요청
+  fetchAndDisplayResults();
+});
+
+
+// 마우스 휠 이벤트 처리
+window.addEventListener('wheel', function(event) {
+  // 휠을 내릴 때만 동작
+  if (event.deltaY > 0) {
+    startIndex += resultsPerPage; // 시작 인덱스 증가
+    fetchAndDisplayResults();
+  }
+});
+
+
+
+// 추가 검색 결과 가져오기
+function fetchAndDisplayResults() {
   fetch(fullUrl)
     .then(response => response.json())
     .then(data => {
-      // 검색 결과를 처리하고 지도에 표시하는 코드
-      displaySearchResults(data);
+      const limitedData = data.features.slice(startIndex, startIndex + resultsPerPage);
+      displaySearchResults(limitedData);
     })
     .catch(error => {
       console.error('Error fetching data:', error);
     });
-});
+}
+
 
 // 검색 결과를 처리하고 지도에 표시하는 함수
-function displaySearchResults(data) {
+function displaySearchResults(limitedData) {
+  clearMapLayers();
   // 결과를 화면에 표시할 방법에 따라 처리
 
   let html = '<ul>';
-  data.features.forEach(feature => {
+  limitedData.forEach(feature => {
     const name = feature.properties.jinju_do_2;
     html += '<li>' + name + '</li>';
 
@@ -453,16 +477,28 @@ function displaySearchResults(data) {
       })
     });
 
-    // 기존에 있던 vectorLayer 제거 후 새로운 layer 추가
-    map.getLayers().pop();
     map.addLayer(vectorLayer1);
+    vectorLayers.push(vectorLayer1);
 
-    // 선택한 feature를 확대
     map.getView().fit(vectorSource1.getExtent(), { size: map.getSize(), padding: [50, 50, 50, 50], maxZoom: 17 });
   });
   html += '</ul>';
 
   searchResults.innerHTML = html;
+}
+
+// 지도에 추가된 모든 레이어를 제거하는 함수
+function clearMapLayers() {
+  vectorLayers.forEach(layer => {
+    map.removeLayer(layer);
+  });
+  vectorLayers = []; // 배열 비우기
+}
+
+// 검색 결과 창을 비우는 함수
+function clearSearchResults() {
+  searchResults.innerHTML = '';
+  clearMapLayers();
 }
 
 

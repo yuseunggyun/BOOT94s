@@ -425,7 +425,13 @@ function displaySearchResults(data) {
   // 결과를 화면에 표시할 방법에 따라 처리
 
   let html = '<ul>';
+
+  const maxResults = 5;
+  let count = 0;
+
   data.features.forEach(feature => {
+    if (count >= maxResults) return;
+
     const name = feature.properties.jinju_do_2;
     html += '<li>' + name + '</li>';
 
@@ -462,10 +468,11 @@ function displaySearchResults(data) {
 
 const extent = vectorSource1.getExtent();
     // 선택된 feature가 있을 때만 지도를 확대
-    if (extent && extent.length === 4) {
+    if (extent && extent.length === 4 && count === 0) {
       selectedFeatureExtent = extent; // 선택된 필지의 extent를 저장
-      map.getView().fit(extent, { size: map.getSize(), padding: [50, 50, 50, 50]});
+      map.getView().fit(extent, { size: map.getSize(), padding: [150, 150, 150, 150]});
     }
+    count++;
   });
   html += '</ul>';
 
@@ -479,7 +486,7 @@ searchInput.addEventListener('change', function() {
   if (searchText === '') {
     // 검색어가 없으면 선택된 필지의 extent로 지도를 확대
     if (selectedFeatureExtent) {
-      map.getView().fit(selectedFeatureExtent, { size: map.getSize(), padding: [50, 50, 50, 50]});
+      map.getView().fit(selectedFeatureExtent, { size: map.getSize(), padding: [150, 150, 150, 150]});
     }
   }
 });

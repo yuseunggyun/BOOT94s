@@ -383,18 +383,37 @@ selectedFeatures.on(['add', 'remove'], function () {
 // 검색 창과 관련된 HTML 요소를 가져옴
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
-const featureInfoBox = document.getElementById('feature-info'); // feature 정보를 표시할 요소
+const featureInfoBox = document.getElementById('feature-info'); // feature-info 요소 가져오기
 
 let selectedFeatureExtent = null;
 let selectedListItem = null; // 현재 선택된 li 요소를 저장하는 변수
 
-// 검색어 입력 시 이벤트 처리
+let vectorSource1 = new VectorSource();
+let vectorLayer1 = new VectorLayer({
+
+  source: vectorSource1,
+  style: new Style({
+    stroke: new Stroke({
+      color: 'rgba(0, 0, 255, 1.0)',
+      width: 2
+    }),
+    fill: new Fill({
+      color: 'rgba(79, 252, 211, 0.5)'
+    })
+  })
+});
+
+map.addLayer(vectorLayer1); // 초기에는 레이어 추가
+
+
+// 검색창 내용이 변경될 때의 처리
 searchInput.addEventListener('input', function() {
   const searchText = searchInput.value.trim();
 
   // 입력이 없으면 검색 결과 창을 비움
   if (searchText === '') {
     searchResults.innerHTML = '';
+    clearSelection();
     return; // 검색어가 없으면 더 이상 진행하지 않음
   }
 
@@ -414,6 +433,7 @@ searchInput.addEventListener('input', function() {
   fetch(fullUrl)
     .then(response => response.json())
     .then(data => {
+
       // 검색 결과를 처리하고 지도에 표시하는 코드
       displaySearchResults(data);
     })
@@ -426,86 +446,69 @@ searchInput.addEventListener('input', function() {
 function displaySearchResults(data) {
   // 결과를 화면에 표시할 방법에 따라 처리
 
-  let html = '<select id="search-select">';
+  let html = '<select>';
 
   const maxResults = 5;
   let count = 0;
 
-  data.features.forEach(feature => {
+  data.features.forEach((feature, index) => {
     if (count >= maxResults) return;
 
     const name = feature.properties.jinju_do_2;
-    html += `<option value="${name}">${name}</option>`; // option 요소 추가
+    html += `<option value="${index}">${name}</option>`; // option 요소로 변경
     count++;
   });
 
   html += '</select>';
   searchResults.innerHTML = html;
 
-  // <select> 요소가 변경될 때 처리
-  const selectElement = document.getElementById('search-select');
-  selectElement.addEventListener('change', function() {
-    const selectedName = selectElement.value; // 선택된 옵션의 값 가져오기
-
-    // 선택된 feature 찾기
-    const selectedFeature = data.features.find(feature => feature.properties.jinju_do_2 === selectedName);
-    if (selectedFeature) {
-      handleFeatureSelection(selectedFeature); // 선택된 feature 처리 함수 호출
-    }
-  });
-}
-
-// 선택된 feature 처리 함수
-function handleFeatureSelection(feature) {
-  // 선택된 feature의 정보를 표시
-  displayFeatureInfo(feature);
-
-
-  
-  // 선택된 feature의 extent로 지도를 확대
-  zoomToSelectedFeature(feature);
-}
-
-
-// 선택된 feature의 정보를 표시하는 함수
-function displayFeatureInfo(feature) {
-  // feature 정보를 화면에 표시하는 예시
-
-  featureInfoBox.innerHTML = '<h3>' + feature.properties.name + '</h3>'; // 예시: feature의 속성을 기반으로 정보 표시
-}
-
-// 선택된 feature의 extent로 지도를 확대하는 함수
-
-function zoomToSelectedFeature(feature) {
-  
-  // 선택된 feature의 geometry를 기반으로 extent를 계산
-  const geometry = feature.getGeometry();
-  const extent = geometry.getExtent();
-
-  // extent가 유효한지 검사
-  if (extent && extent.length === 4) {
-    // 선택된 필지의 extent를 저장
-    selectedFeatureExtent = extent;
-    
-    // 지도를 선택된 feature의 extent에 맞게 확대
-    map.getView().fit(extent, { size: map.getSize(), padding: [150, 150, 150, 150] });
+  // 검색 결과 select 요소 변경 시 처리
+  const selectElement = searchResults.querySelector('select');
+  if (selectElement) {
+    selectElement.addEventListener('change', function() {
+      const selectedIndex = selectElement.value;
+      const selectedFeature = data.features[selectedIndex]; // 선택된 feature 가져오기
+      handleSelectChange(selectedFeature); // 선택된 항목 처리 함수 호출
+    });
   }
 }
 
-// 검색창 내용이 삭제될 때의 처리
-searchInput.addEventListener('change', function() {
-  const searchText = searchInput.value.trim();
 
-  if (searchText === '') {
-    // 검색어가 없으면 선택된 필지의 extent로 지도를 확대
-    if (selectedFeatureExtent) {
-      map.getView().fit(selectedFeatureExtent, { size: map.getSize(), padding: [150, 150, 150, 150] });
+// 선택된 항목 처리 함수 (select 요소 변경 시)
+function handleSelectChange(feature) {
+  clearSelection(); // 이전 선택 초기화
+
+  addFeatureToMap(feature);
+}
+
+
+// 새로운 feature로 지도에 레이어 추가 및 확대
+function addFeatureToMap(feature) {
+  vectorSource1.clear();
+  vectorSource1.addFeatures((new GeoJSON()).readFeatures(feature));
+
+
+const extent = vectorSource1.getExtent();
+    // 선택된 feature가 있을 때만 지도를 확대
+    if (extent && extent.length === 4) {
+      selectedFeatureExtent = extent; // 선택된 필지의 extent를 저장
+      map.getView().fit(extent, { size: map.getSize(), padding: [150, 150, 150, 150]});
     }
 
-    // feature 정보를 초기화
-    featureInfoBox.innerHTML = '';
   }
-});
+
+
+// 이전 선택 초기화 함수
+function clearSelection() {
+  // 이전에 선택된 항목의 배경색 초기화
+  if (selectedListItem) {
+    selectedListItem.style.backgroundColor = '';
+    selectedListItem = null;
+  }
+}
+
+
+
 
 // 읍면 사이드바 클릭 시 이벤트 발생
 document.getElementById('ym01').onclick = () => {

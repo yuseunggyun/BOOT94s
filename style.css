@@ -312,7 +312,32 @@ ul.sideinfo {
 }
 
 
-#search-results li:hover {
-  background-color: rgba(0, 0, 255, 0.2); /* 마우스를 올렸을 때의 배경색 */
-  cursor: pointer; /* 마우스 커서를 포인터(pointer)로 변경 */
+#search-select {
+  padding: 10px 30px 10px 10px; /* 오른쪽에 화살표 공간을 주기 위해 패딩 설정 */
+  font-size: 16px;
+  font-family: Arial, sans-serif;
+  color: #333;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  background-color: #fff;
+  cursor: pointer;
+  position: relative; /* 상대 위치 설정 */
+}
+
+#search-select::after {
+  content: '\25BC'; /* 유니코드로 드롭다운 화살표 표시 */
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+#search-select:hover {
+  background-color: #f0f0f0;
+}
+
+#search-select:focus {
+  outline: none;
+  border-color: #66afe9; /* 예시: 포커스됐을 때의 스타일 */
 }

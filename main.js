@@ -384,6 +384,7 @@ selectedFeatures.on(['add', 'remove'], function () {
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
 const featureInfoBox = document.getElementById('feature-info'); // feature-info 요소 가져오기
+const insidebar = document.querySelector(".landinfo");
 
 let selectedFeatureExtent = null;
 let selectedListItem = null; // 현재 선택된 li 요소를 저장하는 변수
@@ -478,7 +479,29 @@ function displaySearchResults(data) {
 function handleSelectChange(feature) {
   clearSelection(); // 이전 선택 초기화
 
-  addFeatureToMap(feature);
+  addFeatureToMap(feature); // 선택된 항목 지도에 표시 함수 호출
+  showFeatureInfo(feature); // 토지 정보 표시 함수 호출
+}
+
+// 토지 정보 표시 함수
+function showFeatureInfo(feature) {
+  const properties = feature.properties;
+  console.log(properties)
+  if (properties) {
+    const html = `
+    PNU : <div style="display: inline-block;" id="pnu">${properties.pnu}</div><br>
+    소재지 : <div style="display: inline-block;" id="do">${properties.jinju_do_1}</div><br>
+    대장구분 : <div style="display: inline-block;" id="cada">${properties.jinju_cada}</div><br>
+    지번 : <div style="display: inline-block;" id="jibun">${properties.jinju_jibu}</div><br>
+    지목 : <div style="display: inline-block;" id="jimok">${properties.jinju_ji_1}</div><br>
+    면적(㎡) : <div style="display: inline-block;" id="are">${properties.jinju_area}</div><br>
+    공시지가(원) : <div style="display: inline-block;" id="price">${properties.jinju_pric}</div><br>
+    소유구분 : <div style="display: inline-block;" id="owner">${properties.jinju_ow_1}</div><br>
+    소유권변동사유 : <div style="display: inline-block;" id="owner_re">${properties.jinju_ch_1}</div><br>
+    소유권변동일자 : <div style="display: inline-block;" id="owner_da">${properties.jinju_ch_2}</div><br>`;
+
+    insidebar.innerHTML = html;
+  }
 }
 
 

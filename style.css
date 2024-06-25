@@ -313,6 +313,17 @@ ul.sideinfo {
 
 
 #search-results li:hover {
-  background-color: rgba(0, 0, 255, 0.2); 
+  background-color: rgba(7, 225, 105, 0.2); 
   cursor: pointer; 
+}
+
+#feature-info {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

@@ -1,26 +1,42 @@
+// OpenLayers > Examples > WFS
+// GeoServer에 있는 진주 연속지적도를 벡터파일로 서비스 후 꾸미기
+
 import './style.css';
-import Map from 'ol/Map.js';
-import View from 'ol/View.js';
-import { fromLonLat } from 'ol/proj.js';
-import TileLayer from 'ol/layer/Tile.js';
-import OSM from 'ol/source/OSM.js';
-import { Vector as VectorLayer } from 'ol/layer.js';
-import VectorSource from 'ol/source/Vector.js';
-import { GeoJSON } from 'ol/format.js';
-import { Style, Circle as CircleStyle, Fill, Stroke, RegularShape, Text } from 'ol/style.js';
-import { Select, defaults as defaultInteractions, Draw, Modify } from 'ol/interaction.js';
-import { pointerMove, click, platformModifierKeyOnly } from 'ol/events/condition.js';
-import { Overlay } from 'ol';
-import DragBox from 'ol/interaction/DragBox.js';
-import { getWidth } from 'ol/extent.js';
-import { LineString, Point } from 'ol/geom.js';
-import { getArea, getLength } from 'ol/sphere.js';
+import { Map, View } from 'ol';
+import TileLayer from 'ol/layer/Tile';
+import OSM from 'ol/source/OSM';
+import { fromLonLat } from 'ol/proj';
 
+// geoserver에서 WFS 방식으로 가져오기 위해
+import { Vector as VectorLayer } from 'ol/layer';
+import VectorSource from 'ol/source/Vector';
+import { GeoJSON } from 'ol/format';
+import { Style } from 'ol/style';
+import { Circle } from 'ol/style';
+import { Stroke } from 'ol/style';
+import { Fill } from 'ol/style';
 
+// view와의 상호작용을 위해 
+import { Select, defaults } from 'ol/interaction';
+import { pointerMove, click, platformModifierKeyOnly } from 'ol/events/condition';
 
+// 팝업창을 위해
+import { Overlay} from 'ol';
 
+// dragbox를 위해
+import DragBox from 'ol/interaction/DragBox';
+import {getWidth} from 'ol/extent.js';
 
+//지도상 거리 면적 계산기능을 위해
+import {
+  Circle as CircleStyle,
+  RegularShape,
+  Text,
+} from 'ol/style.js';
+import {Draw, Modify} from 'ol/interaction.js';
+import {LineString, Point} from 'ol/geom.js';
 
+import {getArea, getLength} from 'ol/sphere.js';
 
 // url을 변수로 빼서 따로 설정해 줘도 됨
 const g_url = "http://localhost:42888";
@@ -168,9 +184,6 @@ const Style6100 = new Style({
   }),
 });
 
-
-
-
 // Vector 레이어 생성
 const vectorLayer = new VectorLayer({
   source: wfsSource,
@@ -188,38 +201,63 @@ function makeWFSSource(method) {
         "&typeName=jinjuWS:jj&maxFeatures=2000&outputFormat=application/json&CQL_FILTER=" + makeFilter(method))
       }
     );
-  vectorLayer.setSource(newWfsSource)
+
+  vectorLayer.setSource(newWfsSource);
 }
 
-  makeWFSSource("");
-
+makeWFSSource("");
 
 wfsLayer = new VectorLayer({
   source: wfsSource,
 });
 
+// popup 창 설정
+const popup = document.getElementById('popup');
 
-// osm(오픈 소스 기반 지도 서비스) 레이어를 만든다.
-const osmLayer = new TileLayer
-(
-  {
-    source: new OSM()
-  }
-);
+const overlay = new Overlay({
+  element: popup,
+  autoPan: {
+    animation: {
+      duration: 250,
+    },
+  },
+});
 
-
-const map = new Map({
-  target: 'map',
-  layers: [osmLayer, vectorLayer,],
-  // overlays: [overlay],
-  view: new View({
-    center: [14261274,4187593],
-    zoom: 11.5,
-    // constrainRotation: 16,
-    // interactions: defaults().extend([mouseHoverSelect])
-    
+// Mouse Hover 스타일
+const mouseHoverSelect = new Select({
+  condition: pointerMove,
+  style: new Style({
+    stroke: new Stroke({
+      color: 'rgba(0, 0, 255, 1.0)',
+      width: 3
+    }),
+    fill: new Fill({
+      color: 'rgba(79, 252, 211, 0.5)'
+    })
   })
 });
+
+// OSM 지도를 osmLayer 변수에 담기
+const osmLayer = new TileLayer({
+  source: new OSM()
+});
+
+// 지도 생성
+const map = new Map({
+  layers: [
+    osmLayer,   // 배경 지도
+    vectorLayer // 백터 레이어
+  ],
+  target: 'map',
+  overlays: [overlay],
+  view: new View({
+    center: fromLonLat([128.1298, 35.2052]),
+    zoom: 10,
+    constrainRotation: 16,
+    interactions: defaults().extend([mouseHoverSelect])
+  }),
+});
+
 
 
 
@@ -233,7 +271,7 @@ const map = new Map({
 const showSegments = document.getElementById('segments');
 const clearPrevious = document.getElementById('clear');
 
-const style = new Style({
+const lineStyle = new Style({
   fill: new Fill({
     color: 'rgba(255, 255, 255, 0.2)',
   }),
@@ -242,7 +280,7 @@ const style = new Style({
     lineDash: [10, 10],
     width: 2,
   }),
-  image: new CircleStyle({
+  image: new Circle({
     radius: 5,
     stroke: new Stroke({
       color: 'rgba(0, 0, 0, 0.7)',
@@ -253,7 +291,7 @@ const style = new Style({
   }),
 });
 
-const labelStyle = new Style({
+const labelTextStyle = new Style({
   text: new Text({
     font: '14px Calibri,sans-serif',
     fill: new Fill({
@@ -277,7 +315,7 @@ const labelStyle = new Style({
   }),
 });
 
-const tipStyle = new Style({
+const tooltipTextStyle = new Style({
   text: new Text({
     font: '12px Calibri,sans-serif',
     fill: new Fill({
@@ -292,8 +330,8 @@ const tipStyle = new Style({
   }),
 });
 
-const modifyStyle = new Style({
-  image: new CircleStyle({
+const modifyPointStyle = new Style({
+  image: new Circle({
     radius: 5,
     stroke: new Stroke({
       color: 'rgba(0, 0, 0, 0.7)',
@@ -317,7 +355,7 @@ const modifyStyle = new Style({
   }),
 });
 
-const segmentStyle = new Style({
+const segmentTextStyle = new Style({
   text: new Text({
     font: '12px Calibri,sans-serif',
     fill: new Fill({
@@ -341,7 +379,7 @@ const segmentStyle = new Style({
   }),
 });
 
-const segmentStyles = [segmentStyle];
+const segmentStyles = [segmentTextStyle];
 
 const formatLength = function (line) {
   const length = getLength(line);
@@ -367,7 +405,7 @@ const formatArea = function (polygon) {
 
 const source = new VectorSource();
 
-const modify = new Modify({ source: source, style: modifyStyle });
+const modify = new Modify({ source: source, style: modifyPointStyle });
 
 let tipPoint;
 
@@ -377,7 +415,7 @@ function styleFunction(feature, segments, drawType, tip) {
   const type = geometry.getType();
   let point, label, line;
   if (!drawType || drawType === type || type === 'Point') {
-    styles.push(style);
+    styles.push(lineStyle);
     if (type === 'Polygon') {
       point = geometry.getInteriorPoint();
       label = formatArea(geometry);
@@ -394,7 +432,7 @@ function styleFunction(feature, segments, drawType, tip) {
       const segment = new LineString([a, b]);
       const label = formatLength(segment);
       if (segmentStyles.length - 1 < count) {
-        segmentStyles.push(segmentStyle.clone());
+        segmentStyles.push(segmentTextStyle.clone());
       }
       const segmentPoint = new Point(segment.getCoordinateAt(0.5));
       segmentStyles[count].setGeometry(segmentPoint);
@@ -404,9 +442,9 @@ function styleFunction(feature, segments, drawType, tip) {
     });
   }
   if (label) {
-    labelStyle.setGeometry(point);
-    labelStyle.getText().setText(label);
-    styles.push(labelStyle);
+    labelTextStyle.setGeometry(point);
+    labelTextStyle.getText().setText(label);
+    styles.push(labelTextStyle);
   }
   if (
     tip &&
@@ -414,8 +452,8 @@ function styleFunction(feature, segments, drawType, tip) {
     !modify.getOverlay().getSource().getFeatures().length
   ) {
     tipPoint = geometry;
-    tipStyle.getText().setText(tip);
-    styles.push(tipStyle);
+    tooltipTextStyle.getText().setText(tip);
+    styles.push(tooltipTextStyle);
   }
   return styles;
 }
@@ -433,6 +471,10 @@ map.addInteraction(modify);
 let draw; // global so we can remove it later
 
 function addInteraction(drawType) {
+  //호버 비활성화
+  map.removeInteraction(mouseHoverSelect);
+  // 선택 기능 비활성화
+  map.removeInteraction(select);
   const activeTip = '다음점' + (drawType === 'Polygon' ? 'polygon' : '(종료시 더블클릭)');
   const idleTip = '시작점';
   let tip = idleTip;
@@ -453,12 +495,13 @@ function addInteraction(drawType) {
   });
   draw.on('drawend', function (event) {
     event.feature.set('keep', true); 
-    modifyStyle.setGeometry(tipPoint);
+    modifyPointStyle.setGeometry(tipPoint);
     modify.setActive(true);
     map.once('pointermove', function () {
-      modifyStyle.setGeometry();
+      modifyPointStyle.setGeometry();
     });
     tip = idleTip;
+    
   });
   modify.setActive(true);
   map.addInteraction(draw);
@@ -496,6 +539,10 @@ document.addEventListener('keydown', function (event) {
       draw = null;
     }
   }
+   //호버 비활성화
+  map.addInteraction(mouseHoverSelect);
+  // 선택 기능 활성화
+  map.addInteraction(select);
 });
 
 clearPrevious.addEventListener('change', function () {
@@ -507,6 +554,146 @@ clearPrevious.addEventListener('change', function () {
 
 
 
+
+
+
+
+
+
+
+
+
+// Mouse Hover 활성화
+map.addInteraction(mouseHoverSelect);
+
+const selectedStyle = new Style({
+  fill: new Fill({
+    color: 'rgba(255, 255, 255, 0.6)',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(255, 255, 255, 0.7)',
+    width: 3,
+  }),
+});
+
+// Select 도구
+const select = new Select({
+  style: function (feature) {
+    const color = feature.get('COLOR_BIO') || 'rgba(108, 169, 131, 0.5';
+    selectedStyle.getFill().setColor(color);
+    return selectedStyle;
+  },
+});
+
+// Select 활성화
+map.addInteraction(select);
+
+// Select 피처 값 가져오기
+const selectedFeatures = select.getFeatures();
+
+// JQuery를 이용하여 HTML 입력 값(SUM) 가져옴
+function calculateSum(){
+  var sub1 = parseFloat($('#sub1').val());
+  var sub2 = parseFloat($('#sub2').val());
+  var sub3 = parseFloat($('#sub3').val());
+
+  var sum = sub1 + sub2 + sub3;
+
+  $('#result').text('총합: ' + sum);
+
+// Select 객체를 조건에 따라 다른 색상을 줌
+  selectedFeatures.forEach(function (feature) {
+  if (sum < 30) {
+    feature.setStyle(Style0030);
+  } else if (sum > 30 && sum < 60) {
+    feature.setStyle(Style3160);
+  } else {
+    feature.setStyle(Style6100);
+  }
+  });
+}
+
+// 보조키(Ctrl)를 사용한 DragBox 기능
+const dragBox = new DragBox({
+  condition: platformModifierKeyOnly,
+});
+
+// DragBox 활성화
+map.addInteraction(dragBox);
+
+// Drag하여 Select한 객체를 조건에 따라 다른 색상을 줌
+dragBox.on('boxend', function () {
+  selectedFeatures.forEach(function (feature) {
+    if (sum < 30) {
+      feature.setStyle(Style0030);
+    } else if (sum > 30 && sum < 60) {
+      feature.setStyle(Style3160);
+    } else {
+      feature.setStyle(Style6100);
+    }
+  });
+
+  // DragBox 부분은 geoserver에서 제공하는 문서를 보고 참고함.
+  const boxExtent = dragBox.getGeometry().getExtent();
+
+  // if the extent crosses the antimeridian process each world separately
+  const worldExtent = map.getView().getProjection().getExtent();
+  const worldWidth = getWidth(worldExtent);
+  const startWorld = Math.floor((boxExtent[0] - worldExtent[0]) / worldWidth);
+  const endWorld = Math.floor((boxExtent[2] - worldExtent[0]) / worldWidth);
+
+  for (let world = startWorld; world <= endWorld; ++world) {
+    const left = Math.max(boxExtent[0] - world * worldWidth, worldExtent[0]);
+    const right = Math.min(boxExtent[2] - world * worldWidth, worldExtent[2]);
+    const extent = [left, boxExtent[1], right, boxExtent[3]];
+
+    const boxFeatures = newWfsSource
+      .getFeaturesInExtent(extent)
+      .filter(
+        (feature) =>
+          !selectedFeatures.getArray().includes(feature) &&
+          feature.getGeometry().intersectsExtent(extent),
+      );
+
+    const rotation = map.getView().getRotation();
+    const oblique = rotation % (Math.PI / 2) !== 0;
+
+    if (oblique) {
+      const anchor = [0, 0];
+      const geometry = dragBox.getGeometry().clone();
+      geometry.translate(-world * worldWidth, 0);
+      geometry.rotate(-rotation, anchor);
+      const extent = geometry.getExtent();
+      boxFeatures.forEach(function (feature) {
+        const geometry = feature.getGeometry().clone();
+        geometry.rotate(-rotation, anchor);
+        if (geometry.intersectsExtent(extent)) {
+          selectedFeatures.push(feature);
+        }
+      });
+    } else {
+      selectedFeatures.extend(boxFeatures);
+    }
+  }
+});
+
+// clear selection when drawing a new box and when clicking on the map
+dragBox.on('boxstart', function () {
+  selectedFeatures.clear();
+});
+
+const infoBox = document.getElementById('info');
+
+selectedFeatures.on(['add', 'remove'], function () {
+  const names = selectedFeatures.getArray().map((feature) => {
+    return feature.get('ECO_NAME');
+  });
+  if (names.length > 0) {
+    infoBox.innerHTML = names.join(', ');
+  } else {
+    infoBox.innerHTML = 'None';
+  }
+});
 
 // 읍면 사이드바 클릭 시 이벤트 발생
 document.getElementById('ym01').onclick = () => {
@@ -627,3 +814,96 @@ document.getElementById('dong12').onclick = () => {
 document.getElementById('dong13').onclick = () => {
   makeWFSSource('dong13');
 }
+
+// 지도 클릭 이벤트. 오버레이를 처리
+map.on('click', (e) =>
+  {
+    console.log(e);
+
+    // 일단 창을 닫음. 이렇게 하면 자료가 없는 곳을 찍으면 창이 닫히는 효과가 나옴
+    // overlay.setPosition(undefined);
+
+    // 점찍은 곳의 자료를 찾아냄. geoserver에서는 WFS를 위해 위치 정보 뿐 아니라 메타데이터도 같이 보내고 있음
+    map.forEachFeatureAtPixel(e.pixel, (feature, layer) =>
+      {
+        // 점찍은 곳에 넘어온 메타데이터 값을 찾음
+        let clickedFeatureID = feature.get('id');
+        let clickedFeaturejinju_do_1 = feature.get('jinju_do_1');
+        let clickedFeaturejinju_jibu = feature.get('jinju_jibu');
+
+        // 메타데이터를 오버레이 하기 위한 div에 적음
+        document.getElementById("info-title").innerHTML = "[" + clickedFeaturejinju_do_1 + " " + clickedFeaturejinju_jibu + "]"
+        document.getElementById("jinju_link").href = "./detail.jsp?id=" + clickedFeatureID;
+
+    // 오버레이 창을 띄움
+    // overlay.setPosition(e.coordinate);
+
+    // JQUERY를 이용한 area1 창에 정보 표시
+    $(document).ready(function(){
+      var clickedFeature1 = feature.get('pnu');
+      $('#pnu').text(clickedFeature1);
+      $('#pnu').attr('data-clicked-feature-pnu', clickedFeature1);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature2 = feature.get('jinju_do_1');
+      $('#do').text(clickedFeature2);
+      $('#do').attr('data-clicked-feature-jinju_do_1', clickedFeature2);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature3 = feature.get('jinju_cada');
+      $('#cada').text(clickedFeature3);
+      $('#cada').attr('data-clicked-feature-jinju_cada', clickedFeature3);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature4 = feature.get('jinju_jibu');
+      $('#jibun').text(clickedFeature4);
+      $('#jibun').attr('data-clicked-feature-jinju_jibu', clickedFeature4);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature5 = feature.get('jinju_ji_1');
+      $('#jimok').text(clickedFeature5);
+      $('#jimok').attr('data-clicked-feature-jinju_ji_1', clickedFeature5);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature6 = feature.get('jinju_area');
+      $('#are').text(clickedFeature6);
+      $('#are').attr('data-clicked-feature-jinju_area', clickedFeature6);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature7 = feature.get('jinju_pric');
+      $('#price').text(clickedFeature7);
+      $('#price').attr('data-clicked-feature-jinju_pric', clickedFeature7);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature8 = feature.get('jinju_ow_1');
+      $('#owner').text(clickedFeature8);
+      $('#owner').attr('data-clicked-feature-jinju_ow_1', clickedFeature8);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature9 = feature.get('jinju_ch_1');
+      $('#owner_re').text(clickedFeature9);
+      $('#owner_re').attr('data-clicked-feature-jinju_ch_1', clickedFeature9);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature10 = feature.get('jinju_ch_2');
+      $('#owner_da').text(clickedFeature10);
+      $('#owner_da').attr('data-clicked-feature-jinju_ch_2', clickedFeature10);
+    })
+
+    $(document).ready(function(){
+      $('#inputForm').on('submit', function(event){
+        event.preventDefault();
+        calculateSum();
+      });
+    });    
+  });
+});

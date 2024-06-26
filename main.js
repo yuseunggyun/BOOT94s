@@ -229,7 +229,7 @@ const map = new Map({
 
 
 // 거리 및 면적 계산 기능
-const typeSelect = document.getElementById('type');
+
 const showSegments = document.getElementById('segments');
 const clearPrevious = document.getElementById('clear');
 
@@ -427,12 +427,13 @@ const vector = new VectorLayer({
   },
 });
 
+map.addLayer(vector);
 map.addInteraction(modify);
 
 let draw; // global so we can remove it later
 
 function addInteraction(drawType) {
-  const activeTip = '다음점' + (drawType === 'Polygon' ? 'polygon' : '(종료시 더블클릭');
+  const activeTip = '다음점' + (drawType === 'Polygon' ? 'polygon' : '(종료시 더블클릭)');
   const idleTip = '시작점';
   let tip = idleTip;
   draw = new Draw({
@@ -448,8 +449,10 @@ function addInteraction(drawType) {
     }
     modify.setActive(false);
     tip = activeTip;
+   
   });
-  draw.on('drawend', function () {
+  draw.on('drawend', function (event) {
+    event.feature.set('keep', true); 
     modifyStyle.setGeometry(tipPoint);
     modify.setActive(true);
     map.once('pointermove', function () {
@@ -461,28 +464,45 @@ function addInteraction(drawType) {
   map.addInteraction(draw);
 }
 
+
+
 function setDrawType(type) {
   if (draw) {
     map.removeInteraction(draw);
+    draw = null;
   }
   addInteraction(type);
 }
 
-document.getElementById('distanceButton').onclick = function () {
+document.getElementById('distanceButton').addEventListener('click', function () {
   setDrawType('LineString');
-};
+});
 
-document.getElementById('areaButton').onclick = function () {
+document.getElementById('areaButton').addEventListener('click', function () {
   setDrawType('Polygon');
-};
+});
 
-showSegments.onchange = function () {
+showSegments.addEventListener('change', function () {
+  vector.changed();
   if (draw) {
-    vector.changed();
     draw.getOverlay().changed();
   }
-};
+});
 
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') {
+    if (draw) {
+      map.removeInteraction(draw);
+      draw = null;
+    }
+  }
+});
+
+clearPrevious.addEventListener('change', function () {
+  if (clearPrevious.checked) {
+    source.clear();
+  }
+});
 
 
 

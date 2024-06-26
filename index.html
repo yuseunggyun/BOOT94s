@@ -196,32 +196,12 @@
     </div>
 
 
-
-
-    
-     <!-- mapArea 영역 (맵) -->
-     <div id="mapArea">
+    <!-- mapArea 영역 (맵) -->
+    <div id="mapArea">
       <div id="map" class="map">
         <div id="info"></div>
-        <!--지도상 거리 면적 계산기능-->
-        <div id="area2">
-          <form>
-            <label for="type">측정 유형 &nbsp;</label>
-            <select id="type">
-              <option value="LineString">거리(길이)계산</option>
-              <option value="Polygon">면적(다각형)계산</option>
-            </select>
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <label for="segments">각 측정 길이 표시:&nbsp;</label>
-            <input type="checkbox" id="segments" checked />
-            &nbsp;&nbsp;&nbsp;&nbsp;
-            <label for="clear">이전 측정값 지우기:&nbsp;</label>
-            <input type="checkbox" id="clear" checked />
-          </form>
-        </div>
       </div>
     </div>
-
 
 
 
@@ -229,15 +209,29 @@
 
 
 
+  <!--거리 및 면적계산 기능 따로 div 설정-->
+  <div id="area2">
+    <form>
+      <label for="type">측정 유형 &nbsp;</label>
+      <div id="type">
+        <button type="button" id="distanceButton">거리(길이)계산</button>
+        <button type="button" id="areaButton">면적(다각형)계산</button>
+      </div>
+      <label for="segments">각 측정 길이 표시:&nbsp;</label>
+      <input type="checkbox" id="segments" checked />
+      &nbsp;&nbsp;&nbsp;&nbsp;
+      <label for="clear">이전 측정값 지우기:&nbsp;</label>
+      <input type="checkbox" id="clear" checked />
+    </form>
+  </div>
 
 
 
 
 
-
-
-  <!-- 동적검색을 위한 script -->
+  
   <script>
+    // 동적검색을 위한 scroipt
     let search = document.querySelector(".search");
     let clear = document.querySelector(".clear");
 
@@ -248,31 +242,7 @@
       document.getElementById("search").value = "";
     }
 
-    // 하위 목록 보이게 설정
-    document.getElementById("ym17").onclick = function () {
-      if (document.getElementsByClassName("ymList2")[0].style.display == 'none') {
-        document.getElementsByClassName("ymList2")[0].style.display = 'block'
-      } else {
-        document.getElementsByClassName("ymList2")[0].style.display = 'none';
-      }
-    }
-
-    // 사이드바 목록 보이게 설정
-    document.getElementById("information").onclick = function () {
-      if (document.getElementsByClassName("sidebar")[0].style.display == 'block') {
-        document.getElementsByClassName("sidebar")[0].style.display = 'none'
-      } else {
-        document.getElementsByClassName("sidebar")[0].style.display = 'block';
-      }
-    }
-  </script>
-
-
-  <!-- 버튼 클릭시 색 고정-->
-
-  <script>
-
-    // 읍면동에 대한 부분
+    // 읍면동에 대한 부분 버튼 클릭시 고정
     const buttons = document.querySelectorAll('.ymList button');
 
     buttons.forEach(option => {
@@ -282,7 +252,35 @@
       });
     });
 
-    // 상세정보에 대한 부분
+    // 하위 목록 보이게 설정
+    document.getElementById("ym17").onclick = function () {
+      if (document.getElementsByClassName("ymList2")[0].style.display == 'none') {
+        document.getElementsByClassName("ymList2")[0].style.display = 'block'
+      } else {
+        document.getElementsByClassName("ymList2")[0].style.display = 'none';
+      }
+    }
+
+    //전주시가에 대한 부분 버튼 클릭시 고정
+    const buttons1 = document.querySelectorAll('.ymList2 button');
+
+    buttons1.forEach(option => {
+      option.addEventListener('click', () => {
+        buttons1.forEach(btn => btn.classList.remove('active2'));
+        option.classList.add('active2');
+      });
+    });
+
+    // 사이드바 목록 보이게 설정
+    document.getElementById("information").onclick = function () {
+      if (document.getElementsByClassName("sidebar")[0].style.display == 'block') {
+        document.getElementsByClassName("sidebar")[0].style.display = 'none'
+      } else {
+        document.getElementsByClassName("sidebar")[0].style.display = 'block';
+      }
+    }
+
+    // 상세정보에 대한 부분 버튼 클릭시 고정
     const detailButton = document.querySelector('.ymList span');
 
     detailButton.addEventListener('click', function () {
@@ -293,25 +291,10 @@
       }
     });
 
-    //전주시가에 대한 부분
-    const buttons1 = document.querySelectorAll('.ymList2 button');
 
-    buttons1.forEach(option => {
-      option.addEventListener('click', () => {
-        buttons1.forEach(btn => btn.classList.remove('active2'));
-        option.classList.add('active2');
-      });
-    });
   </script>
 
 
+  <script type="module" src="main.js"></script>
 
-
-
-
-
-
-  <script type="module" src="./main.js"></script>
 </body>
-
-</html>

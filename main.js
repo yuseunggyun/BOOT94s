@@ -6,6 +6,7 @@ import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import { fromLonLat } from 'ol/proj';
+import Point from 'ol/geom/Point';
 
 // geoserver에서 WFS 방식으로 가져오기 위해
 import { Vector as VectorLayer } from 'ol/layer';
@@ -383,7 +384,6 @@ selectedFeatures.on(['add', 'remove'], function () {
 // 검색 창과 관련된 HTML 요소를 가져옴
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
-const featureInfoBox = document.getElementById('feature-info'); // feature-info 요소 가져오기
 const insidebar = document.querySelector(".landinfo");
 
 let selectedFeatureExtent = null;
@@ -391,7 +391,6 @@ let selectedListItem = null; // 현재 선택된 li 요소를 저장하는 변�
 
 let vectorSource1 = new VectorSource();
 let vectorLayer1 = new VectorLayer({
-
   source: vectorSource1,
   style: new Style({
     stroke: new Stroke({
@@ -406,47 +405,69 @@ let vectorLayer1 = new VectorLayer({
 
 map.addLayer(vectorLayer1); // 초기에는 레이어 추가
 
+// 검색결과 지도에 추가
+function addFeatureToMapNew(features) {
+  vectorSource1.clear();
+  const geojsonFormat = new GeoJSON();
+  const olFeatures = geojsonFormat.readFeatures(features);
+
+  vectorSource1.addFeatures(olFeatures);
+
+  const extent = vectorSource1.getExtent();
+  if (extent && extent.length === 4) {
+    selectedFeatureExtent = extent;
+    map.getView().fit(extent, { size: map.getSize(), padding: [150, 150, 150, 150] });
+  }
+}
 
 // 검색창 내용이 변경될 때의 처리
-searchInput.addEventListener('input', function() {
-  const searchText = searchInput.value.trim();
+searchInput.addEventListener('keyup', function(event) {
+  if (event.key === 'Enter') {
+    const searchText = searchInput.value.trim();
 
-  // 입력이 없으면 검색 결과 창을 비움
-  if (searchText === '') {
-    searchResults.innerHTML = '';
-    clearSelection();
-    return; // 검색어가 없으면 더 이상 진행하지 않음
+    // 입력이 없으면 검색 결과 창을 비움
+    if (searchText === '') {
+      searchResults.innerHTML = '';
+      clearSelection();
+      return; // 검색어가 없으면 더 이상 진행하지 않음
+    }
+
+    // GeoServer에서 검색할 때 필요한 URL 생성
+    const geoServerUrl = 'http://localhost:42888/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=';
+
+    // 예시로 검색어를 'jinju_do_' 필드로 CQL 필터 생성
+    const searchText1 = searchText + '%'; // searchText1은 입력된 검색어로 시작하는 경우
+    const searchText2 = '%' + searchText; // searchText2는 입력된 검색어로 끝나는 경우
+    const exactValue = searchText; // exactValue는 정확히 입력된 검색어와 일치하는 경우
+
+    const filter = "(jinju_do_2 LIKE '%" + searchText1 + "%' OR jinju_do_2 LIKE '%" + searchText2 + "%' OR jinju_do_2 = '" + exactValue + "')";
+    const fullUrl = encodeURI(geoServerUrl + filter);
+
+    // AJAX를 이용해 GeoServer에서 데이터 요청
+    fetch(fullUrl)
+      .then(response => response.json())
+      .then(data => {
+        if (data.features.length > 0) {
+          // 첫 번째 검색 결과의 지번 위치로 지도 확대
+          const extent = new GeoJSON().readFeatures(data)[0].getGeometry().getExtent();
+
+          // OpenLayers에서 확대 및 중심 설정
+          map.getView().fit(extent, { padding: [150, 150, 150, 150] });
+
+          // 검색 결과를 처리하고 지도에 표시하는 코드
+          displaySearchResults(data);
+          addFeatureToMapNew(data.features); // 함수명 수정
+        }
+      })
+      .catch(error => {
+        console.error('Error fetching data:', error);
+      });
   }
-
-
-  // GeoServer에서 검색할 때 필요한 URL 생성
-  const geoServerUrl = 'http://localhost:42888/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=';
-
-  // 예시로 검색어를 'jinju_do_' 필드로 CQL 필터 생성
-  const searchText1 = searchText + '%'; // searchText1은 입력된 검색어로 시작하는 경우
-  const searchText2 = '%' + searchText; // searchText2는 입력된 검색어로 끝나는 경우
-  const exactValue = searchText; // exactValue는 정확히 입력된 검색어와 일치하는 경우
-
-  const filter = "(jinju_do_2 LIKE '%" + searchText1 + "%' OR jinju_do_2 LIKE '%" + searchText2 + "%' OR jinju_do_2 = '" + exactValue + "')";
-  const fullUrl = encodeURI(geoServerUrl + filter);
-
-  // AJAX를 이용해 GeoServer에서 데이터 요청
-  fetch(fullUrl)
-    .then(response => response.json())
-    .then(data => {
-
-      // 검색 결과를 처리하고 지도에 표시하는 코드
-      displaySearchResults(data);
-    })
-    .catch(error => {
-      console.error('Error fetching data:', error);
-    });
 });
 
 // 검색 결과를 처리하고 지도에 표시하는 함수
 function displaySearchResults(data) {
   // 결과를 화면에 표시할 방법에 따라 처리
-
   let html = '<select>';
 
   const maxResults = 5;
@@ -474,52 +495,48 @@ function displaySearchResults(data) {
   }
 }
 
-
 // 선택된 항목 처리 함수 (select 요소 변경 시)
 function handleSelectChange(feature) {
   clearSelection(); // 이전 선택 초기화
 
-  addFeatureToMap(feature); // 선택된 항목 지도에 표시 함수 호출
+  addFeatureToMapNew(feature); // 선택된 항목 지도에 표시 함수 호출
   showFeatureInfo(feature); // 토지 정보 표시 함수 호출
 }
 
 // 토지 정보 표시 함수
 function showFeatureInfo(feature) {
   const properties = feature.properties;
-  console.log(properties)
   if (properties) {
     const html = `
-    PNU : <div style="display: inline-block;" id="pnu">${properties.pnu}</div><br>
-    소재지 : <div style="display: inline-block;" id="do">${properties.jinju_do_1}</div><br>
-    대장구분 : <div style="display: inline-block;" id="cada">${properties.jinju_cada}</div><br>
-    지번 : <div style="display: inline-block;" id="jibun">${properties.jinju_jibu}</div><br>
-    지목 : <div style="display: inline-block;" id="jimok">${properties.jinju_ji_1}</div><br>
-    면적(㎡) : <div style="display: inline-block;" id="are">${properties.jinju_area}</div><br>
-    공시지가(원) : <div style="display: inline-block;" id="price">${properties.jinju_pric}</div><br>
-    소유구분 : <div style="display: inline-block;" id="owner">${properties.jinju_ow_1}</div><br>
-    소유권변동사유 : <div style="display: inline-block;" id="owner_re">${properties.jinju_ch_1}</div><br>
-    소유권변동일자 : <div style="display: inline-block;" id="owner_da">${properties.jinju_ch_2}</div><br>`;
-
+      PNU : <div style="display: inline-block;" id="pnu">${properties.pnu}</div><br>
+      소재지 : <div style="display: inline-block;" id="do">${properties.jinju_do_1}</div><br>
+      대장구분 : <div style="display: inline-block;" id="cada">${properties.jinju_cada}</div><br>
+      지번 : <div style="display: inline-block;" id="jibun">${properties.jinju_jibu}</div><br>
+      지목 : <div style="display: inline-block;" id="jimok">${properties.jinju_ji_1}</div><br>
+      면적(㎡) : <div style="display: inline-block;" id="are">${properties.jinju_area}</div><br>
+      공시지가(원) : <div style="display: inline-block;" id="price">${properties.jinju_pric}</div><br>
+      소유구분 : <div style="display: inline-block;" id="owner">${properties.jinju_ow_1}</div><br>
+      소유권변동사유 : <div style="display: inline-block;" id="owner_re">${properties.jinju_ch_1}</div><br>
+      소유권변동일자 : <div style="display: inline-block;" id="owner_da">${properties.jinju_ch_2}</div><br>
+    `;
     insidebar.innerHTML = html;
   }
 }
 
-
 // 새로운 feature로 지도에 레이어 추가 및 확대
 function addFeatureToMap(feature) {
   vectorSource1.clear();
-  vectorSource1.addFeatures((new GeoJSON()).readFeatures(feature));
+  const geojsonFormat = new GeoJSON();
+  const olFeatures = geojsonFormat.readFeatures(feature);
 
+  vectorSource1.addFeatures(olFeatures);
 
-const extent = vectorSource1.getExtent();
-    // 선택된 feature가 있을 때만 지도를 확대
-    if (extent && extent.length === 4) {
-      selectedFeatureExtent = extent; // 선택된 필지의 extent를 저장
-      map.getView().fit(extent, { size: map.getSize(), padding: [150, 150, 150, 150]});
-    }
-
+  const extent = vectorSource1.getExtent();
+  if (extent && extent.length === 4) {
+    selectedFeatureExtent = extent;
+    map.getView().fit(extent, { size: map.getSize(), padding: [150, 150, 150, 150] });
   }
-
+}
 
 // 이전 선택 초기화 함수
 function clearSelection() {
@@ -529,6 +546,7 @@ function clearSelection() {
     selectedListItem = null;
   }
 }
+
 
 
 

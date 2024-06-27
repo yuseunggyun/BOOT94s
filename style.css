@@ -282,7 +282,6 @@ table.ymList span.ym18 {
   color: rgb(35,160,250);
   padding: 2px 43.35px;
   cursor: pointer;
-  
 }
 
 
@@ -301,6 +300,47 @@ table.ymList span.ym18 {
   width: 100%;
   height: 100%;
 }
+
+
+
+/*위성영상*/
+#layerSwitcher {
+  width: 113px;
+  height: 7.5%;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 10px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  font-size: 1.1rem;
+  
+}
+div#layerSwitcher #btn-road{
+  border: none;
+  padding: 2px 10px;
+  position: absolute;
+  left: 20px;
+}
+
+div#layerSwitcher #btn-satellite{
+  border: none;
+  padding: 2px 10px;
+  position: absolute;
+  left: 20px;
+  top : 50px
+}
+
+
+div#layerSwitcher button:hover {
+background: rgba(126, 126, 126, 0.5);
+border-radius: 10%;
+padding : 2px 3px;
+}
+
+
 
 
 /* (info 스타일 추가) */
@@ -326,7 +366,7 @@ table.ymList span.ym18 {
 /*maptype  거리 및 면적 계산 스타일 부분*/
 #area2 {
   position: absolute;
-  top: 10px;
+  top: 110px;  
   right: 10px;
   background: rgba(255, 255, 255, 0.8);
   padding: 10px;
@@ -355,6 +395,15 @@ table.ymList span.ym18 {
   left: 70px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
+  
+
+}
+
+#area2 button:hover{
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 10%;
+  padding : 2px 3px;
+
 }
 
 #area2 #choice {

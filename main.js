@@ -21,11 +21,11 @@ import { Select, defaults } from 'ol/interaction';
 import { pointerMove, click, platformModifierKeyOnly } from 'ol/events/condition';
 
 // 팝업창을 위해
-import { Overlay} from 'ol';
+import { Overlay } from 'ol';
 
 // dragbox를 위해
 import DragBox from 'ol/interaction/DragBox';
-import {getWidth} from 'ol/extent.js';
+import { getWidth } from 'ol/extent.js';
 
 //지도상 거리 면적 계산기능을 위해
 import {
@@ -33,10 +33,14 @@ import {
   RegularShape,
   Text,
 } from 'ol/style.js';
-import {Draw, Modify} from 'ol/interaction.js';
-import {LineString, Point} from 'ol/geom.js';
+import { Draw, Modify } from 'ol/interaction.js';
+import { LineString, Point } from 'ol/geom.js';
+import { getArea, getLength } from 'ol/sphere.js';
 
-import {getArea, getLength} from 'ol/sphere.js';
+
+// 위성지도를 가져오기 위해
+import 'ol/ol.css';
+import XYZ from 'ol/source/XYZ';
 
 // url을 변수로 빼서 따로 설정해 줘도 됨
 const g_url = "http://localhost:42888";
@@ -198,7 +202,7 @@ function makeWFSSource(method) {
       {
         format: new GeoJSON(),
         url: encodeURI(g_url + "/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature" +
-        "&typeName=jinjuWS:jj&maxFeatures=2000&outputFormat=application/json&CQL_FILTER=" + makeFilter(method))
+          "&typeName=jinjuWS:jj&maxFeatures=2000&outputFormat=application/json&CQL_FILTER=" + makeFilter(method))
       }
     );
 
@@ -246,7 +250,19 @@ const osmLayer = new TileLayer({
 const map = new Map({
   layers: [
     osmLayer,   // 배경 지도
-    vectorLayer // 백터 레이어
+    vectorLayer, // 백터 레이어
+    new TileLayer({
+      source: new OSM(),
+      visible: true,
+      title: 'RoadMap'
+    }),
+    new TileLayer({
+      source: new XYZ({
+        url: 'http://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
+      }),
+      visible: false,
+      title: 'SatelliteMap'
+    })
   ],
   target: 'map',
   overlays: [overlay],
@@ -258,6 +274,19 @@ const map = new Map({
   }),
 });
 
+// 위성지도부분
+const roadLayer = map.getLayers().getArray().find(layer => layer.get('title') === 'RoadMap');
+const satelliteLayer = map.getLayers().getArray().find(layer => layer.get('title') === 'SatelliteMap');
+
+document.getElementById('btn-road').addEventListener('click', function () {
+  roadLayer.setVisible(true);
+  satelliteLayer.setVisible(false);
+});
+
+document.getElementById('btn-satellite').addEventListener('click', function () {
+  roadLayer.setVisible(false);
+  satelliteLayer.setVisible(true);
+});
 
 
 
@@ -491,17 +520,17 @@ function addInteraction(drawType) {
     }
     modify.setActive(false);
     tip = activeTip;
-   
+
   });
   draw.on('drawend', function (event) {
-    event.feature.set('keep', true); 
+    event.feature.set('keep', true);
     modifyPointStyle.setGeometry(tipPoint);
     modify.setActive(true);
     map.once('pointermove', function () {
       modifyPointStyle.setGeometry();
     });
     tip = idleTip;
-    
+
   });
   modify.setActive(true);
   map.addInteraction(draw);
@@ -539,7 +568,7 @@ document.addEventListener('keydown', function (event) {
       draw = null;
     }
   }
-   //호버 비활성화
+  //호버 활성화
   map.addInteraction(mouseHoverSelect);
   // 선택 기능 활성화
   map.addInteraction(select);
@@ -592,7 +621,7 @@ map.addInteraction(select);
 const selectedFeatures = select.getFeatures();
 
 // JQuery를 이용하여 HTML 입력 값(SUM) 가져옴
-function calculateSum(){
+function calculateSum() {
   var sub1 = parseFloat($('#sub1').val());
   var sub2 = parseFloat($('#sub2').val());
   var sub3 = parseFloat($('#sub3').val());
@@ -601,15 +630,15 @@ function calculateSum(){
 
   $('#result').text('총합: ' + sum);
 
-// Select 객체를 조건에 따라 다른 색상을 줌
+  // Select 객체를 조건에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
-  if (sum < 30) {
-    feature.setStyle(Style0030);
-  } else if (sum > 30 && sum < 60) {
-    feature.setStyle(Style3160);
-  } else {
-    feature.setStyle(Style6100);
-  }
+    if (sum < 30) {
+      feature.setStyle(Style0030);
+    } else if (sum > 30 && sum < 60) {
+      feature.setStyle(Style3160);
+    } else {
+      feature.setStyle(Style6100);
+    }
   });
 }
 
@@ -816,94 +845,92 @@ document.getElementById('dong13').onclick = () => {
 }
 
 // 지도 클릭 이벤트. 오버레이를 처리
-map.on('click', (e) =>
-  {
-    console.log(e);
+map.on('click', (e) => {
+  console.log(e);
 
-    // 일단 창을 닫음. 이렇게 하면 자료가 없는 곳을 찍으면 창이 닫히는 효과가 나옴
-    // overlay.setPosition(undefined);
+  // 일단 창을 닫음. 이렇게 하면 자료가 없는 곳을 찍으면 창이 닫히는 효과가 나옴
+  // overlay.setPosition(undefined);
 
-    // 점찍은 곳의 자료를 찾아냄. geoserver에서는 WFS를 위해 위치 정보 뿐 아니라 메타데이터도 같이 보내고 있음
-    map.forEachFeatureAtPixel(e.pixel, (feature, layer) =>
-      {
-        // 점찍은 곳에 넘어온 메타데이터 값을 찾음
-        let clickedFeatureID = feature.get('id');
-        let clickedFeaturejinju_do_1 = feature.get('jinju_do_1');
-        let clickedFeaturejinju_jibu = feature.get('jinju_jibu');
+  // 점찍은 곳의 자료를 찾아냄. geoserver에서는 WFS를 위해 위치 정보 뿐 아니라 메타데이터도 같이 보내고 있음
+  map.forEachFeatureAtPixel(e.pixel, (feature, layer) => {
+    // 점찍은 곳에 넘어온 메타데이터 값을 찾음
+    let clickedFeatureID = feature.get('id');
+    let clickedFeaturejinju_do_1 = feature.get('jinju_do_1');
+    let clickedFeaturejinju_jibu = feature.get('jinju_jibu');
 
-        // 메타데이터를 오버레이 하기 위한 div에 적음
-        document.getElementById("info-title").innerHTML = "[" + clickedFeaturejinju_do_1 + " " + clickedFeaturejinju_jibu + "]"
-        document.getElementById("jinju_link").href = "./detail.jsp?id=" + clickedFeatureID;
+    // 메타데이터를 오버레이 하기 위한 div에 적음
+    document.getElementById("info-title").innerHTML = "[" + clickedFeaturejinju_do_1 + " " + clickedFeaturejinju_jibu + "]"
+    document.getElementById("jinju_link").href = "./detail.jsp?id=" + clickedFeatureID;
 
     // 오버레이 창을 띄움
     // overlay.setPosition(e.coordinate);
 
     // JQUERY를 이용한 area1 창에 정보 표시
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature1 = feature.get('pnu');
       $('#pnu').text(clickedFeature1);
       $('#pnu').attr('data-clicked-feature-pnu', clickedFeature1);
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature2 = feature.get('jinju_do_1');
       $('#do').text(clickedFeature2);
       $('#do').attr('data-clicked-feature-jinju_do_1', clickedFeature2);
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature3 = feature.get('jinju_cada');
       $('#cada').text(clickedFeature3);
       $('#cada').attr('data-clicked-feature-jinju_cada', clickedFeature3);
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature4 = feature.get('jinju_jibu');
       $('#jibun').text(clickedFeature4);
       $('#jibun').attr('data-clicked-feature-jinju_jibu', clickedFeature4);
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature5 = feature.get('jinju_ji_1');
       $('#jimok').text(clickedFeature5);
       $('#jimok').attr('data-clicked-feature-jinju_ji_1', clickedFeature5);
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature6 = feature.get('jinju_area');
       $('#are').text(clickedFeature6);
       $('#are').attr('data-clicked-feature-jinju_area', clickedFeature6);
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature7 = feature.get('jinju_pric');
       $('#price').text(clickedFeature7);
       $('#price').attr('data-clicked-feature-jinju_pric', clickedFeature7);
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature8 = feature.get('jinju_ow_1');
       $('#owner').text(clickedFeature8);
       $('#owner').attr('data-clicked-feature-jinju_ow_1', clickedFeature8);
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature9 = feature.get('jinju_ch_1');
       $('#owner_re').text(clickedFeature9);
       $('#owner_re').attr('data-clicked-feature-jinju_ch_1', clickedFeature9);
     })
 
-    $(document).ready(function(){
+    $(document).ready(function () {
       var clickedFeature10 = feature.get('jinju_ch_2');
       $('#owner_da').text(clickedFeature10);
       $('#owner_da').attr('data-clicked-feature-jinju_ch_2', clickedFeature10);
     })
 
-    $(document).ready(function(){
-      $('#inputForm').on('submit', function(event){
+    $(document).ready(function () {
+      $('#inputForm').on('submit', function (event) {
         event.preventDefault();
         calculateSum();
       });
-    });    
+    });
   });
 });

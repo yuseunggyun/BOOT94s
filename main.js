@@ -250,7 +250,7 @@ const osmLayer = new TileLayer({
 const map = new Map({
   layers: [
     osmLayer,   // 배경 지도
-    vectorLayer, // 백터 레이어
+    //위성지도 가져옴
     new TileLayer({
       source: new OSM(),
       visible: true,
@@ -262,7 +262,8 @@ const map = new Map({
       }),
       visible: false,
       title: 'SatelliteMap'
-    })
+    }),
+    vectorLayer // 백터 레이어
   ],
   target: 'map',
   overlays: [overlay],
@@ -273,6 +274,9 @@ const map = new Map({
     interactions: defaults().extend([mouseHoverSelect])
   }),
 });
+
+
+
 
 // 위성지도부분
 const roadLayer = map.getLayers().getArray().find(layer => layer.get('title') === 'RoadMap');
@@ -287,8 +291,6 @@ document.getElementById('btn-satellite').addEventListener('click', function () {
   roadLayer.setVisible(false);
   satelliteLayer.setVisible(true);
 });
-
-
 
 
 

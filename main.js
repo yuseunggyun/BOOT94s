@@ -307,17 +307,18 @@ const lineStyle = new Style({
     color: 'rgba(255, 255, 255, 0.2)',
   }),
   stroke: new Stroke({
-    color: 'rgba(0, 0, 0, 0.5)',
+    color: 'rgba(255, 0, 0, 0.8)',
     lineDash: [10, 10],
     width: 2,
   }),
   image: new Circle({
     radius: 5,
     stroke: new Stroke({
-      color: 'rgba(0, 0, 0, 0.7)',
+      color: 'rgba(255, 0, 0, 0.8)',
+      width: 3
     }),
     fill: new Fill({
-      color: 'rgba(255, 255, 255, 0.2)',
+      color: 'rgba(0, 0, 0, 0.3)',
     }),
   }),
 });
@@ -326,10 +327,14 @@ const labelTextStyle = new Style({
   text: new Text({
     font: '14px Calibri,sans-serif',
     fill: new Fill({
-      color: 'rgba(255, 255, 255, 1)',
+      color: 'rgba(255, 0, 0, 1)',
     }),
     backgroundFill: new Fill({
-      color: 'rgba(0, 0, 0, 0.7)',
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    backgroundStroke: new Stroke({
+      color: 'rgba(255, 0, 0, 0.8)', // 빨간색 테두리
+      width: 1, // 테두리 굵기
     }),
     padding: [3, 3, 3, 3],
     textBaseline: 'bottom',
@@ -341,7 +346,7 @@ const labelTextStyle = new Style({
     angle: Math.PI,
     displacement: [0, 10],
     fill: new Fill({
-      color: 'rgba(0, 0, 0, 0.7)',
+      color: 'rgba(255, 0, 0, 0.8)',
     }),
   }),
 });
@@ -350,10 +355,10 @@ const tooltipTextStyle = new Style({
   text: new Text({
     font: '12px Calibri,sans-serif',
     fill: new Fill({
-      color: 'rgba(255, 255, 255, 1)',
+      color: 'rgba(255, 0, 0, 1)',
     }),
     backgroundFill: new Fill({
-      color: 'rgba(0, 0, 0, 0.4)',
+      color: 'rgba(255, 255, 255, 1)',
     }),
     padding: [2, 2, 2, 2],
     textAlign: 'left',
@@ -365,20 +370,20 @@ const modifyPointStyle = new Style({
   image: new Circle({
     radius: 5,
     stroke: new Stroke({
-      color: 'rgba(0, 0, 0, 0.7)',
+      color: 'rgba(255, 0, 0, 0.7)',
     }),
     fill: new Fill({
-      color: 'rgba(0, 0, 0, 0.4)',
+      color: 'rgba(0, 0, 0, 0.3)',
     }),
   }),
   text: new Text({
     text: '종료점',
     font: '12px Calibri,sans-serif',
     fill: new Fill({
-      color: 'rgba(255, 255, 255, 1)',
+      color: 'rgba(255, 0, 0, 1)',
     }),
     backgroundFill: new Fill({
-      color: 'rgba(0, 0, 0, 0.7)',
+      color: 'rgba(255, 255, 255, 1)',
     }),
     padding: [2, 2, 2, 2],
     textAlign: 'left',
@@ -390,10 +395,10 @@ const segmentTextStyle = new Style({
   text: new Text({
     font: '12px Calibri,sans-serif',
     fill: new Fill({
-      color: 'rgba(255, 255, 255, 1)',
+      color: 'rgba(255, 0, 0, 1)',
     }),
     backgroundFill: new Fill({
-      color: 'rgba(0, 0, 0, 0.4)',
+      color: 'rgba(255, 255, 255, 1)',
     }),
     padding: [2, 2, 2, 2],
     textBaseline: 'bottom',
@@ -405,7 +410,7 @@ const segmentTextStyle = new Style({
     angle: Math.PI,
     displacement: [0, 8],
     fill: new Fill({
-      color: 'rgba(0, 0, 0, 0.4)',
+      color: 'rgba(255, 0, 0, 0.8)',
     }),
   }),
 });

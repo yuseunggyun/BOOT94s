@@ -6,6 +6,7 @@ import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import { fromLonLat } from 'ol/proj';
+import Point from 'ol/geom/Point';
 
 // geoserver에서 WFS 방식으로 가져오기 위해
 import { Vector as VectorLayer } from 'ol/layer';
@@ -26,6 +27,7 @@ import { Overlay} from 'ol';
 // dragbox를 위해
 import DragBox from 'ol/interaction/DragBox';
 import {getWidth} from 'ol/extent.js';
+import { bbox } from 'ol/loadingstrategy';
 
 
 // url을 변수로 빼서 따로 설정해 줘도 됨
@@ -379,6 +381,186 @@ selectedFeatures.on(['add', 'remove'], function () {
     infoBox.innerHTML = 'None';
   }
 });
+
+
+// *** 검색창 관련 코드 *** //
+
+
+// 검색 창과 관련된 HTML 요소를 가져옴
+const searchInput = document.getElementById('search');
+const searchResults = document.getElementById('search-results');
+const insidebar = document.querySelector(".landinfo");
+
+let selectedFeatureExtent = null;
+let selectedListItem = null; // 현재 선택된 li 요소를 저장하는 변수
+
+let vectorSource1 = new VectorSource();
+let vectorLayer1 = new VectorLayer({
+  source: vectorSource1,
+  style: new Style({
+    stroke: new Stroke({
+      color: 'rgba(0, 0, 255, 1.0)',
+      width: 2,
+    }),
+    fill: new Fill({
+      color: 'rgba(79, 252, 211, 0.5)',
+    }),
+  }),
+});
+
+map.addLayer(vectorLayer1); // 초기에는 레이어 추가
+
+// 검색결과 지도에 추가
+function addFeatureToMapNew(features) {
+  vectorSource1.clear();
+  const geojsonFormat = new ol.format.GeoJSON();
+  const olFeatures = geojsonFormat.readFeatures(features);
+
+  vectorSource1.addFeatures(olFeatures);
+
+  const extent = vectorSource1.getExtent();
+  if (extent && extent.length === 4) {
+    selectedFeatureExtent = extent;
+    map.getView().fit(extent, { size: map.getSize(), padding: [150, 150, 150, 150] });
+  }
+}
+
+// 검색창 내용이 변경될 때의 처리
+searchInput.addEventListener('keyup', function(event) {
+  if (event.key === 'Enter') {
+    const searchText = searchInput.value.trim();
+
+    // 입력이 없으면 검색 결과 창을 비움
+    if (searchText === '') {
+      searchResults.innerHTML = '';
+      clearSelection();
+      return; // 검색어가 없으면 더 이상 진행하지 않음
+    }
+
+    // GeoServer에서 검색할 때 필요한 URL 생성
+    const geoServerUrl = `${g_url}/geoserver/jinjuWS/ows`;
+
+    // 검색어
+    const searchText1 = searchText + '%'; // 검색어로 시작하는 경우
+    const searchText2 = '%' + searchText; // 검색어로 끝나는 경우
+    const exactValue = searchText; // 정확히 일치하는 경우
+
+    const filter = `(jinju_do_2 LIKE '${searchText1}' OR jinju_do_2 LIKE '${searchText2}' OR jinju_do_2 = '${exactValue}')`;
+    const fullUrl = `${geoServerUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=${encodeURIComponent(filter)}`;
+
+    console.log(fullUrl); // 최종 URL 확인용 로그
+
+    
+// jQuery를 이용한 AJAX 요청
+
+fetch(fullUrl)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json(); // JSON으로 응답 받기
+  })
+  .then(data => {
+    // 여기서 data를 활용하여 원하는 작업을 수행합니다.
+    searchResults.innerHTML = ''; // 검색 결과 창 비우기
+
+    const features = data.features;
+    if (features.length > 0) {
+      features.forEach(feature => {
+        const li = document.createElement('li');
+        li.textContent = feature.properties.jinju_do_2; // 예시로 속성 중 하나를 표시
+        li.addEventListener('click', () => {
+          const selectedFeature = new GeoJSON().readFeature(feature);
+          map.getView().fit(selectedFeature.getGeometry().getExtent(), { size: map.getSize(), padding: [150, 150, 150, 150] });
+
+          if (selectedListItem) {
+            selectedListItem.classList.remove('selected');
+          }
+          li.classList.add('selected');
+          selectedListItem = li;
+        });
+        searchResults.appendChild(li);
+      });
+
+      addFeatureToMapNew(data); // 지도에 피처 추가하는 함수 호출
+
+    } else {
+      searchResults.innerHTML = '<li>검색 결과가 없습니다</li>';
+    }
+  })
+  .catch(error => {
+    // 네트워크 오류 또는 처리할 수 없는 경우
+    console.error('Error fetching search results:', error);
+    searchResults.innerHTML = '<li>데이터를 불러오는 중 오류가 발생했습니다</li>';
+  });
+
+
+
+  } else {
+    searchResults.innerHTML = '';
+    vectorSource1.clear();
+  }
+});
+
+
+// 검색 결과를 처리하고 지도에 표시하는 함수
+function displaySearchResults(data) {
+  // 검색 결과 select 요소 변경 시 처리
+  const selectElement = searchResults.querySelector('select');
+  if (selectElement) {
+    selectElement.addEventListener('change', function() {
+      const selectedIndex = selectElement.value;
+      const selectedFeature = data.features[selectedIndex]; // 선택된 feature 가져오기
+
+      handleSelectChange(selectedFeature); // 선택된 항목 처리 함수 호출
+    });
+  }
+}
+
+// 선택된 항목 처리 함수 (select 요소 변경 시)
+function handleSelectChange(feature) {
+  clearSelection(); // 이전 선택 초기화
+
+
+
+
+  addFeatureToMapNew(feature); // 선택된 항목 지도에 표시 함수 호출
+  showFeatureInfo(feature); // 토지 정보 표시 함수 호출
+}
+
+// 토지 정보 표시 함수
+function showFeatureInfo(feature) {
+  const properties = feature.properties;
+  if (properties) {
+    const html = `
+      PNU : <div style="display: inline-block;" id="pnu">${properties.pnu}</div><br>
+      소재지 : <div style="display: inline-block;" id="do">${properties.jinju_do_1}</div><br>
+      대장구분 : <div style="display: inline-block;" id="cada">${properties.jinju_cada}</div><br>
+      지번 : <div style="display: inline-block;" id="jibun">${properties.jinju_jibu}</div><br>
+      지목 : <div style="display: inline-block;" id="jimok">${properties.jinju_ji_1}</div><br>
+      면적(㎡) : <div style="display: inline-block;" id="are">${properties.jinju_area}</div><br>
+      공시지가(원) : <div style="display: inline-block;" id="price">${properties.jinju_pric}</div><br>
+      소유구분 : <div style="display: inline-block;" id="owner">${properties.jinju_ow_1}</div><br>
+      소유권변동사유 : <div style="display: inline-block;" id="owner_re">${properties.jinju_ch_1}</div><br>
+      소유권변동일자 : <div style="display: inline-block;" id="owner_da">${properties.jinju_ch_2}</div><br>
+    `;
+    insidebar.innerHTML = html;
+  }
+}
+
+
+// 이전 선택 초기화 함수
+function clearSelection() {
+  // 이전에 선택된 항목의 배경색 초기화
+  if (selectedListItem) {
+    selectedListItem.style.backgroundColor = '';
+    selectedListItem = null;
+  }
+}
+
+
+
+
 
 // 읍면 사이드바 클릭 시 이벤트 발생
 document.getElementById('ym01').onclick = () => {

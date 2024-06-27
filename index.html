@@ -18,6 +18,8 @@
 </head>
 
 <body>
+  <script src="https://cdn.jsdelivr.net/npm/ol@latest/dist/ol.js"></script>
+
   <div class="container">
     <!-- area 영역(좌1 사이드) -->
     <div class="area">
@@ -37,7 +39,7 @@
           </div>
         </div>
 
-        <div id="searchResults"></div>
+        <div id="search-results"></div>
     
         <!-- 행정구역 리스트 -->
         <div class="ymname">
@@ -189,15 +191,18 @@
       <div id="map">
         <div id="info"></div>
       </div>
+
     </div>
   </div> <!-- container 닫기 -->
     
+
+  
   <!-- 동적검색을 위한 script -->
   <script>
     let searchIcon = document.querySelector(".search");
     let clearIcon = document.querySelector(".clear");
     let searchInput = document.getElementById("search");
-    let searchResults = document.getElementById("searchResults");    
+    let searchResults = document.getElementById("search-results");    
 
     searchIcon.onclick = function () {
       document.querySelector(".container1").classList.toggle('active');

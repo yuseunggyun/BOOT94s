@@ -336,6 +336,32 @@ table.ymList span.ym18 {
   font-size: 0.9rem;
 }
 
+#area2 h2 {
+  text-align: center;
+  color: rgba(26, 26, 26, 0.7);
+}
+
+#area2 #distanceButton{
+  position: absolute;
+  top: 40px;
+  left: 30px;
+  border: none;
+  color: rgba(26, 26, 26, 0.7);
+}
+
+#area2 #areaButton {
+  position: absolute;
+  top: 40px;
+  left: 70px;
+  border: none;
+  color: rgba(26, 26, 26, 0.7);
+}
+
+#area2 #choice {
+  font-size: 0.8em;
+}
+
+
 
 /* #popup {
   font-size: 0.9em;

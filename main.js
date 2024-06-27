@@ -27,6 +27,7 @@ import { Overlay} from 'ol';
 // dragbox를 위해
 import DragBox from 'ol/interaction/DragBox';
 import {getWidth} from 'ol/extent.js';
+import { bbox } from 'ol/loadingstrategy';
 
 
 // url을 변수로 빼서 따로 설정해 줘도 됨
@@ -381,6 +382,10 @@ selectedFeatures.on(['add', 'remove'], function () {
   }
 });
 
+
+// *** 검색창 관련 코드 *** //
+
+
 // 검색 창과 관련된 HTML 요소를 가져옴
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
@@ -395,12 +400,12 @@ let vectorLayer1 = new VectorLayer({
   style: new Style({
     stroke: new Stroke({
       color: 'rgba(0, 0, 255, 1.0)',
-      width: 2
+      width: 2,
     }),
     fill: new Fill({
-      color: 'rgba(79, 252, 211, 0.5)'
-    })
-  })
+      color: 'rgba(79, 252, 211, 0.5)',
+    }),
+  }),
 });
 
 map.addLayer(vectorLayer1); // 초기에는 레이어 추가
@@ -408,7 +413,7 @@ map.addLayer(vectorLayer1); // 초기에는 레이어 추가
 // 검색결과 지도에 추가
 function addFeatureToMapNew(features) {
   vectorSource1.clear();
-  const geojsonFormat = new GeoJSON();
+  const geojsonFormat = new ol.format.GeoJSON();
   const olFeatures = geojsonFormat.readFeatures(features);
 
   vectorSource1.addFeatures(olFeatures);
@@ -433,37 +438,70 @@ searchInput.addEventListener('keyup', function(event) {
     }
 
     // GeoServer에서 검색할 때 필요한 URL 생성
-    const geoServerUrl = 'http://localhost:42888/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=';
+    const geoServerUrl = `${g_url}/geoserver/jinjuWS/ows`;
 
-    // 예시로 검색어를 'jinju_do_' 필드로 CQL 필터 생성
-    const searchText1 = searchText + '%'; // searchText1은 입력된 검색어로 시작하는 경우
-    const searchText2 = '%' + searchText; // searchText2는 입력된 검색어로 끝나는 경우
-    const exactValue = searchText; // exactValue는 정확히 입력된 검색어와 일치하는 경우
+    // 검색어
+    const searchText1 = searchText + '%'; // 검색어로 시작하는 경우
+    const searchText2 = '%' + searchText; // 검색어로 끝나는 경우
+    const exactValue = searchText; // 정확히 일치하는 경우
 
-    const filter = "(jinju_do_2 LIKE '%" + searchText1 + "%' OR jinju_do_2 LIKE '%" + searchText2 + "%' OR jinju_do_2 = '" + exactValue + "')";
-    const fullUrl = encodeURI(geoServerUrl + filter);
+    const filter = `(jinju_do_2 LIKE '${searchText1}' OR jinju_do_2 LIKE '${searchText2}' OR jinju_do_2 = '${exactValue}')`;
+    const fullUrl = `${geoServerUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=${encodeURIComponent(filter)}`;
 
-    // AJAX를 이용해 GeoServer에서 데이터 요청
-    fetch(fullUrl)
-      .then(response => response.json())
-      .then(data => {
-        if (data.features.length > 0) {
-          // 첫 번째 검색 결과의 지번 위치로 지도 확대
-          const extent = new GeoJSON().readFeatures(data)[0].getGeometry().getExtent();
+    console.log(fullUrl); // 최종 URL 확인용 로그
 
-          // OpenLayers에서 확대 및 중심 설정
-          map.getView().fit(extent, { padding: [150, 150, 150, 150] });
+    
+// jQuery를 이용한 AJAX 요청
 
-          // 검색 결과를 처리하고 지도에 표시하는 코드
-          displaySearchResults(data);
-          addFeatureToMapNew(data.features); // 함수명 수정
-        }
-      })
-      .catch(error => {
-        console.error('Error fetching data:', error);
+fetch(fullUrl)
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.json(); // JSON으로 응답 받기
+  })
+  .then(data => {
+    // 여기서 data를 활용하여 원하는 작업을 수행합니다.
+    searchResults.innerHTML = ''; // 검색 결과 창 비우기
+
+    const features = data.features;
+    if (features.length > 0) {
+      features.forEach(feature => {
+        const li = document.createElement('li');
+        li.textContent = feature.properties.jinju_do_2; // 예시로 속성 중 하나를 표시
+        li.addEventListener('click', () => {
+          const selectedFeature = new GeoJSON().readFeature(feature);
+          map.getView().fit(selectedFeature.getGeometry().getExtent(), { size: map.getSize(), padding: [150, 150, 150, 150] });
+
+          if (selectedListItem) {
+            selectedListItem.classList.remove('selected');
+          }
+          li.classList.add('selected');
+          selectedListItem = li;
+        });
+        searchResults.appendChild(li);
       });
+
+      addFeatureToMapNew(data); // 지도에 피처 추가하는 함수 호출
+
+    } else {
+      searchResults.innerHTML = '<li>검색 결과가 없습니다</li>';
+    }
+  })
+  .catch(error => {
+    // 네트워크 오류 또는 처리할 수 없는 경우
+    console.error('Error fetching search results:', error);
+    searchResults.innerHTML = '<li>데이터를 불러오는 중 오류가 발생했습니다</li>';
+  });
+
+
+
+  } else {
+    searchResults.innerHTML = '';
+    vectorSource1.clear();
   }
 });
+
 
 // 검색 결과를 처리하고 지도에 표시하는 함수
 function displaySearchResults(data) {
@@ -490,6 +528,7 @@ function displaySearchResults(data) {
     selectElement.addEventListener('change', function() {
       const selectedIndex = selectElement.value;
       const selectedFeature = data.features[selectedIndex]; // 선택된 feature 가져오기
+
       handleSelectChange(selectedFeature); // 선택된 항목 처리 함수 호출
     });
   }
@@ -498,6 +537,9 @@ function displaySearchResults(data) {
 // 선택된 항목 처리 함수 (select 요소 변경 시)
 function handleSelectChange(feature) {
   clearSelection(); // 이전 선택 초기화
+
+
+
 
   addFeatureToMapNew(feature); // 선택된 항목 지도에 표시 함수 호출
   showFeatureInfo(feature); // 토지 정보 표시 함수 호출
@@ -523,20 +565,6 @@ function showFeatureInfo(feature) {
   }
 }
 
-// 새로운 feature로 지도에 레이어 추가 및 확대
-function addFeatureToMap(feature) {
-  vectorSource1.clear();
-  const geojsonFormat = new GeoJSON();
-  const olFeatures = geojsonFormat.readFeatures(feature);
-
-  vectorSource1.addFeatures(olFeatures);
-
-  const extent = vectorSource1.getExtent();
-  if (extent && extent.length === 4) {
-    selectedFeatureExtent = extent;
-    map.getView().fit(extent, { size: map.getSize(), padding: [150, 150, 150, 150] });
-  }
-}
 
 // 이전 선택 초기화 함수
 function clearSelection() {

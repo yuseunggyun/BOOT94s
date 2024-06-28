@@ -24,6 +24,15 @@ import { Overlay} from 'ol';
 import DragBox from 'ol/interaction/DragBox';
 import {getWidth} from 'ol/extent.js';
 
+// 지도상 거리 면적 계산기능을 위해
+import { Circle, RegularShape, Text } from 'ol/style.js';
+import { Draw, Modify } from 'ol/interaction.js';
+import { LineString, Point } from 'ol/geom.js';
+import { getArea, getLength } from 'ol/sphere.js';
+
+// 위성지도를 가져오기 위해
+import 'ol/ol.css';
+import XYZ from 'ol/source/XYZ';
 
 // url을 변수로 빼서 따로 설정해 줘도 됨
 const g_url = "http://localhost:42888";// 내부용
@@ -153,6 +162,19 @@ const osmLayer = new TileLayer({
 const map = new Map({
   layers: [
     osmLayer,   // 배경 지도
+    // 위성 지도
+    new TileLayer({
+      source: new OSM(),
+      visible: true,
+      title: 'RoadMap'
+    }),
+    new TileLayer({
+      source: new XYZ({
+        url: 'http://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
+      }),
+      visible: false,
+      title: 'SatelliteMap'
+    }),
     vectorLayer // 백터 레이어
   ],
   target: 'map',
@@ -163,6 +185,305 @@ const map = new Map({
     constrainRotation: 16,
     interactions: defaults().extend([mouseHoverSelect])
   })
+});
+
+// 위성 지도 레이어
+const roadLayer = map.getLayers().getArray().find(layer => layer.get('title') === 'RoadMap');
+const satelliteLayer = map.getLayers().getArray().find(layer => layer.get('title') === 'SatelliteMap');
+
+document.getElementById('btn-road').addEventListener('click', function () {
+  roadLayer.setVisible(true);
+  satelliteLayer.setVisible(false);
+});
+
+document.getElementById('btn-satellite').addEventListener('click', function () {
+  roadLayer.setVisible(false);
+  satelliteLayer.setVisible(true);
+});
+
+// 거리 및 면적 계산 기능 (Geoserver에서 참고함)
+const showSegments = document.getElementById('segments');
+const clearPrevious = document.getElementById('clear');
+
+const lineStyle = new Style({
+  fill: new Fill({
+    color: 'rgba(255, 255, 255, 0.2)',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(255, 0, 0, 0.8)',
+    lineDash: [10, 10],
+    width: 2,
+  }),
+  image: new Circle({
+    radius: 5,
+    stroke: new Stroke({
+      color: 'rgba(255, 0, 0, 0.8)',
+      width: 3
+    }),
+    fill: new Fill({
+      color: 'rgba(0, 0, 0, 0.3)',
+    }),
+  }),
+});
+
+const labelTextStyle = new Style({
+  text: new Text({
+    font: '14px Calibri,sans-serif',
+    fill: new Fill({
+      color: 'rgba(255, 0, 0, 1)',
+    }),
+    backgroundFill: new Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    backgroundStroke: new Stroke({
+      color: 'rgba(255, 0, 0, 0.8)', // 빨간색 테두리
+      width: 1, // 테두리 굵기
+    }),
+    padding: [3, 3, 3, 3],
+    textBaseline: 'bottom',
+    offsetY: -15,
+  }),
+  image: new RegularShape({
+    radius: 8,
+    points: 3,
+    angle: Math.PI,
+    displacement: [0, 10],
+    fill: new Fill({
+      color: 'rgba(255, 0, 0, 0.8)',
+    }),
+  }),
+});
+
+const tooltipTextStyle = new Style({
+  text: new Text({
+    font: '12px Calibri,sans-serif',
+    fill: new Fill({
+      color: 'rgba(255, 0, 0, 1)',
+    }),
+    backgroundFill: new Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    padding: [2, 2, 2, 2],
+    textAlign: 'left',
+    offsetX: 15,
+  }),
+});
+
+const modifyPointStyle = new Style({
+  image: new Circle({
+    radius: 5,
+    stroke: new Stroke({
+      color: 'rgba(255, 0, 0, 0.7)',
+    }),
+    fill: new Fill({
+      color: 'rgba(0, 0, 0, 0.3)',
+    }),
+  }),
+  text: new Text({
+    text: '종료점',
+    font: '12px Calibri,sans-serif',
+    fill: new Fill({
+      color: 'rgba(255, 0, 0, 1)',
+    }),
+    backgroundFill: new Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    padding: [2, 2, 2, 2],
+    textAlign: 'left',
+    offsetX: 15,
+  }),
+});
+
+const segmentTextStyle = new Style({
+  text: new Text({
+    font: '12px Calibri,sans-serif',
+    fill: new Fill({
+      color: 'rgba(255, 0, 0, 1)',
+    }),
+    backgroundFill: new Fill({
+      color: 'rgba(255, 255, 255, 1)',
+    }),
+    padding: [2, 2, 2, 2],
+    textBaseline: 'bottom',
+    offsetY: -12,
+  }),
+  image: new RegularShape({
+    radius: 6,
+    points: 3,
+    angle: Math.PI,
+    displacement: [0, 8],
+    fill: new Fill({
+      color: 'rgba(255, 0, 0, 0.8)',
+    }),
+  }),
+});
+
+const segmentStyles = [segmentTextStyle];
+
+const formatLength = function (line) {
+  const length = getLength(line);
+  let output;
+  if (length > 100) {
+    output = Math.round((length / 1000) * 100) / 100 + ' km';
+  } else {
+    output = Math.round(length * 100) / 100 + ' m';
+  }
+  return output;
+};
+
+const formatArea = function (polygon) {
+  const area = getArea(polygon);
+  let output;
+  if (area > 10000) {
+    output = Math.round((area / 1000000) * 100) / 100 + ' km\xB2';
+  } else {
+    output = Math.round(area * 100) / 100 + ' m\xB2';
+  }
+  return output;
+};
+
+const source = new VectorSource();
+const modify = new Modify({ source: source, style: modifyPointStyle });
+let tipPoint;
+
+function styleFunction(feature, segments, drawType, tip) {
+  const styles = [];
+  const geometry = feature.getGeometry();
+  const type = geometry.getType();
+  let point, label, line;
+  if (!drawType || drawType === type || type === 'Point') {
+    styles.push(lineStyle);
+    if (type === 'Polygon') {
+      point = geometry.getInteriorPoint();
+      label = formatArea(geometry);
+      line = new LineString(geometry.getCoordinates()[0]);
+    } else if (type === 'LineString') {
+      point = new Point(geometry.getLastCoordinate());
+      label = formatLength(geometry);
+      line = geometry;
+    }
+  }
+  if (segments && line) {
+    let count = 0;
+    line.forEachSegment(function (a, b) {
+      const segment = new LineString([a, b]);
+      const label = formatLength(segment);
+      if (segmentStyles.length - 1 < count) {
+        segmentStyles.push(segmentTextStyle.clone());
+      }
+      const segmentPoint = new Point(segment.getCoordinateAt(0.5));
+      segmentStyles[count].setGeometry(segmentPoint);
+      segmentStyles[count].getText().setText(label);
+      styles.push(segmentStyles[count]);
+      count++;
+    });
+  }
+  if (label) {
+    labelTextStyle.setGeometry(point);
+    labelTextStyle.getText().setText(label);
+    styles.push(labelTextStyle);
+  }
+  if (
+    tip &&
+    type === 'Point' &&
+    !modify.getOverlay().getSource().getFeatures().length
+  ) {
+    tipPoint = geometry;
+    tooltipTextStyle.getText().setText(tip);
+    styles.push(tooltipTextStyle);
+  }
+  return styles;
+}
+
+const vector = new VectorLayer({
+  source: source,
+  style: function (feature) {
+    return styleFunction(feature, showSegments.checked);
+  },
+});
+
+map.addLayer(vector);
+map.addInteraction(modify);
+
+let draw; // global so we can remove it later
+
+function addInteraction(drawType) {
+  //호버 비활성화
+  map.removeInteraction(mouseHoverSelect);
+  // 선택 기능 비활성화
+  map.removeInteraction(select);
+  const activeTip = '다음점' + (drawType === 'Polygon' ? 'polygon' : '(종료시 더블클릭)');
+  const idleTip = '시작점';
+  let tip = idleTip;
+  draw = new Draw({
+    source: source,
+    type: drawType,
+    style: function (feature) {
+      return styleFunction(feature, showSegments.checked, drawType, tip);
+    },
+  });
+  draw.on('drawstart', function () {
+    if (clearPrevious.checked) {
+      source.clear();
+    }
+    modify.setActive(false);
+    tip = activeTip;
+
+  });
+  draw.on('drawend', function (event) {
+    event.feature.set('keep', true);
+    modifyPointStyle.setGeometry(tipPoint);
+    modify.setActive(true);
+    map.once('pointermove', function () {
+      modifyPointStyle.setGeometry();
+    });
+    tip = idleTip;
+
+  });
+  modify.setActive(true);
+  map.addInteraction(draw);
+}
+
+function setDrawType(type) {
+  if (draw) {
+    map.removeInteraction(draw);
+    draw = null;
+  }
+  addInteraction(type);
+}
+
+document.getElementById('distanceButton').addEventListener('click', function () {
+  setDrawType('LineString');
+});
+
+document.getElementById('areaButton').addEventListener('click', function () {
+  setDrawType('Polygon');
+});
+
+showSegments.addEventListener('change', function () {
+  vector.changed();
+  if (draw) {
+    draw.getOverlay().changed();
+  }
+});
+
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') {
+    if (draw) {
+      map.removeInteraction(draw);
+      draw = null;
+    }
+  }
+  //호버 활성화
+  map.addInteraction(mouseHoverSelect);
+  // 선택 기능 활성화
+  map.addInteraction(select);
+});
+
+clearPrevious.addEventListener('change', function () {
+  if (clearPrevious.checked) {
+    source.clear();
+  }
 });
 
 // Mouse Hover 활성화

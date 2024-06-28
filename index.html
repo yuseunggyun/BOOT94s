@@ -279,18 +279,19 @@
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
             let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기
+            let filteredData = data.filter(line => line.includes(query)); // 정확히 일치하는 항목 필터링
             
-            if (data.length >= 10) {
-              let pnu = data[0];
-              let doValue = data[1];
-              let cada = data[2];
-              let jibun = data[3];
-              let jimok = data[4];
-              let are = data[5];
-              let price = data[6];
-              let owner = data[7];
-              let owner_re = data[8];
-              let owner_da = data[9];
+            if (filteredData.length > 0) {
+              let pnu = filteredData[0];
+              let doValue = filteredData[1];
+              let cada = filteredData[2];
+              let jibun = filteredData[3];
+              let jimok = filteredData[4];
+              let are = filteredData[5];
+              let price = filteredData[6];
+              let owner = filteredData[7];
+              let owner_re = filteredData[8];
+              let owner_da = filteredData[9];
 
               let html = `
               PNU : <div style="display: inline-block;" id="pnu">${pnu}</div><br>

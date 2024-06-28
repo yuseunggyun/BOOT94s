@@ -483,6 +483,7 @@ fetch(fullUrl)
       });
 
       addFeatureToMapNew(data); // 지도에 피처 추가하는 함수 호출
+      showFeatureInfo(feature); // 토지 정보 표시 함수 호출
 
     } else {
       searchResults.innerHTML = '<li>검색 결과가 없습니다</li>';
@@ -502,48 +503,6 @@ fetch(fullUrl)
   }
 });
 
-
-// 검색 결과를 처리하고 지도에 표시하는 함수
-function displaySearchResults(data) {
-  // 결과를 화면에 표시할 방법에 따라 처리
-  let html = '<select>';
-
-  const maxResults = 5;
-  let count = 0;
-
-  data.features.forEach((feature, index) => {
-    if (count >= maxResults) return;
-
-    const name = feature.properties.jinju_do_2;
-    html += `<option value="${index}">${name}</option>`; // option 요소로 변경
-    count++;
-  });
-
-  html += '</select>';
-  searchResults.innerHTML = html;
-
-  // 검색 결과 select 요소 변경 시 처리
-  const selectElement = searchResults.querySelector('select');
-  if (selectElement) {
-    selectElement.addEventListener('change', function() {
-      const selectedIndex = selectElement.value;
-      const selectedFeature = data.features[selectedIndex]; // 선택된 feature 가져오기
-
-      handleSelectChange(selectedFeature); // 선택된 항목 처리 함수 호출
-    });
-  }
-}
-
-// 선택된 항목 처리 함수 (select 요소 변경 시)
-function handleSelectChange(feature) {
-  clearSelection(); // 이전 선택 초기화
-
-
-
-
-  addFeatureToMapNew(feature); // 선택된 항목 지도에 표시 함수 호출
-  showFeatureInfo(feature); // 토지 정보 표시 함수 호출
-}
 
 // 토지 정보 표시 함수
 function showFeatureInfo(feature) {

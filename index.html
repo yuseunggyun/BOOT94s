@@ -261,58 +261,7 @@
       searchInput.value = "";
       searchResults.innerHTML = "";
     }
-
-    searchInput.onchange = function () {
-      let query = searchInput.value.trim();
-      if (query) {
-          fetchResults(query);
-      } else {
-          searchResults.innerHTML = "<p>주소를 입력하세요.</p>";
-      }
-    }
-
-    // 검색 결과를 토지 정보에 띄우기
-    function fetchResults(query) {
-      let xhr = new XMLHttpRequest();
-      xhr.open("GET", `search.jsp?address=${encodeURIComponent(query)}`, true);
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-            let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기
-            let filteredData = data.filter(line => line.includes(query)); // 정확히 일치하는 항목 필터링
-            
-            if (filteredData.length > 0) {
-              let pnu = filteredData[0];
-              let doValue = filteredData[1];
-              let cada = filteredData[2];
-              let jibun = filteredData[3];
-              let jimok = filteredData[4];
-              let are = filteredData[5];
-              let price = filteredData[6];
-              let owner = filteredData[7];
-              let owner_re = filteredData[8];
-              let owner_da = filteredData[9];
-
-              let html = `
-              PNU : <div style="display: inline-block;" id="pnu">${pnu}</div><br>
-              소재지 : <div style="display: inline-block;" id="do">${doValue}</div><br>
-              대장구분 : <div style="display: inline-block;" id="cada">${cada}</div><br>
-              지번 : <div style="display: inline-block;" id="jibun">${jibun}</div><br>
-              지목 : <div style="display: inline-block;" id="jimok">${jimok}</div><br>
-              면적(㎡) : <div style="display: inline-block;" id="are">${are}</div><br>
-              공시지가(원) : <div style="display: inline-block;" id="price">${price}</div><br>
-              소유구분 : <div style="display: inline-block;" id="owner">${owner}</div><br>
-              소유권변동사유 : <div style="display: inline-block;" id="owner_re">${owner_re}</div><br>
-              소유권변동일자 : <div style="display: inline-block;" id="owner_da">${owner_da}</div><br>
-              `;
-
-              let insidebar = document.querySelector(".landinfo");
-              insidebar.innerHTML = html;
-              }
-          }
-        };
-      xhr.send();
-    }
+   
     // 하위 목록 보이게 설정
     document.getElementById("ym17").onclick = function () {
       if (document.getElementsByClassName("ymList2")[0].style.display == 'none') {

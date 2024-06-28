@@ -780,24 +780,6 @@ function clearSelection() {
   }
 }
 
-// 읍면 사이드바 클릭 시 이벤트 처리
-const ymList = Array.from({ length: 16 }, (_, i) => `ym0${i + 1}`);
-ymList.forEach(ym => {
-  const ymElement = document.getElementById(ym);
-  if (ymElement) {
-    ymElement.onclick = () => makeWFSSource(ym);
-  }
-});
-
-// 동 사이드바 클릭 시 이벤트 발생
-const dongList = Array.from({ length: 13 }, (_, i) => `dong${i + 1}`);
-dongList.forEach(dong => {
-  const dongElement = document.getElementById(dong);
-  if (dongElement) {
-    dongElement.onclick = () => makeWFSSource(dong);
-  }
-});
-
 // 지도 클릭 이벤트. 오버레이를 처리
 map.on('click', (e) =>
   {
@@ -875,4 +857,30 @@ map.on('click', (e) =>
       });
     });    
   });
+});
+
+// 읍면 사이드바 클릭 시 이벤트 처리
+const ymList = Array.from({ length: 16 }, (_, i) => `ym${String(i + 1).padStart(2, '0')}`);
+  ymList.forEach(ym => {
+    const ymElement = document.getElementById(ym);
+    if (ymElement) {
+      ymElement.onclick = () => {
+        console.log(`Clicked: ${ym}`);  // 클릭된 ID 확인용 로그
+        makeWFSSource(ym);
+      };
+    } else {
+      console.error(`Element not found: ${ym}`);  // 요소가 없을 경우 로그 출력
+    }
+  });
+  
+// 동 사이드바 클릭 시 이벤트 발생
+const dongList = Array.from({ length: 13 }, (_, i) => `dong${i + 1}`);
+dongList.forEach(dong => {
+  const dongElement = document.getElementById(dong);
+  if (dongElement) {
+    dongElement.onclick = () => {
+      console.log(`Clicked: ${dong}`);
+      makeWFSSource(dong);
+    };
+  }
 });

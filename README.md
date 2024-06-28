@@ -4,6 +4,42 @@
 
 해결 : firebase function(유료)을 이용해야 함. / 금전적인 부분이라 구현하기가 힘듦.
 
+6.28 <코드를 간소화 하던 과정중 ID가 숫자 2자리 됐을때 인식 못했던 현상>
+
+문제 : 
+<코드>
+// 읍면 사이드바 클릭 시 이벤트 처리
+const ymList = Array.from({ length: 16 }, (_, i) => `ym0${i + 1}`);
+ymList.forEach(ym => {
+  const ymElement = document.getElementById(ym);
+  if (ymElement) {
+    ymElement.onclick = () => {
+      console.log(`Clicked: ${ym}`);
+      makeWFSSource(ym);
+    };
+  } else {
+    console.error(`Element not found: ${ym}`);
+  }
+});
+위 코드를 실행했을 때 ym01~09까지는 잘 되고, 10~16이 Element not found 오류가 남
+
+해결 : 
+<코드>
+// 읍면 사이드바 클릭 시 이벤트 처리
+const ymList = Array.from({ length: 16 }, (_, i) => `ym${String(i + 1).padStart(2, '0')}`);
+  ymList.forEach(ym => {
+    const ymElement = document.getElementById(ym);
+    if (ymElement) {
+      ymElement.onclick = () => {
+        console.log(`Clicked: ${ym}`);  // 클릭된 ID 확인용 로그
+        makeWFSSource(ym);
+      };
+    } else {
+      console.error(`Element not found: ${ym}`);  // 요소가 없을 경우 로그 출력
+    }
+  });
+위 코드와 같이 두 자리 숫자의 패딩 문제를 해결하기 위해 String(i + 1).padStart(2, '0')을 사용하여 2자리 문자열을 보장함.
+
 6.28 <앞으로의 구성>
 
 필지를 선택하면 값을 입력할 수 있도록 하고,

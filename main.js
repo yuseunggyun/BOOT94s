@@ -514,21 +514,41 @@ map.addInteraction(select);
 // Select 피처 값 가져오기
 const selectedFeatures = select.getFeatures();
 
-// JQuery를 이용하여 HTML 입력 값(SUM) 가져옴
+// JQuery를 이용하여 HTML 입력 값(SUM) 가져옴 
+// 개발적성값
 function calculateSum(){
-  const sub1 = parseFloat($('#sub1').val());
-  const sub2 = parseFloat($('#sub2').val());
-  const sub3 = parseFloat($('#sub3').val());
+  const sub1 = parseFloat($('#sub1').val()) || 0;
+  const sub2 = parseFloat($('#sub2').val()) || 0;
+  const sub3 = parseFloat($('#sub3').val()) || 0;
+  const sub4 = parseFloat($('#sub4').val()) || 0;
+  const sub5 = parseFloat($('#sub5').val()) || 0;
+  const sub6 = parseFloat($('#sub6').val()) || 0;
 
-  const sum = sub1 + sub2 + sub3;
+  const sum1 = sub1 + sub2 + sub3 + sub4 + sub5 + sub6;
 
-  $('#result').text('총합: ' + sum);
+  $('#sub7').text(sum1);
 
-// Select 객체를 조건에 따라 다른 색상을 줌
+  // 보전적성값
+  const sub8 = parseFloat($('#sub8').val()) || 0;
+  const sub9 = parseFloat($('#sub9').val()) || 0;
+  const sub10 = parseFloat($('#sub10').val()) || 0;
+  const sub11 = parseFloat($('#sub11').val()) || 0;
+  const sub12 = parseFloat($('#sub12').val()) || 0;
+  const sub13 = parseFloat($('#sub13').val()) || 0;
+
+  const sum2 = sub8 + sub9 + sub10 + sub11 + sub12 + sub13;
+
+  $('#sub14').text(sum2);
+
+  // 종합적성값
+  const totalSum = sum1 - sum2;
+  $('#sub15').text(totalSum);
+
+// Select 객체를 종합적성값 구간에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
-  if (sum < 30) {
+  if (totalSum < 30) {
     feature.setStyle(Style0030);
-  } else if (sum > 30 && sum < 60) {
+  } else if (totalSum >= 30 && totalSum < 60) {
     feature.setStyle(Style3160);
   } else {
     feature.setStyle(Style6100);
@@ -547,9 +567,9 @@ map.addInteraction(dragBox);
 // Drag하여 Select한 객체를 조건에 따라 다른 색상을 줌
 dragBox.on('boxend', function () {
   selectedFeatures.forEach(function (feature) {
-    if (sum < 30) {
+    if (sum1 < 30) {
       feature.setStyle(Style0030);
-    } else if (sum > 30 && sum < 60) {
+    } else if (sum1 > 30 && sum1 < 60) {
       feature.setStyle(Style3160);
     } else {
       feature.setStyle(Style6100);
@@ -855,7 +875,7 @@ map.on('click', (e) =>
         event.preventDefault();
         calculateSum();
       });
-    });    
+    });
   });
 });
 

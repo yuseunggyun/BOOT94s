@@ -93,7 +93,7 @@
             </tr>
             <tr>
               <td><span id="ym17">진주시가</span></td>
-              <td id="information"><p id="detailInfo" style="cursor: pointer;">상세정보</p></td>
+              <td id="information"><span>상세정보</span></td>
             </tr>
           </table>
           <table class="ymList2">
@@ -141,14 +141,10 @@
       </div> <!-- header 닫힘 -->
     </div> <!-- area 닫힘 -->
 
-
-
-
-    <!-- 수정부분 -->
-
     <!-- area1 영역 (좌2 사이드) -->
     <div class="area1">
       <div class="sidebar">
+        <br><br><br><br><br><br><br>
         <ul class="sideinfo">
           <h2 class="insidebar"> 필지 정보 </h2>
           <div class="landinfo">
@@ -163,125 +159,27 @@
             소유권변동사유 : <div style="display: inline-block;" id="owner_re"></div><br>
             소유권변동일자 : <div style="display: inline-block;" id="owner_da"></div><br>
           </div>
-          <h2 class="insidebar"> 평가 지표 </h2>
-
+          <h2 class="insidebar"> 점수 입력 </h2>
           <div id="score">
-            <a href="" id="jinju_link" target="_blank">
-              <h3 id="info-title"></h3>
-            </a>
-            <script src="http://code.jquery.com/jquery-latest.min.js"></script>
             <form id="inputForm">
-              <table border="1" class="maindevelop" style="width: 100%;">
+              <table>
                 <tr>
-                  <th colspan="3" class="develop">개발적성 <button type="submit" class="developbutton">입력</button></th>
-                </tr>
-                <tr>
-                  <th rowspan="5" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">필수지표</th>
-                </tr>
-                <tr>
-                  <td><label for="sub1">경사도 :</label></td>
+                  <td><label for="sub1">지표별 평가점수 :</label></td>
                   <td><input type="number" id="sub1" name="sub1" min="0" max="100" style="width:50px"
                       oninput="validateInput(this)"></td>
                 </tr>
                 <tr>
-                  <td><label for="sub2">표고 :</label></td>
+                  <td><label for="sub2">특성별 적성값 :</label></td>
                   <td><input type="number" id="sub2" name="sub2" min="0" max="100" style="width:50px"
                       oninput="validateInput(this)"></td>
                 </tr>
                 <tr>
-                  <td><label for="sub3">기개발지와의 거리 :</label></td>
+                  <td><label for="sub3">종합 적성값 :</label></td>
                   <td><input type="number" id="sub3" name="sub3" min="0" max="100" style="width:50px"
                       oninput="validateInput(this)"></td>
                 </tr>
-                <tr>
-                  <td><label for="sub4">공공편익시설과의 거리 :</label></td>
-                  <td><input type="number" id="sub4" name="sub4" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-                <tr>
-                  <th rowspan="3" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">선택지표</th>
-                </tr>
-                <tr>
-                  <td><label for="sub5">지가수준 :</label></td>
-                  <td><input type="number" id="sub5" name="sub5" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-                <tr>
-                  <td><label for="sub6">도로와의 거리 :</label></td>
-                  <td><input type="number" id="sub6" name="sub6" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-                <tr >
-                    <th colspan="2" class="developscore" style="text-align: center;"><label for="sub7">종합 개발 점수: </label></th>
-                    <td><input type="number" id="sub7" name="sub7" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
               </table>
-
-
-              <table border="1" class="mainintegrity" style="width: 100%;">
-                <tr>
-                  <th colspan="3" class="integrity">보전적성<button type="submit" class="integritybutton">입력</button></th>
-                </tr>
-                <tr>
-                  <th rowspan="5" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">필수지표</th>
-                </tr>
-                <tr>
-                  <td><label for="sub8">경지정리면적 비율 :</label></td>
-                  <td><input type="number" id="sub8" name="sub8" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-                <tr>
-                  <td><label for="sub9">생태·자연도상위등급 비율 :</label></td>
-                  <td><input type="number" id="sub9" name="sub9" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-                <tr>
-                  <td><label for="sub10">공적규제지역면적 비율 :</label></td>
-                  <td><input type="number" id="su10" name="sub10" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-                <tr>
-                  <td><label for="sub11">공적규제지역과의 거리 :</label></td>
-                  <td><input type="number" id="sub11" name="sub11" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-                <tr>
-                  <th rowspan="3" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">선택지표</th>
-                </tr>
-                <tr>
-                  <td><label for="sub12">농업진흥지역 비율 :</label></td>
-                  <td><input type="number" id="sub12" name="sub12" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-                <tr>
-                  <td><label for="sub13">하천·호소·농업용저수지와의 <br>거리:</label></td>
-                  <td><input type="number" id="sub13" name="sub13" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-                <tr >
-                    <th colspan="2" class="integrityscore"><label for="sub14" style="text-align: center;">종합 보전 점수: </label></td>
-                    <th><input type="number" id="sub14" name="sub14" min="0" max="100" style="width:50px"
-                      oninput="validateInput(this)"></td>
-                </tr>
-              </table>
-
-              <table class="maintotal" style="width: 100%;">
-                <tr>
-                  <th class="total">종합 적성 값: &nbsp;&nbsp;&nbsp;&nbsp;<input type="number" id="sub15" name="sub14" min="0" max="100" style="width:50px"
-                    oninput="validateInput(this)"><button type="totalsubmit" class="totalbutton">입력</button></th>
-                </tr>
-              
-             
-              </table>
-            
-
-
-
-
-
-
-
+              <button type="submit">입력</button>
               <!-- 입력한 값이 0 ~ 100 사이의 값이 아닐 경우 알림 창이 뜨게함-->
               <script>
                 function validateInput(input) {
@@ -304,7 +202,6 @@
         </ul>
       </div>
     </div>
-
 
     <!-- mapArea 영역 (맵) -->
     <div id="mapArea">
@@ -350,6 +247,19 @@
         <input type="checkbox" id="clear" checked />
       </div>
     </form>
+
+
+    <!--폴리곤 생성-->
+    <div class="polygonbuttons">
+      <button id="createPolygonButton">폴리곤 생성</button>
+      <button id="saveButton">폴리곤 저장</button>
+      <button id="removeButton">폴리곤 삭제</button>
+    </div>
+
+
+
+
+
   </div>
 
   <!-- 동적검색을 위한 script -->
@@ -368,58 +278,6 @@
       searchResults.innerHTML = "";
     }
 
-    searchInput.onchange = function () {
-      let query = searchInput.value.trim();
-      if (query) {
-        fetchResults(query);
-      } else {
-        searchResults.innerHTML = "<p>주소를 입력하세요.</p>";
-      }
-    }
-
-
-
-    // 검색 결과를 토지 정보에 띄우기
-    function fetchResults(query) {
-      let xhr = new XMLHttpRequest();
-      xhr.open("GET", `search.jsp?address=${encodeURIComponent(query)}`, true);
-      xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState == 4 && xhr.status == 200) {
-          let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기
-
-          if (data.length >= 10) {
-            let pnu = data[0];
-            let doValue = data[1];
-            let cada = data[2];
-            let jibun = data[3];
-            let jimok = data[4];
-            let are = data[5];
-            let price = data[6];
-            let owner = data[7];
-            let owner_re = data[8];
-            let owner_da = data[9];
-
-            let html = `
-              PNU : <div style="display: inline-block;" id="pnu">${pnu}</div><br>
-              소재지 : <div style="display: inline-block;" id="do">${doValue}</div><br>
-              대장구분 : <div style="display: inline-block;" id="cada">${cada}</div><br>
-              지번 : <div style="display: inline-block;" id="jibun">${jibun}</div><br>
-              지목 : <div style="display: inline-block;" id="jimok">${jimok}</div><br>
-              면적(㎡) : <div style="display: inline-block;" id="are">${are}</div><br>
-              공시지가(원) : <div style="display: inline-block;" id="price">${price}</div><br>
-              소유구분 : <div style="display: inline-block;" id="owner">${owner}</div><br>
-              소유권변동사유 : <div style="display: inline-block;" id="owner_re">${owner_re}</div><br>
-              소유권변동일자 : <div style="display: inline-block;" id="owner_da">${owner_da}</div><br>
-              `;
-
-            let insidebar = document.querySelector(".landinfo");
-            insidebar.innerHTML = html;
-          }
-        }
-      };
-      xhr.send();
-    }
     // 하위 목록 보이게 설정
     document.getElementById("ym17").onclick = function () {
       if (document.getElementsByClassName("ymList2")[0].style.display == 'none') {
@@ -429,64 +287,24 @@
       }
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // 수정 부분
-
     // 사이드바 목록 보이게 설정
     document.getElementById("information").onclick = function () {
-    const sidebar = document.getElementsByClassName("sidebar")[0];
-    const detailInfo = document.getElementById("detailInfo");
-    
-    if (sidebar.style.display === 'block') {
-        sidebar.style.display = 'none';
-        detailInfo.classList.remove('active-info');
-    } else {
-        sidebar.style.display = 'block';
-        detailInfo.classList.add('active-info');
+      if (document.getElementsByClassName("sidebar")[0].style.display == 'block') {
+        document.getElementsByClassName("sidebar")[0].style.display = 'none'
+      } else {
+        document.getElementsByClassName("sidebar")[0].style.display = 'block';
+      }
     }
-}
 
     // 읍면동에 대한 부분 버튼 클릭시 고정
     const buttons = document.querySelectorAll('.ymList span');
-    const detailInfo = document.querySelector('.active-info');
 
     buttons.forEach(option => {
       option.addEventListener('click', () => {
-        if (option !== detailInfo) {
-          buttons.forEach(btn => btn.classList.remove('active1'));
-          option.classList.add('active1');
-        }
+        buttons.forEach(btn => btn.classList.remove('active1'));
+        option.classList.add('active1');
       });
     });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
     //진주시가에 대한 부분 버튼 클릭시 고정
     const buttons1 = document.querySelectorAll('.ymList2 span');
@@ -498,9 +316,18 @@
       });
     });
 
+    // 상세정보에 대한 부분 버튼 클릭시 고정
+    const detailButton = document.querySelector('.ymList span');
 
+    detailButton.addEventListener('click', function () {
+      if (detailButton.classList.contains('information')) {
+        detailButton.classList.remove('information');
+      } else {
+        detailButton.classList.add('information');
+      }
+    });
   </script>
-  <script type="module" src="./main.js"></script>
+  <script type="module" src="./main.js" defer></script>
 </body>
 
 </html>

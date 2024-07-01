@@ -142,11 +142,6 @@ body {
    /* 위 오른 아래 왼쪽 */
 }
 
-
-
-
-
-
 /*행정구역명 스타일 적용*/
 #ymname1 {
   text-align: center;
@@ -182,11 +177,7 @@ table.ymList span.active1 {
   color: #ffffff;
   padding: 2px 43.35px;
   cursor: pointer;
-  display: inline-block;
-  width: 66px;
-  line-height: 1.4.5
 }
-
 
 /*진주 시가 스타일 및 하위 호버 스타일 설정*/
 table.ymList2 {
@@ -194,7 +185,6 @@ table.ymList2 {
   border-top: 2px solid rgba(0, 152, 129, 1);
   font-size: 0.85em;
   width : 100.5%;
-  height: 100%;
 }
 
 table.ymList2 span {
@@ -202,7 +192,6 @@ table.ymList2 span {
   background-color: #cfcfcf;
   padding: 2.45px 76.5px;
   width: 100%;
-  height: 100%;
   text-align: left;
 }
 
@@ -214,10 +203,6 @@ table.ymList2 span.active2 {
   background: rgba(0, 152, 129, 1);
   color: #ffffff; 
   cursor: pointer;
-  display: inline-block;
-  width: 158px;
-  height: 100%;
-  line-height: 1.5;
 }
 
 /* 진주시가 하위 리스트 숨김*/
@@ -225,192 +210,70 @@ table.ymList2 span.active2 {
   display: none;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- /*수정 부분*/
-
 /* area1 영역 (좌2 사이드) */
 .area1 {
   float: left;
   display: flex;
-  width: 0%;
+  width: 30%;
   height: 100%;
   top: 0;
   z-index: 3;
   position: relative;
-  margin-left: 1px;
+  margin: 0px 0px 0px 1px;
   /* background-color: white; */
 
 }
 
+/* 필지 정보 스타일 */
 .insidebar {
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 1.3rem;
   color: rgb(35,160,250);
   background-color: rgba(252, 209, 79, 0.7);
+  /* 위 오른 아래 왼쪽 */
+  margin: 10px 0px 10px 0px;
   float: top;
 }
 
 ul.sideinfo {
-  font-size: 0.75rem;
+  font-size: 1.0rem;
   line-height: 2.0;
   background: #efefef;
   border: 2px solid rgb(0,152,129);
-  padding: 7px;
+  /* border-radius: 13px; */
+  margin: 9px 0;
+  padding: 10px;
   width: 288px;
-  height: 100%;
+  height: 77.5%;
 
 }
 
 /* 평가 점수 스타일 */
 #score {
-  font-size: 0.7rem;
-  padding-top: 7px;
+  font-size: 0.9rem;
 }
 
 /*사이드바 목록 숨김*/
 .sidebar {
   display: none;
   list-style-type: none;
-  border-left: 1.5px solid rgba(0, 152, 129, 1);
+  /* 위 오른 아래 왼쪽 */
+  margin: 0px 0px 0px 0px;
+  border-left: 2px solid rgba(0, 152, 129, 1);
   z-index: 1px;
 }
 
-/* #landinfo {
-  background-color: #fff;
-  border: 1px solid #03ad72;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-} */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*수정부분*/
-
 /*상세정보만 스타일 적용*/
-.active-info {
+table.ymList span.ym18 {
   border-top-left-radius: 13px;
   border-top-right-radius: 13px;
   border-bottom-left-radius: 13px;
   border-bottom-right-radius: 13px; 
   background: rgba(252, 209, 79, 0.7);
   color: rgb(35,160,250);
-  /* padding: 2px 43.35px; */
+  padding: 2px 43.35px;
   cursor: pointer;
 }
-
-/* 추가부분 */
-/*평가지표 테이블 개발*/
-table.maindevelop {
-  font-size: 0.75rem;
-  border-collapse: collapse;
-}
-
-table.maindevelop td {
-  font-size: 0.75rem;
-  padding: 2px 7px;
-}
-
-
-button.developbutton {
-  font-size: 0.82rem;
-  position: relative;
-  left: 103px;
-  padding: 1.4px;
-  background: rgba(126, 126, 126, 0.5);
-}
-
-
-/*평가지표 테이블 보전*/
-table.mainintegrity {
-  font-size: 0.75rem;
-  border-collapse: collapse;
-  position: relative;
-  top: 15px;
-}
-
-table.mainintegrity  td {
-  font-size: 0.75rem;
-  padding: 2px 7px;
-}
-
-button.integritybutton {
-  font-size: 0.82rem;
-  position: relative;
-  left: 104px;
-  padding: 1.4px;
-  background: rgba(126, 126, 126, 0.5);
-}
-
-/*종합적성값*/
-table.maintotal {
-  font-size: 0.9rem;
-  border-collapse: collapse;
-  position: relative;
-  top: 30px;
-}
-
-button.totalbutton {
-  font-size: 0.82rem;
-  position: relative;
-  left: 20px;
-  padding: 1.4px;
-  background: rgba(126, 126, 126, 0.5);
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #mapArea {
   position: absolute;
@@ -550,3 +413,13 @@ padding : 2px 3px;
   cursor: pointer; 
 }
 
+#landinfo {
+  background-color: #fff;
+  border: 1px solid #03ad72;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

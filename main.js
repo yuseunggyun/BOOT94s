@@ -452,10 +452,6 @@ function setDrawType(type) {
   addInteraction(type);
 }
 
-document.getElementById('distanceButton').addEventListener('click', function () {
-  setDrawType('LineString');
-});
-
 document.getElementById('areaButton').addEventListener('click', function () {
   setDrawType('Polygon');
 });
@@ -485,6 +481,170 @@ clearPrevious.addEventListener('change', function () {
     source.clear();
   }
 });
+
+// 새로운 폴리곤 생성 저장 삭제
+const createPolygonButton = document.getElementById('createPolygonButton');
+const saveButton = document.getElementById('saveButton');
+const removeButton = document.getElementById('removeButton');
+
+// 스타일을 정의합니다.
+const polygonStyle = new Style({
+  fill: new Fill({
+    color: 'rgba(0, 0, 0, 0.2)',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(255, 255, 255, 0.8)',
+    lineDash: [10, 10],
+    width: 2,
+  }),
+  image: new Circle({
+    radius: 5,
+    stroke: new Stroke({
+      color: 'rgba(0, 0, 0, 0.8)',
+      width: 3
+    }),
+    fill: new Fill({
+      color: 'rgba(0, 0, 0, 0.3)',
+    }),
+  }),
+});
+
+// 새로운 폴리곤 스타일 정의
+const noStyle = null;  // 스타일을 적용하지 않기 위해 null로 설정
+
+let isDistanceMode = false;  // 거리 재기 모드인지 여부를 나타내는 플래그
+
+document.getElementById('distanceButton').addEventListener('click', function () {
+  setDrawType('LineString');
+  isDistanceMode = true;  // 거리 재기 모드 활성화
+});
+
+// 벡터 레이어의 소스를 정의합니다.
+const polygonSource = new VectorSource();
+
+// 선택 상호작용을 정의합니다.
+const selectInteraction = new Select();
+map.addInteraction(selectInteraction);
+
+// 그리기 interaction을 관리할 변수를 선언합니다.
+let polygonDraw;
+
+// 그리기 interaction을 추가하는 함수입니다.
+function setPolygonInteraction(drawType) {
+  //호버 비활성화
+  if (typeof mouseHoverSelect !== 'undefined') {
+    map.removeInteraction(mouseHoverSelect);
+  }
+  // 선택 기능 비활성화
+  if (typeof select !== 'undefined') {
+    map.removeInteraction(select);
+  }
+  polygonDraw = new Draw({
+    source: polygonSource,
+    type: drawType,
+    style: isDistanceMode ? noStyle : polygonStyle,  // 거리 재기 모드에서는 스타일 적용 안 함
+  });
+  polygonDraw.on('drawend', function (event) {
+    event.feature.set('keep', true);
+    resetPolygonInteraction(); // 그리기 완료 후 상호작용 리셋
+  });
+  map.addInteraction(polygonDraw);
+}
+
+// 그리기 완료 후 상호작용 리셋 함수
+function resetPolygonInteraction() {
+  if (polygonDraw) {
+    map.removeInteraction(polygonDraw);
+    polygonDraw = null;
+  }
+  if (typeof mouseHoverSelect !== 'undefined') {
+    map.addInteraction(mouseHoverSelect);
+  }
+  if (typeof select !== 'undefined') {
+    map.addInteraction(select);
+  }
+}
+
+// 그리기 유형을 설정하는 함수
+function addPolygonDrawType(type) {
+  if (polygonDraw) {
+    map.removeInteraction(polygonDraw);
+    polygonDraw = null;
+  }
+  setPolygonInteraction(type);
+}
+
+// '폴리곤 생성' 버튼 클릭 시 그리기 유형을 폴리곤으로 설정
+createPolygonButton.addEventListener('click', function () {
+  addPolygonDrawType('Polygon');
+  isDistanceMode = false; // 거리 재기 모드 비활성화
+});
+
+// '폴리곤 저장' 버튼 클릭 시 폴리곤을 로컬 스토리지에 저장
+saveButton.addEventListener('click', function () {
+  const features = polygonSource.getFeatures();
+  if (features.length > 0) {
+    const format = new GeoJSON();
+    const geojsonStr = format.writeFeatures(features);
+    localStorage.setItem('savedPolygons', geojsonStr);
+    alert('폴리곤이 저장되었습니다!');
+  } else {
+    alert('저장할 폴리곤이 없습니다.');
+  }
+});
+
+// '폴리곤 삭제' 버튼 클릭 시 선택한 폴리곤을 제거합니다.
+removeButton.addEventListener('click', function () {
+  const selectedFeatures = selectInteraction.getFeatures();
+  if (selectedFeatures.getLength() > 0) {
+    selectedFeatures.forEach(function (feature) {
+      polygonSource.removeFeature(feature);
+    });
+    selectedFeatures.clear();
+    alert('선택된 폴리곤이 삭제되었습니다.');
+  } else {
+    alert('삭제할 폴리곤이 선택되지 않았습니다.');
+  }
+});
+
+// 로컬 스토리지에서 저장된 폴리곤을 불러오는 함수입니다.
+function loadSavedPolygons() {
+  const savedPolygons = localStorage.getItem('savedPolygons');
+  if (savedPolygons) {
+    const format = new GeoJSON();
+    const features = format.readFeatures(savedPolygons, {
+      featureProjection: map.getView().getProjection(),
+    });
+    polygonSource.addFeatures(features);
+  }
+}
+
+// 페이지 로드 시 저장된 폴리곤을 불러옵니다.
+loadSavedPolygons();
+
+// Escape 키를 누를 때 그리기 interaction을 종료합니다.
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape' && polygonDraw) {
+    map.removeInteraction(polygonDraw);
+    polygonDraw = null;
+  }
+  //호버 활성화
+  if (typeof mouseHoverSelect !== 'undefined') {
+    map.addInteraction(mouseHoverSelect);
+  }
+  // 선택 기능 활성화
+  if (typeof select !== 'undefined') {
+   map.addInteraction(select);
+  }
+});
+
+// 폴리곤 소스를 위한 벡터 레이어를 추가합니다.
+const polygonLayer = new VectorLayer({
+  source: polygonSource,
+  style: polygonStyle,
+});
+
+map.addLayer(polygonLayer);
 
 // Mouse Hover 활성화
 map.addInteraction(mouseHoverSelect);

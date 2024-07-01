@@ -60,40 +60,45 @@
           <h3 id="ymname1"> 행정 구역명</h3>
           <table class="ymList">
             <tr>
-              <td><span id="ym01">문산읍</span></td>
-              <td><span id="ym02">내동면</span></td>
+              <td style="width: 50%;"><span id="ym01">문산읍</span></td>
+              <td colspan="2"><span id="ym02">내동면</span></td>
             </tr>
             <tr>
-              <td><span id="ym03">정촌면</span></td>
-              <td><span id="ym04">금곡면</span></td>
+              <td style="width: 50%;"><span id="ym03">정촌면</span></td>
+              <td colspan="2"><span id="ym04">금곡면</span></td>
             </tr>
             <tr>
-              <td><span id="ym05">진성면</span></td>
-              <td><span id="ym06">일반성면</span></td>
+              <td style="width: 50%;"><span id="ym05">진성면</span></td>
+              <td colspan="2"><span id="ym06">일반성면</span></td>
             </tr>
             <tr>
-              <td><span id="ym07">이반성면</span></td>
-              <td><span id="ym08">사봉면</span></td>
+              <td style="width: 50%;"><span id="ym07">이반성면</span></td>
+              <td colspan="2"><span id="ym08">사봉면</span></td>
             </tr>
             <tr>
-              <td><span id="ym09">지수면</span></td>
-              <td><span id="ym10">대곡면</span></td>
+              <td style="width: 50%;"><span id="ym09">지수면</span></td>
+              <td colspan="2"><span id="ym10">대곡면</span></td>
             </tr>
             <tr>
-              <td><span id="ym11">금산면</span></td>
-              <td><span id="ym12">집현면</span></td>
+              <td style="width: 50%;"><span id="ym11">금산면</span></td>
+              <td colspan="2"><span id="ym12">집현면</span></td>
             </tr>
             <tr>
-              <td><span id="ym13">미천면</span></td>
-              <td><span id="ym14">명석면</span></td>
+              <td style="width: 50%;"><span id="ym13">미천면</span></td>
+              <td colspan="2"><span id="ym14">명석면</span></td>
             </tr>
             <tr>
-              <td><span id="ym15">대평면</span></td>
-              <td><span id="ym16">수곡면</span></td>
+              <td style="width:50%"><span id="ym15">대평면</span></td>
+              <td colspan="2"><span id="ym16">수곡면</span></td>
             </tr>
             <tr>
               <td><span id="ym17">진주시가</span></td>
-              <td id="information"><p id="detailInfo" style="cursor: pointer;">상세정보</p></td>
+              <td id="information">
+                <p id="detailInfo" style="cursor: pointer;">상세정보</p>
+              </td>
+              <td id="information1">
+                <p id="detailInfo1" style="cursor: pointer;">평가지표</p>
+              </td>
             </tr>
           </table>
           <table class="ymList2">
@@ -144,6 +149,7 @@
     <!-- area1 영역 (좌2 사이드) -->
     <div class="area1">
       <div class="sidebar">
+        <br><br><br><br><br><br><br>
         <ul class="sideinfo">
           <h2 class="insidebar"> 필지 정보 </h2>
           <div class="landinfo">
@@ -158,8 +164,16 @@
             소유권변동사유 : <div style="display: inline-block;" id="owner_re"></div><br>
             소유권변동일자 : <div style="display: inline-block;" id="owner_da"></div><br>
           </div>
+        </ul>
+      </div>
+    </div>
+    <br><br><br><br><br><br><br>
+    <!-- area3 영역 (우측 사이드) 평가지표 -->
+    <div class="area3">
+      <div class="sidebar1">
+        <ul class="sideinfo1">
           <h2 class="insidebar"> 평가 지표 </h2>
-
+        </ul>
           <div id="score">
             <a href="" id="jinju_link" target="_blank">
               <h3 id="info-title"></h3>
@@ -297,7 +311,6 @@
               </script>
             </form>
           </div>
-        </ul>
       </div>
     </div>
 
@@ -338,13 +351,18 @@
         <br>
       </div>
       <div id="choice">
-        <label for="segments">- 측정 길이 표시:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-        <input type="checkbox" id="segments" checked />
-        <br>
+        <label for="segments">- 측정 길이 표시:&nbsp;</label>
+        <input type="checkbox" id="segments" checked /> &nbsp;
         <label for="clear">- 이전 측정값 삭제:&nbsp;</label>
         <input type="checkbox" id="clear" checked />
       </div>
     </form>
+    <!--폴리곤 생성-->
+    <div class="polygonbuttons">
+      <button id="createPolygonButton">폴리곤 생성</button>
+      <button id="saveButton">폴리곤 저장</button>
+      <button id="removeButton">폴리곤 삭제</button>
+    </div>
   </div>
 
   <!-- 동적검색을 위한 script -->
@@ -423,7 +441,7 @@
       }
     }
 
-    // 사이드바 목록 보이게 설정
+    // 사이드바(상세정보) 목록 보이게 설정
     document.getElementById("information").onclick = function () {
     const sidebar = document.getElementsByClassName("sidebar")[0];
     const detailInfo = document.getElementById("detailInfo");
@@ -436,6 +454,20 @@
         detailInfo.classList.add('active-info');
     }
   }
+
+  // 사이드바(평가지표) 목록 보이게 설정
+  document.getElementById("information1").onclick = function () {
+      const area3 = document.getElementsByClassName("area3")[0];
+      const detailInfo1 = document.getElementById("detailInfo1");
+
+      if (area3.style.display === 'block') {
+        area3.style.display = 'none';
+        detailInfo1.classList.remove('active-info1');
+      } else {
+        area3.style.display = 'block';
+        detailInfo1.classList.add('active-info1');
+      }
+    }
 
     // 읍면동에 대한 부분 버튼 클릭시 고정
     const buttons = document.querySelectorAll('.ymList span');

@@ -556,6 +556,111 @@ function calculateSum(){
   });
 }
 
+// JQuery를 이용하여 적성값 입력, 수정, 삭제
+// 개발적성
+$(document).ready(function() {
+  window.insertDevelop = function() {
+      let data = gatherDevelopData();
+      $.post('insertDevelop.jsp', data)
+          .done(function(response) {
+              alert('개발적성 입력 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성 입력 실패');
+          });
+  };
+
+  window.updateDevelop = function() {
+      let data = gatherDevelopData();
+      data.id = getDevelopId();
+      $.post('updateDevelop.jsp', data)
+          .done(function(response) {
+              alert('개발적성 수정 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성 수정 실패');
+          });
+  };
+
+  window.deleteDevelop = function() {
+      let id = getDevelopId();
+      $.post('deleteDevelop.jsp', { id: id })
+          .done(function(response) {
+              alert('개발적성 삭제 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성 삭제 실패');
+          });
+  };
+
+  // 보전적성
+  window.insertIntegrity = function() {
+      let data = gatherIntegrityData();
+      $.post('insertIntegrity.jsp', data)
+          .done(function(response) {
+              alert('보전적성 입력 성공');
+          })
+          .fail(function(error) {
+              alert('보전적성 입력 실패');
+          });
+  };
+
+  window.updateIntegrity = function() {
+      let data = gatherIntegrityData();
+      data.id = getIntegrityId();
+      $.post('updateIntegrity.jsp', data)
+          .done(function(response) {
+              alert('보전적성 수정 성공');
+          })
+          .fail(function(error) {
+              alert('보전적성 수정 실패');
+          });
+  };
+
+  window.deleteIntegrity = function() {
+      let id = getIntegrityId();
+      $.post('deleteIntegrity.jsp', { id: id })
+          .done(function(response) {
+              alert('보전적성 삭제 성공');
+          })
+          .fail(function(error) {
+              alert('보전적성 삭제 실패');
+          });
+  };
+
+  // 각 요소들의 값 가져오기
+  function gatherDevelopData() {
+      return {
+          sub1: $('#sub1').val(),
+          sub2: $('#sub2').val(),
+          sub3: $('#sub3').val(),
+          sub4: $('#sub4').val(),
+          sub5: $('#sub5').val(),
+          sub6: $('#sub6').val()
+      };
+  }
+
+  function gatherIntegrityData() {
+      return {
+          sub8: $('#sub8').val(),
+          sub9: $('#sub9').val(),
+          sub10: $('#sub10').val(),
+          sub11: $('#sub11').val(),
+          sub12: $('#sub12').val(),
+          sub13: $('#sub13').val()
+      };
+  }
+  // 개발적성 ID를 입력받는 요소에서 값을 가져옴
+  function getDevelopId() {
+    return $('#developId').val(); 
+  }
+
+  // 보전적성 ID를 입력받는 요소에서 값을 가져옴
+  function getIntegrityId() {
+    return $('#integrityId').val(); 
+  }
+});
+
 // 보조키(Ctrl)를 사용한 DragBox 기능
 const dragBox = new DragBox({
   condition: platformModifierKeyOnly,
@@ -808,6 +913,9 @@ map.on('click', (e) =>
     // 점찍은 곳의 자료를 찾아냄. geoserver에서는 WFS를 위해 위치 정보 뿐 아니라 메타데이터도 같이 보내고 있음
     map.forEachFeatureAtPixel(e.pixel, (feature) =>
       {
+        var id = feature.get('id');
+        $('#developId').val(id); // 개발적성 ID로 설정
+        $('#integrityId').val(id); // 보전적성 ID로 설정
 
     // JQUERY를 이용한 area1 창에 정보 표시
     $(document).ready(function(){

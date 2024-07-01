@@ -381,8 +381,9 @@
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
           let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기
+          let filteredData = data.filter(line => line.includes(query));
 
-          if (data.length >= 10) {
+          if (filteredData.length >= 10) {
             let pnu = data[0];
             let doValue = data[1];
             let cada = data[2];

@@ -31,7 +31,7 @@ import { LineString, Point } from 'ol/geom.js';
 import { getArea, getLength } from 'ol/sphere.js';
 
 // 위성지도를 가져오기 위해
-import 'ol/ol.css';
+
 import XYZ from 'ol/source/XYZ';
 
 // url을 변수로 빼서 따로 설정해 줘도 됨
@@ -39,7 +39,7 @@ const g_url = "http://localhost:42888";// 내부용
 // const g_url = "http://172.20.221.180:42888";// 외부용
 
 let wfsSource = null;
-let wfsLayer = null;
+
 
 // 목록 클릭 시 CQL 필터 만드는 함수 추가 
 function makeFilter(method) {
@@ -499,17 +499,17 @@ const removeButton = document.getElementById('removeButton');
 // 스타일을 정의합니다.
 const polygonStyle = new Style({
   fill: new Fill({
-    color: 'rgba(255, 255, 255, 0.2)',
+    color: 'rgba(0, 0, 0, 0.2)',
   }),
   stroke: new Stroke({
-    color: 'rgba(255, 0, 0, 0.8)',
+    color: 'rgba(255, 255, 255, 0.8)',
     lineDash: [10, 10],
     width: 2,
   }),
   image: new Circle({
     radius: 5,
     stroke: new Stroke({
-      color: 'rgba(255, 0, 0, 0.8)',
+      color: 'rgba(0, 0, 0, 0.8)',
       width: 3
     }),
     fill: new Fill({
@@ -552,6 +552,7 @@ function addPolygonDrawType(type) {
     polygonDraw = null;
   }
   setPolygonInteraction(type);
+  
 }
 
 // '폴리곤 생성' 버튼 클릭 시 그리기 유형을 폴리곤으로 설정합니다.
@@ -621,7 +622,6 @@ const polygonLayer = new VectorLayer({
 });
 
 map.addLayer(polygonLayer);
-
 
 
 

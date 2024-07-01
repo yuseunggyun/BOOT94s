@@ -1,5 +1,6 @@
 @import "node_modules/ol/ol.css";
 
+
 /* 전역적 스타일 정의 */
 * {
   margin: 0;
@@ -154,15 +155,15 @@ body {
   background-color: #efefef;
   border: 1px solid #ccc;
   margin: 10px 0px 0px 0px;
-  width: 99.9%;
+  width: 100%;
 }
 
 /*읍면 스타일 및 호버 스타일 설정*/
 table.ymList {
   background: #efefef;
   border: 1px solid #ccc;
-  font-size: 0.96em;
-  width: 100.5%;
+  font-size: 0.88em;
+  width: 100.8%;
   text-align: center;
 }
 
@@ -246,7 +247,6 @@ table.ymList2 span.active2 {
 .area1 {
   float: left;
   display: flex;
-  width: 0%;
   height: 100%;
   top: 0;
   z-index: 3;
@@ -258,27 +258,22 @@ table.ymList2 span.active2 {
 
 .insidebar {
   text-align: center;
-  font-size: 0.85rem;
+  font-size: 1.3rem;
   color: rgb(35,160,250);
   background-color: rgba(252, 209, 79, 0.7);
+  margin: 10px 0px 10px 0px;
   float: top;
 }
 
 ul.sideinfo {
-  font-size: 0.75rem;
+  font-size: 1rem;
   line-height: 2.0;
   background: #efefef;
   border: 2px solid rgb(0,152,129);
-  padding: 7px;
+  margin: 9px 0;
+  padding: 10px;
   width: 288px;
   height: 100%;
-
-}
-
-/* 평가 점수 스타일 */
-#score {
-  font-size: 0.7rem;
-  padding-top: 7px;
 }
 
 /*사이드바 목록 숨김*/
@@ -288,6 +283,65 @@ ul.sideinfo {
   border-left: 1.5px solid rgba(0, 152, 129, 1);
   z-index: 1px;
 }
+
+
+
+/*평가지표 스타일*/
+.area3 {
+  background: #efefef;
+  border: 2px solid rgb(0,152,129);
+  float: right;
+  height: 100%;
+  top: 0;
+  z-index: 3;
+  position: relative;
+  display: none;
+  width: 350px;
+  margin-top: 10px;
+}
+div.area3 h2.insidebar1 {
+  text-align: center;
+  font-size: 1.3rem;
+  color: rgb(35,160,250);
+  background-color: rgba(252, 209, 79, 0.7);
+  margin: 10px 5px 10px 5px;
+  float: top;
+}
+ul.sideinfo1 {
+  line-height: 2.0;
+  margin: 5px 0;
+  padding: 5px;
+
+}
+
+
+/* 개발적성평가 점수 스타일 */
+div.area3 table.maindevelop {
+  font-size: 0.9rem;
+  margin: -10px 10px 10px 10px;
+}
+div.area3 table.maindevelop td {
+  font-size: 0.85rem;
+}
+div.area3 table.maindevelop th.developscore {
+  font-size: 0.9rem;
+  padding: 5px;
+}
+
+/* 보전적성평가 점수 스타일 */
+div.area3 table.mainintegrity {
+  font-size: 0.9rem;
+  margin: -10px 10px 10px 10px;
+}
+div.area3 table.mainintegrity td {
+  font-size: 0.85rem;
+}
+div.area3 table.mainintegrity th.integrityscore {
+  font-size: 0.9rem;
+  padding: 5px;
+}
+
+
 
 /* #landinfo {
   background-color: #fff;
@@ -317,8 +371,6 @@ ul.sideinfo {
 
 
 
-/*수정부분*/
-
 /*상세정보만 스타일 적용*/
 .active-info {
   border-top-left-radius: 13px;
@@ -331,7 +383,28 @@ ul.sideinfo {
   cursor: pointer;
 }
 
-/* 추가부분 */
+
+/*상세정보만 스타일 적용*/
+.active-info1 {
+  border-top-left-radius: 13px;
+  border-top-right-radius: 13px;
+  border-bottom-left-radius: 13px;
+  border-bottom-right-radius: 13px; 
+  background: rgba(252, 209, 79, 0.7);
+  color: rgb(35,160,250);
+  /* padding: 2px 43.35px; */
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
+
 /*평가지표 테이블 개발*/
 table.maindevelop {
   font-size: 0.75rem;
@@ -398,13 +471,16 @@ table.maintotal {
   height: 100%;
 }
 
+
+
+
 /*위성영상*/
 #layerSwitcher {
   width: 113px;
   height: 7.5%;
   position: absolute;
   top: 10px;
-  right: 10px;
+  right: 290px;
   z-index: 1;
   background: rgba(255, 255, 255, 0.8);
   padding: 10px;
@@ -458,7 +534,7 @@ padding : 2px 3px;
 /*maptype  거리 및 면적 계산 스타일 부분*/
 #area2 {
   position: absolute;
-  top: 110px;  
+  top: 10px;  
   right: 10px;
   background: rgba(255, 255, 255, 0.8);
   padding: 10px;
@@ -476,7 +552,7 @@ padding : 2px 3px;
 #area2 #distanceButton{
   position: absolute;
   top: 40px;
-  left: 30px;
+  left: 80px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
@@ -485,7 +561,7 @@ padding : 2px 3px;
 #area2 #areaButton {
   position: absolute;
   top: 40px;
-  left: 70px;
+  left: 150px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
@@ -498,7 +574,8 @@ padding : 2px 3px;
 }
 
 #area2 #choice {
-  font-size: 0.8em;
+  font-size: 0.9em;
+  margin-bottom: 5px;
 }
 
 #popup {

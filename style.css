@@ -238,7 +238,7 @@ table.ymList2 span.active2 {
   font-size: 1.1rem;
   color: rgb(35,160,250);
   background-color: rgba(252, 209, 79, 0.7);
-  margin: 0px 0px 5px 0px;
+  margin: 0px 0px 2px 0px;
   float: top;
 }
 
@@ -275,14 +275,7 @@ ul.sideinfo {
   width: 350px;
   margin-top: 10px;
 }
-div.area3 h2.insidebar1 {
-  text-align: center;
-  font-size: 1.3rem;
-  color: rgb(35,160,250);
-  background-color: rgba(252, 209, 79, 0.7);
-  margin: 10px 5px 10px 5px;
-  float: top;
-}
+
 ul.sideinfo1 {
   line-height: 2.0;
   margin: 5px 0;
@@ -359,7 +352,7 @@ button.developbutton {
   position: relative;
   left: 105px;
   top: -3px;
-  padding: 2px;
+  padding: 1px;
   background: rgba(211, 211, 211, 0.5);
   box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
   border-radius: 3px;
@@ -392,7 +385,7 @@ button.integritybutton {
   position: relative;
   left: 105px;
   top: 12px;
-  padding: 2px;
+  padding: 1px;
   background: rgba(211, 211, 211, 0.5);
   box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
   border-radius: 3px;
@@ -406,11 +399,33 @@ button.integritybutton:hover {
 
 /*종합적성값*/
 table.maintotal {
-  font-size: 0.9rem;
+  font-size: 1rem;
   border-collapse: collapse;
   position: relative;
-  top: 30px;
+  top: 15px;
 }
+
+/*범례 테이블 스타일*/
+table.legend {
+  border-collapse: collapse;
+  width: 95%;
+  font-size: 0.9rem;
+  margin-left: 10px;
+  border: none;
+}
+
+table.legend tr.legend2{
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+table.legend tr.legend3{
+  text-align: center;
+  font-size: 0.8rem;
+  width: 100px;
+}
+
+
 
 #mapArea {
   position: absolute;

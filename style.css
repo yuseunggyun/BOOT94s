@@ -1,6 +1,5 @@
 @import "node_modules/ol/ol.css";
 
-
 /* 전역적 스타일 정의 */
 * {
   margin: 0;
@@ -143,11 +142,6 @@ body {
    /* 위 오른 아래 왼쪽 */
 }
 
-
-
-
-
-
 /*행정구역명 스타일 적용*/
 #ymname1 {
   text-align: center;
@@ -155,15 +149,15 @@ body {
   background-color: #efefef;
   border: 1px solid #ccc;
   margin: 10px 0px 0px 0px;
-  width: 100%;
+  width: 99.9%;
 }
 
 /*읍면 스타일 및 호버 스타일 설정*/
 table.ymList {
   background: #efefef;
   border: 1px solid #ccc;
-  font-size: 0.88em;
-  width: 100.8%;
+  font-size: 0.9em;
+  width: 100.5%;
   text-align: center;
 }
 
@@ -226,23 +220,6 @@ table.ymList2 span.active2 {
   display: none;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
- /*수정 부분*/
-
 /* area1 영역 (좌2 사이드) */
 .area1 {
   float: left;
@@ -258,22 +235,23 @@ table.ymList2 span.active2 {
 
 .insidebar {
   text-align: center;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   color: rgb(35,160,250);
   background-color: rgba(252, 209, 79, 0.7);
-  margin: 10px 0px 10px 0px;
+  margin: 0px 0px 5px 0px;
   float: top;
 }
 
 ul.sideinfo {
-  font-size: 1rem;
-  line-height: 2.0;
+  font-size: 0.85rem;
+  line-height: 1.8;
   background: #efefef;
   border: 2px solid rgb(0,152,129);
   margin: 9px 0;
   padding: 10px;
   width: 288px;
   height: 100%;
+
 }
 
 /*사이드바 목록 숨김*/
@@ -283,8 +261,6 @@ ul.sideinfo {
   border-left: 1.5px solid rgba(0, 152, 129, 1);
   z-index: 1px;
 }
-
-
 
 /*평가지표 스타일*/
 .area3 {
@@ -314,11 +290,10 @@ ul.sideinfo1 {
 
 }
 
-
 /* 개발적성평가 점수 스타일 */
 div.area3 table.maindevelop {
   font-size: 0.9rem;
-  margin: -10px 10px 10px 10px;
+  margin: 0px 10px 10px 10px;
 }
 div.area3 table.maindevelop td {
   font-size: 0.85rem;
@@ -341,36 +316,6 @@ div.area3 table.mainintegrity th.integrityscore {
   padding: 5px;
 }
 
-
-
-/* #landinfo {
-  background-color: #fff;
-  border: 1px solid #03ad72;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  padding: 10px;
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-} */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /*상세정보만 스타일 적용*/
 .active-info {
   border-top-left-radius: 13px;
@@ -383,8 +328,7 @@ div.area3 table.mainintegrity th.integrityscore {
   cursor: pointer;
 }
 
-
-/*상세정보만 스타일 적용*/
+/*평가지표만 스타일 적용*/
 .active-info1 {
   border-top-left-radius: 13px;
   border-top-right-radius: 13px;
@@ -396,15 +340,6 @@ div.area3 table.mainintegrity th.integrityscore {
   cursor: pointer;
 }
 
-
-
-
-
-
-
-
-
-
 /*평가지표 테이블 개발*/
 table.maindevelop {
   font-size: 0.75rem;
@@ -415,16 +350,25 @@ table.maindevelop td {
   font-size: 0.75rem;
   padding: 2px 7px;
 }
-
+table.maindevelop th{
+  padding: 5px 0px;
+}
 
 button.developbutton {
   font-size: 0.82rem;
   position: relative;
-  left: 103px;
-  padding: 1.4px;
-  background: rgba(126, 126, 126, 0.5);
+  left: 105px;
+  top: -3px;
+  padding: 2px;
+  background: rgba(211, 211, 211, 0.5);
+  box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+  border-radius: 3px;
 }
-
+button.developbutton:hover {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 3px;
+  padding : 2px;
+  }
 
 /*평가지표 테이블 보전*/
 table.mainintegrity {
@@ -439,13 +383,26 @@ table.mainintegrity  td {
   padding: 2px 7px;
 }
 
+table.mainintegrity th{
+  padding: 5px 3px;
+}
+
 button.integritybutton {
   font-size: 0.82rem;
   position: relative;
-  left: 104px;
-  padding: 1.4px;
-  background: rgba(126, 126, 126, 0.5);
+  left: 105px;
+  top: 12px;
+  padding: 2px;
+  background: rgba(211, 211, 211, 0.5);
+  box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+  border-radius: 3px;
 }
+
+button.integritybutton:hover {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 3px;
+  padding : 2px;
+  }
 
 /*종합적성값*/
 table.maintotal {
@@ -471,9 +428,6 @@ table.maintotal {
   height: 100%;
 }
 
-
-
-
 /*위성영상*/
 #layerSwitcher {
   width: 113px;
@@ -486,25 +440,34 @@ table.maintotal {
   padding: 10px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   
 }
 div#layerSwitcher #btn-road{
   border: none;
   padding: 2px 10px;
-  position: absolute;
+  position: relative;
   left: 20px;
+  top : -5px;
   border-radius: 4px; 
 }
 
 div#layerSwitcher #btn-satellite{
   border: none;
   padding: 2px 10px;
-  position: absolute;
+  position: relative;
   left: 20px;
-  top : 50px;
+  top : 1px;
   border-radius: 4px;
-  
+}
+
+div#layerSwitcher #clearStylesButton{
+  border: none;
+  padding: 2px 10px;
+  position: relative;
+  left: 20px;
+  top : 6px;
+  border-radius: 4px;
 }
 
 div#layerSwitcher button:hover {

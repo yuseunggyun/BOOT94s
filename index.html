@@ -86,12 +86,10 @@
             <tr>
               <td style="width: 50%;"><span id="ym13">미천면</span></td>
               <td colspan="2"><span id="ym14">명석면</span></td>
-              <td></td>
             </tr>
             <tr>
               <td style="width:50%"><span id="ym15">대평면</span></td>
               <td colspan="2"><span id="ym16">수곡면</span></td>
-              <td></td>
             </tr>
             <tr>
               <td><span id="ym17">진주시가</span></td>
@@ -101,7 +99,6 @@
               <td id="information1">
                 <p id="detailInfo1" style="cursor: pointer;">평가지표</p>
               </td>
-
             </tr>
           </table>
           <table class="ymList2">
@@ -167,16 +164,34 @@
             소유권변동사유 : <div style="display: inline-block;" id="owner_re"></div><br>
             소유권변동일자 : <div style="display: inline-block;" id="owner_da"></div><br>
           </div>
+          <div class="landinfo">
+            <h2 class="insidebar"> 각 지표별 점수 </h2>
+            <h3 style="text-align: center;">개발 적성 지표</h3>
+            경사도 : <div style="display: inline-block;" id="score1"></div><br>
+            표고 : <div style="display: inline-block;" id="score2"></div><br>
+            기개발지와의 거리 : <div style="display: inline-block;" id="score3"></div><br>
+            공공편익시설과의 거리 : <div style="display: inline-block;" id="score4"></div><br>
+            지가수준 : <div style="display: inline-block;" id="score5"></div><br>
+            도로와의 거리 : <div style="display: inline-block;" id="score6"></div><br>
+            <hr style="border: 1px dashed rgba(145, 145, 145, 0.87);">
+            <h3 style="text-align: center;">보전 적성 지표</h3>
+            경지정리면적 비율 : <div style="display: inline-block;" id="score7"></div><br>
+            생태&middot;자연도상위등급 비율 : <div style="display: inline-block;" id="score8"></div><br>
+            공적규제지역면적 비율 : <div style="display: inline-block;" id="score9"></div><br>
+            공적규제지역과의 거리 : <div style="display: inline-block;" id="score10"></div><br>
+            농업진흥지역 비율 : <div style="display: inline-block;" id="score11"></div><br>
+            하천&middot;호소&middot;농업용저수지와의 거리 : <div style="display: inline-block;" id="score12"></div><br>
+          </div>
         </ul>
       </div>
     </div>
     <br><br><br><br><br><br><br>
-<!-- area3 영역 (우측 사이드) 평가지표 -->
+    <!-- area3 영역 (우측 사이드) 평가지표 -->
     <div class="area3">
       <div class="sidebar1">
         <ul class="sideinfo1">
-        <h2 class="insidebar1"> 평가 지표 </h2>
-      </ul>
+          <h2 class="insidebar"> 평가 지표 </h2>
+        </ul>
         <div id="score">
           <a href="" id="jinju_link" target="_blank">
             <h3 id="info-title"></h3>
@@ -185,7 +200,7 @@
           <form id="inputForm">
             <table border="1" class="maindevelop" style="width: 100%;">
               <tr>
-                <th colspan="3" class="develop">개발적성 <button type="submit" class="developbutton">입력</button></th>
+                <th colspan="3" class="develop">개발적성</th>
               </tr>
               <tr>
                 <th rowspan="5" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">필수지표</th>
@@ -211,7 +226,7 @@
                     oninput="validateInput(this)"></td>
               </tr>
               <tr>
-                <th rowspan="3" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">&nbsp;&nbsp;선택지표&nbsp;&nbsp;</th>
+                <th rowspan="3" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">선택지표</th>
               </tr>
               <tr>
                 <td><label for="sub5">지가수준 :</label></td>
@@ -219,44 +234,50 @@
                     oninput="validateInput(this)"></td>
               </tr>
               <tr>
-                <td><label for="sub6">도로와의 거리 :</label></td>
+                <td><label for="sub6">도로와의 거리 :</td>
                 <td><input type="number" id="sub6" name="sub6" min="0" max="100" style="width:50px"
                     oninput="validateInput(this)"></td>
               </tr>
               <tr>
-                <th colspan="2" class="developscore" style="text-align: center;"><label for="sub7">종합 개발 점수:
-                  </label>
+                <th colspan="2" class="developscore" style="text-align: center;"><label for="sub7">종합 개발 점수: </label>
                 </th>
                 <td>
                   <p id="sub7" style="text-align: center; font-size: 14px;"></p>
                 </td>
               </tr>
             </table>
+            <div style="text-align: center; ">
+              <button type="button" class="developbutton" onclick="insertDevelop()">입력</button>
+              <button type="button" class="developbutton" onclick="updateDevelop()">수정</button>
+              <button type="button" class="developbutton" onclick="deleteDevelop()">삭제</button>
+              <!-- 개발적성 ID 입력 요소 -->
+              <input type="hidden" id="developId">
+            </div>
             <table border="1" class="mainintegrity" style="width: 100%;">
               <tr>
-                <th colspan="3" class="integrity">보전적성<button type="submit" class="integritybutton">입력</button></th>
+                <th colspan="3" class="integrity">보전적성</th>
               </tr>
               <tr>
                 <th rowspan="5" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">필수지표</th>
               </tr>
               <tr>
                 <td><label for="sub8">경지정리면적 비율 :</label></td>
-                <td><input type="number" id="sub8" name="sub8" min="0" max="100" style="width:50px"
+                <td style="width: 85px;"><input type="number" id="sub8" name="sub8" min="0" max="100" style="width:50px"
                     oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <td><label for="sub9">생태·자연도상위등급 비율 :</label></td>
-                <td><input type="number" id="sub9" name="sub9" min="0" max="100" style="width:50px"
+                <td style="width: 85px;"><input type="number" id="sub9" name="sub9" min="0" max="100" style="width:50px"
                     oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <td><label for="sub10">공적규제지역면적 비율 :</label></td>
-                <td><input type="number" id="sub10" name="sub10" min="0" max="100" style="width:50px"
+                <td style="width: 85px;"><input type="number" id="sub10" name="sub10" min="0" max="100" style="width:50px"
                     oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <td><label for="sub11">공적규제지역과의 거리 :</label></td>
-                <td><input type="number" id="sub11" name="sub11" min="0" max="100" style="width:50px"
+                <td style="width: 85px;"><input type="number" id="sub11" name="sub11" min="0" max="100" style="width:50px"
                     oninput="validateInput(this)"></td>
               </tr>
               <tr>
@@ -264,27 +285,34 @@
               </tr>
               <tr>
                 <td><label for="sub12">농업진흥지역 비율 :</label></td>
-                <td><input type="number" id="sub12" name="sub12" min="0" max="100" style="width:50px"
+                <td style="width: 85px;"><input type="number" id="sub12" name="sub12" min="0" max="100" style="width:50px"
                     oninput="validateInput(this)"></td>
               </tr>
               <tr>
-                <td><label for="sub13">하천·호소·농업용저수지와의 <br>거리:</label></td>
-                <td><input type="number" id="sub13" name="sub13" min="0" max="100" style="width:50px"
+                <td><label for="sub13">하천·호소·농업용저수지와의 거리:</label></td>
+                <td style="width: 85px;"><input type="number" id="sub13" name="sub13" min="0" max="100" style="width:50px"
                     oninput="validateInput(this)"></td>
               </tr>
               <tr>
-                <th colspan="2" class="integrityscore"><label for="sub14" style="text-align: center;">종합 보전 점수:
-                  </label></th>
+                <th colspan="2" class="integrityscore" style="text-align: center;"><label for="sub14">종합 보전 점수: </label>
+                </th>
                 <td>
                   <p id="sub14" style="text-align: center; font-size: 14px;"></p>
                 </td>
               </tr>
             </table>
+            <div style="text-align: center;">
+              <button type="button" class="integritybutton" onclick="insertIntegrity()">입력</button>
+              <button type="button" class="integritybutton" onclick="updateIntegrity()">수정</button>
+              <button type="button" class="integritybutton" onclick="deleteIntegrity()">삭제</button>
+              <!-- 보전적성 ID 입력 요소 -->
+              <input type="hidden" id="integrityId">
+            </div>
             <table class="maintotal" style="width: 100%;">
               <tr>
                 <th class="total">종합 적성 값: </th>
                 <td>
-                  <p id="sub15" style="text-align: center; font-size: 16px;"></p>
+                  <p id="sub15" style="text-align: center; font-size: 14px;"></p>
                 </td>
               </tr>
             </table>
@@ -317,6 +345,8 @@
           <button id="btn-road">일반 지도</button>
           <br>
           <button id="btn-satellite">위성 지도</button>
+          <br>
+          <button id="clearStylesButton">색상 삭제</button>
         </div>
       </div>
     </div>
@@ -336,7 +366,7 @@
       </label>
       <div id="type">
         <button type="button" id="distanceButton">
-          <span class="material-symbols-outlined" >straighten</span>
+          <span class="material-symbols-outlined">straighten</span>
         </button>
         <button type="button" id="areaButton">
           <span class="material-symbols-outlined">pageless</span>
@@ -357,8 +387,6 @@
       <button id="saveButton">폴리곤 저장</button>
       <button id="removeButton">폴리곤 삭제</button>
     </div>
-
-
   </div>
 
   <!-- 동적검색을 위한 script -->
@@ -394,18 +422,32 @@
       xhr.onreadystatechange = function () {
         if (xhr.readyState == 4 && xhr.status == 200) {
           let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기
+          let filteredData = data.filter(line => line.includes(query));
 
-          if (data.length >= 10) {
-            let pnu = data[0];
-            let doValue = data[1];
-            let cada = data[2];
-            let jibun = data[3];
-            let jimok = data[4];
-            let are = data[5];
-            let price = data[6];
-            let owner = data[7];
-            let owner_re = data[8];
-            let owner_da = data[9];
+          if (filteredData.length >= 22) {
+
+            let pnu = data[0] || 0;
+            let doValue = data[1] || 0;
+            let cada = data[2] || 0;
+            let jibun = data[3] || 0;
+            let jimok = data[4] || 0;
+            let are = data[5] || 0;
+            let price = data[6] || 0;
+            let owner = data[7] || 0;
+            let owner_re = data[8] || 0;
+            let owner_da = data[9] || 0;
+            let score1 = data[10] || 0;
+            let score2 = data[11] || 0;
+            let score3 = data[12] || 0;
+            let score4 = data[13] || 0;
+            let score5 = data[14] || 0;
+            let score6 = data[15] || 0;
+            let score7 = data[16] || 0;
+            let score8 = data[17] || 0;
+            let score9 = data[18] || 0;
+            let score10 = data[19] || 0;
+            let score11 = data[20] || 0;
+            let score12 = data[21] || 0;
 
             let html = `
               PNU : <div style="display: inline-block;" id="pnu">${pnu}</div><br>
@@ -418,6 +460,18 @@
               소유구분 : <div style="display: inline-block;" id="owner">${owner}</div><br>
               소유권변동사유 : <div style="display: inline-block;" id="owner_re">${owner_re}</div><br>
               소유권변동일자 : <div style="display: inline-block;" id="owner_da">${owner_da}</div><br>
+              경사도 : <div style="display: inline-block;" id="score1">${score1}</div><br>
+              표고 : <div style="display: inline-block;" id="score2">${score2}</div><br>
+              기개발지와의 거리 : <div style="display: inline-block;" id="score3">${score3}</div><br>
+              공공편익시설과의 거리 : <div style="display: inline-block;" id="score4">${score4}</div><br>
+              지가수준 : <div style="display: inline-block;" id="score5">${score5}</div><br>
+              도로와의 거리 : <div style="display: inline-block;" id="score6">${score6}</div><br>
+              경지정리면적 비율 : <div style="display: inline-block;" id="score7">${score7}</div><br>
+              생태·자연도상위등급 비율 : <div style="display: inline-block;" id="score8">${score8}</div><br>
+              공적규제지역면적 비율 : <div style="display: inline-block;" id="score9">${score9}</div><br>
+              공적규제지역과의 거리 : <div style="display: inline-block;" id="score10">${score10}</div><br>
+              농입진흥지역 비율 : <div style="display: inline-block;" id="score11">${score11}</div><br>
+              하천·호소·농업용저수지와의 거리 : <div style="display: inline-block;" id="score12">${score12}</div><br>
               `;
 
             let insidebar = document.querySelector(".landinfo");

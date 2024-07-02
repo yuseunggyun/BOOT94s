@@ -18,11 +18,11 @@ import { Select, defaults } from 'ol/interaction';
 import { pointerMove, platformModifierKeyOnly } from 'ol/events/condition';
 
 // 팝업창을 위해
-import { Overlay} from 'ol';
+import { Overlay } from 'ol';
 
 // dragbox를 위해
 import DragBox from 'ol/interaction/DragBox';
-import {getWidth} from 'ol/extent.js';
+import { getWidth } from 'ol/extent.js';
 
 // 지도상 거리 면적 계산기능을 위해
 import { Circle, RegularShape, Text } from 'ol/style.js';
@@ -107,7 +107,9 @@ const Style6100 = new Style({
 // Vector 레이어 생성
 const vectorLayer = new VectorLayer({
   source: wfsSource,
-  style: defaultStyle,
+  style: function (feature) {
+    return feature.get('customStyle') || defaultStyle; // customStyle을 참조, 없으면 defaultStyle 사용
+  },
 });
 
 // Geoserver에서 Vector 레이어 불러오기
@@ -452,10 +454,6 @@ function setDrawType(type) {
   addInteraction(type);
 }
 
-document.getElementById('distanceButton').addEventListener('click', function () {
-  setDrawType('LineString');
-});
-
 document.getElementById('areaButton').addEventListener('click', function () {
   setDrawType('Polygon');
 });
@@ -485,6 +483,170 @@ clearPrevious.addEventListener('change', function () {
     source.clear();
   }
 });
+
+// 새로운 폴리곤 생성 저장 삭제
+const createPolygonButton = document.getElementById('createPolygonButton');
+const saveButton = document.getElementById('saveButton');
+const removeButton = document.getElementById('removeButton');
+
+// 스타일을 정의합니다.
+const polygonStyle = new Style({
+  fill: new Fill({
+    color: 'rgba(0, 0, 0, 0.2)',
+  }),
+  stroke: new Stroke({
+    color: 'rgba(255, 255, 255, 0.8)',
+    lineDash: [10, 10],
+    width: 2,
+  }),
+  image: new Circle({
+    radius: 5,
+    stroke: new Stroke({
+      color: 'rgba(0, 0, 0, 0.8)',
+      width: 3
+    }),
+    fill: new Fill({
+      color: 'rgba(0, 0, 0, 0.3)',
+    }),
+  }),
+});
+
+// 새로운 폴리곤 스타일 정의
+const noStyle = null;  // 스타일을 적용하지 않기 위해 null로 설정
+
+let isDistanceMode = false;  // 거리 재기 모드인지 여부를 나타내는 플래그
+
+document.getElementById('distanceButton').addEventListener('click', function () {
+  setDrawType('LineString');
+  isDistanceMode = true;  // 거리 재기 모드 활성화
+});
+
+// 벡터 레이어의 소스를 정의합니다.
+const polygonSource = new VectorSource();
+
+// 선택 상호작용을 정의합니다.
+const selectInteraction = new Select();
+map.addInteraction(selectInteraction);
+
+// 그리기 interaction을 관리할 변수를 선언합니다.
+let polygonDraw;
+
+// 그리기 interaction을 추가하는 함수입니다.
+function setPolygonInteraction(drawType) {
+  //호버 비활성화
+  if (typeof mouseHoverSelect !== 'undefined') {
+    map.removeInteraction(mouseHoverSelect);
+  }
+  // 선택 기능 비활성화
+  if (typeof select !== 'undefined') {
+    map.removeInteraction(select);
+  }
+  polygonDraw = new Draw({
+    source: polygonSource,
+    type: drawType,
+    style: isDistanceMode ? noStyle : polygonStyle,  // 거리 재기 모드에서는 스타일 적용 안 함
+  });
+  polygonDraw.on('drawend', function (event) {
+    event.feature.set('keep', true);
+    resetPolygonInteraction(); // 그리기 완료 후 상호작용 리셋
+  });
+  map.addInteraction(polygonDraw);
+}
+
+// 그리기 완료 후 상호작용 리셋 함수
+function resetPolygonInteraction() {
+  if (polygonDraw) {
+    map.removeInteraction(polygonDraw);
+    polygonDraw = null;
+  }
+  if (typeof mouseHoverSelect !== 'undefined') {
+    map.addInteraction(mouseHoverSelect);
+  }
+  if (typeof select !== 'undefined') {
+    map.addInteraction(select);
+  }
+}
+
+// 그리기 유형을 설정하는 함수
+function addPolygonDrawType(type) {
+  if (polygonDraw) {
+    map.removeInteraction(polygonDraw);
+    polygonDraw = null;
+  }
+  setPolygonInteraction(type);
+}
+
+// '폴리곤 생성' 버튼 클릭 시 그리기 유형을 폴리곤으로 설정
+createPolygonButton.addEventListener('click', function () {
+  addPolygonDrawType('Polygon');
+  isDistanceMode = false; // 거리 재기 모드 비활성화
+});
+
+// '폴리곤 저장' 버튼 클릭 시 폴리곤을 로컬 스토리지에 저장
+saveButton.addEventListener('click', function () {
+  const features = polygonSource.getFeatures();
+  if (features.length > 0) {
+    const format = new GeoJSON();
+    const geojsonStr = format.writeFeatures(features);
+    localStorage.setItem('savedPolygons', geojsonStr);
+    alert('폴리곤이 저장되었습니다!');
+  } else {
+    alert('저장할 폴리곤이 없습니다.');
+  }
+});
+
+// '폴리곤 삭제' 버튼 클릭 시 선택한 폴리곤을 제거합니다.
+removeButton.addEventListener('click', function () {
+  const selectedFeatures = selectInteraction.getFeatures();
+  if (selectedFeatures.getLength() > 0) {
+    selectedFeatures.forEach(function (feature) {
+      polygonSource.removeFeature(feature);
+    });
+    selectedFeatures.clear();
+    alert('선택된 폴리곤이 삭제되었습니다.');
+  } else {
+    alert('삭제할 폴리곤이 선택되지 않았습니다.');
+  }
+});
+
+// 로컬 스토리지에서 저장된 폴리곤을 불러오는 함수입니다.
+function loadSavedPolygons() {
+  const savedPolygons = localStorage.getItem('savedPolygons');
+  if (savedPolygons) {
+    const format = new GeoJSON();
+    const features = format.readFeatures(savedPolygons, {
+      featureProjection: map.getView().getProjection(),
+    });
+    polygonSource.addFeatures(features);
+  }
+}
+
+// 페이지 로드 시 저장된 폴리곤을 불러옵니다.
+loadSavedPolygons();
+
+// Escape 키를 누를 때 그리기 interaction을 종료합니다.
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape' && polygonDraw) {
+    map.removeInteraction(polygonDraw);
+    polygonDraw = null;
+  }
+  //호버 활성화
+  if (typeof mouseHoverSelect !== 'undefined') {
+    map.addInteraction(mouseHoverSelect);
+  }
+  // 선택 기능 활성화
+  if (typeof select !== 'undefined') {
+   map.addInteraction(select);
+  }
+});
+
+// 폴리곤 소스를 위한 벡터 레이어를 추가합니다.
+const polygonLayer = new VectorLayer({
+  source: polygonSource,
+  style: polygonStyle,
+});
+
+map.addLayer(polygonLayer);
 
 // Mouse Hover 활성화
 map.addInteraction(mouseHoverSelect);
@@ -525,7 +687,6 @@ function calculateSum(){
   const sub6 = parseFloat($('#sub6').val()) || 0;
 
   const sum1 = sub1 + sub2 + sub3 + sub4 + sub5 + sub6;
-
   $('#sub7').text(sum1);
 
   // 보전적성값
@@ -537,24 +698,173 @@ function calculateSum(){
   const sub13 = parseFloat($('#sub13').val()) || 0;
 
   const sum2 = sub8 + sub9 + sub10 + sub11 + sub12 + sub13;
-
   $('#sub14').text(sum2);
 
   // 종합적성값
-  const totalSum = sum1 + sum2;
+  const totalSum = sum1 - sum2;
   $('#sub15').text(totalSum);
 
 // Select 객체를 종합적성값 구간에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
-  if (totalSum < 30) {
-    feature.setStyle(Style0030);
-  } else if (totalSum >= 30 && totalSum < 60) {
-    feature.setStyle(Style3160);
-  } else {
-    feature.setStyle(Style6100);
-  }
+    let style;
+    if (totalSum < 30) {
+      style = Style0030;
+    } else if (totalSum >= 30 && totalSum < 60) {
+      style = Style3160;
+    } else {
+      style = Style6100;
+    }
+    feature.setStyle(style);
+    feature.set('customStyle', style); // 스타일 정보를 feature 객체에 저장
+
+    // 로컬 스토리지에 스타일 정보 저장
+    const featureId = feature.getId();
+    const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
+    savedStyles[featureId] = style.getFill().getColor();
+    localStorage.setItem('savedStyles', JSON.stringify(savedStyles));
   });
 }
+
+// 지도 초기화 시 기존 저장된 스타일 적용
+function loadSavedStyles() {
+  const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
+  vectorLayer.getSource().getFeatures().forEach(function (feature) {
+    const featureId = feature.getId();
+    const styleColor = savedStyles[featureId];
+    if (styleColor) {
+      let style;
+      if (styleColor === 'rgba(251, 199, 28, 0.5)') {
+        style = Style0030;
+      } else if (styleColor === 'rgba(251, 121, 28, 0.5)') {
+        style = Style3160;
+      } else if (styleColor === 'rgba(251, 28, 28, 0.5)') {
+        style = Style6100;
+      }
+      feature.setStyle(style);
+      feature.set('customStyle', style);
+    }
+  });
+}
+
+// 페이지 로드 시 저장된 스타일 로드
+document.addEventListener('DOMContentLoaded', loadSavedStyles);
+
+// 저장된 스타일 삭제
+function clearSavedStyles() {
+  localStorage.removeItem('savedStyles');
+  vectorLayer.getSource().getFeatures().forEach(function (feature) {
+    feature.setStyle(defaultStyle); // 기본 스타일로 초기화
+    feature.unset('customStyle');
+  });
+}
+
+// 버튼 클릭 시 저장된 스타일 삭제
+document.getElementById('clearStylesButton').addEventListener('click', clearSavedStyles);
+
+// JQuery를 이용하여 적성값 입력, 수정, 삭제
+// 개발적성
+$(document).ready(function() {
+  window.insertDevelop = function() {
+      let data = gatherDevelopData();
+      $.post('insertDevelop.jsp', data)
+          .done(function(response) {
+              alert('개발적성 입력 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성 입력 실패');
+          });
+  };
+
+  window.updateDevelop = function() {
+      let data = gatherDevelopData();
+      data.id = getDevelopId();
+      $.post('updateDevelop.jsp', data)
+          .done(function(response) {
+              alert('개발적성 수정 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성 수정 실패');
+          });
+  };
+
+  window.deleteDevelop = function() {
+      let id = getDevelopId();
+      $.post('deleteDevelop.jsp', { id: id })
+          .done(function(response) {
+              alert('개발적성 삭제 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성 삭제 실패');
+          });
+  };
+
+  // 보전적성
+  window.insertIntegrity = function() {
+      let data = gatherIntegrityData();
+      $.post('insertIntegrity.jsp', data)
+          .done(function(response) {
+              alert('보전적성 입력 성공');
+          })
+          .fail(function(error) {
+              alert('보전적성 입력 실패');
+          });
+  };
+
+  window.updateIntegrity = function() {
+      let data = gatherIntegrityData();
+      data.id = getIntegrityId();
+      $.post('updateIntegrity.jsp', data)
+          .done(function(response) {
+              alert('보전적성 수정 성공');
+          })
+          .fail(function(error) {
+              alert('보전적성 수정 실패');
+          });
+  };
+
+  window.deleteIntegrity = function() {
+      let id = getIntegrityId();
+      $.post('deleteIntegrity.jsp', { id: id })
+          .done(function(response) {
+              alert('보전적성 삭제 성공');
+          })
+          .fail(function(error) {
+              alert('보전적성 삭제 실패');
+          });
+  };
+
+  // 각 요소들의 값 가져오기
+  function gatherDevelopData() {
+      return {
+          sub1: $('#sub1').val(),
+          sub2: $('#sub2').val(),
+          sub3: $('#sub3').val(),
+          sub4: $('#sub4').val(),
+          sub5: $('#sub5').val(),
+          sub6: $('#sub6').val()
+      };
+  }
+
+  function gatherIntegrityData() {
+      return {
+          sub8: $('#sub8').val(),
+          sub9: $('#sub9').val(),
+          sub10: $('#sub10').val(),
+          sub11: $('#sub11').val(),
+          sub12: $('#sub12').val(),
+          sub13: $('#sub13').val()
+      };
+  }
+  // 개발적성 ID를 입력받는 요소에서 값을 가져옴
+  function getDevelopId() {
+    return $('#developId').val(); 
+  }
+
+  // 보전적성 ID를 입력받는 요소에서 값을 가져옴
+  function getIntegrityId() {
+    return $('#integrityId').val(); 
+  }
+});
 
 // 보조키(Ctrl)를 사용한 DragBox 기능
 const dragBox = new DragBox({
@@ -786,6 +1096,18 @@ function showFeatureInfo(feature) {
       소유구분 : <div style="display: inline-block;" id="owner">${properties.jinju_ow_1}</div><br>
       소유권변동사유 : <div style="display: inline-block;" id="owner_re">${properties.jinju_ch_1}</div><br>
       소유권변동일자 : <div style="display: inline-block;" id="owner_da">${properties.jinju_ch_2}</div><br>
+      경사도 : <div style="display: inline-block;" id="score1">${properties.sub1}</div><br>
+      표고 : <div style="display: inline-block;" id="score2">${properties.sub2}</div><br>
+      기개발지와의 거리 : <div style="display: inline-block;" id="score3">${properties.sub3}</div><br>
+      공공편익시설과의 거리 : <div style="display: inline-block;" id="score4">${properties.sub4}</div><br>
+      지가수준 : <div style="display: inline-block;" id="score5">${properties.sub5}</div><br>
+      도로와의 거리 : <div style="display: inline-block;" id="score6">${properties.sub6}</div><br>
+      경지정리면적 비율 : <div style="display: inline-block;" id="score7">${properties.sub8}</div><br>
+      생태·자연도상위등급 비율 : <div style="display: inline-block;" id="score8">${properties.sub9}</div><br>
+      공적규제지역면적 비율 : <div style="display: inline-block;" id="score9">${properties.sub10}</div><br>
+      공적규제지역과의 거리 : <div style="display: inline-block;" id="score10">${properties.sub11}</div><br>
+      농업진흥지역 비율 : <div style="display: inline-block;" id="score11">${properties.sub12}</div><br>
+      하천·호소·농업용저수지와의 거리 : <div style="display: inline-block;" id="score12">${properties.sub13}</div><br>
     `;
     insidebar.innerHTML = html;
   }
@@ -808,6 +1130,9 @@ map.on('click', (e) =>
     // 점찍은 곳의 자료를 찾아냄. geoserver에서는 WFS를 위해 위치 정보 뿐 아니라 메타데이터도 같이 보내고 있음
     map.forEachFeatureAtPixel(e.pixel, (feature) =>
       {
+        var id = feature.get('id');
+        $('#developId').val(id); // 개발적성 ID로 설정
+        $('#integrityId').val(id); // 보전적성 ID로 설정
 
     // JQUERY를 이용한 area1 창에 정보 표시
     $(document).ready(function(){
@@ -871,10 +1196,84 @@ map.on('click', (e) =>
     })
 
     $(document).ready(function(){
+      var clickedFeature11 = feature.get('sub1');
+      $('#score1').text(clickedFeature11);
+      $('#score1').attr('data-clicked-feature-sub1', clickedFeature11);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature12 = feature.get('sub2');
+      $('#score2').text(clickedFeature12);
+      $('#score2').attr('data-clicked-feature-sub2', clickedFeature12);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature13 = feature.get('sub3');
+      $('#score3').text(clickedFeature13);
+      $('#score3').attr('data-clicked-feature-sub3', clickedFeature13);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature14 = feature.get('sub4');
+      $('#score4').text(clickedFeature14);
+      $('#score4').attr('data-clicked-feature-sub4', clickedFeature14);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature15 = feature.get('sub5');
+      $('#score5').text(clickedFeature15);
+      $('#score5').attr('data-clicked-feature-sub5', clickedFeature15);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature16 = feature.get('sub6');
+      $('#score6').text(clickedFeature16);
+      $('#score6').attr('data-clicked-feature-sub6', clickedFeature16);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature17 = feature.get('sub8');
+      $('#score7').text(clickedFeature17);
+      $('#score7').attr('data-clicked-feature-sub8', clickedFeature17);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature18 = feature.get('sub9');
+      $('#score8').text(clickedFeature18);
+      $('#score8').attr('data-clicked-feature-sub9', clickedFeature18);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature19 = feature.get('sub10');
+      $('#score9').text(clickedFeature19);
+      $('#score9').attr('data-clicked-feature-sub10', clickedFeature19);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature20 = feature.get('sub11');
+      $('#score10').text(clickedFeature20);
+      $('#score10').attr('data-clicked-feature-sub11', clickedFeature20);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature21 = feature.get('sub12');
+      $('#score11').text(clickedFeature21);
+      $('#score11').attr('data-clicked-feature-sub12', clickedFeature21);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature22 = feature.get('sub13');
+      $('#score12').text(clickedFeature22);
+      $('#score12').attr('data-clicked-feature-sub13', clickedFeature22);
+    })
+
+    $(document).ready(function(){
       $('#inputForm').on('submit', function(event){
         event.preventDefault();
         calculateSum();
       });
+    // 입력 값이 변경될 때마다 calculateSum 함수 호출
+    $('#sub1, #sub2, #sub3, #sub4, #sub5, #sub6, #sub8, #sub9, #sub10, #sub11, #sub12, #sub13').on('input', calculateSum);
     });
   });
 });

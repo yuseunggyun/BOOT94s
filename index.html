@@ -194,7 +194,7 @@
             <form id="inputForm">
               <table border="1" class="maindevelop" style="width: 100%;">
                 <tr>
-                  <th colspan="4" class="develop">개발적성 <button type="submit" class="developbutton">종합점수</button></th>
+                  <th colspan="4" class="develop">개발적성</th>
                 </tr>
                 <tr>
                   <th rowspan="5" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">필수지표</th>
@@ -248,7 +248,7 @@
               </table>
               <table border="1" class="mainintegrity" style="width: 100%;">
                 <tr>
-                  <th colspan="3" class="integrity">보전적성 <button type="submit" class="integritybutton">종합점수</button></th>
+                  <th colspan="3" class="integrity">보전적성</th>
                 </tr>
                 <tr>
                   <th rowspan="5" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">필수지표</th>
@@ -413,6 +413,7 @@
           let filteredData = data.filter(line => line.includes(query));
 
           if (filteredData.length >= 22) {
+            
             let pnu = data[0] || 0;
             let doValue = data[1] || 0;
             let cada = data[2] || 0;

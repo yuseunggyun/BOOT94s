@@ -18,11 +18,11 @@ import { Select, defaults } from 'ol/interaction';
 import { pointerMove, platformModifierKeyOnly } from 'ol/events/condition';
 
 // 팝업창을 위해
-import { Overlay} from 'ol';
+import { Overlay } from 'ol';
 
 // dragbox를 위해
 import DragBox from 'ol/interaction/DragBox';
-import {getWidth} from 'ol/extent.js';
+import { getWidth } from 'ol/extent.js';
 
 // 지도상 거리 면적 계산기능을 위해
 import { Circle, RegularShape, Text } from 'ol/style.js';
@@ -706,13 +706,13 @@ function calculateSum(){
 
 // Select 객체를 종합적성값 구간에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
-  if (totalSum < 30) {
-    feature.setStyle(Style0030);
-  } else if (totalSum >= 30 && totalSum < 60) {
-    feature.setStyle(Style3160);
-  } else {
-    feature.setStyle(Style6100);
-  }
+    if (totalSum < 30) {
+      feature.setStyle(Style0030);
+    } else if (totalSum >= 30 && totalSum < 60) {
+      feature.setStyle(Style3160);
+    } else {
+      feature.setStyle(Style6100);
+    }
   });
 }
 
@@ -1227,6 +1227,8 @@ map.on('click', (e) =>
         event.preventDefault();
         calculateSum();
       });
+    // 입력 값이 변경될 때마다 calculateSum 함수 호출
+    $('#sub1, #sub2, #sub3, #sub4, #sub5, #sub6, #sub8, #sub9, #sub10, #sub11, #sub12, #sub13').on('input', calculateSum);
     });
   });
 });

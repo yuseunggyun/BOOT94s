@@ -416,25 +416,34 @@ table.maintotal {
   padding: 10px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  font-size: 1.1rem;
+  font-size: 0.8rem;
   
 }
 div#layerSwitcher #btn-road{
   border: none;
   padding: 2px 10px;
-  position: absolute;
+  position: relative;
   left: 20px;
+  top : -5px;
   border-radius: 4px; 
 }
 
 div#layerSwitcher #btn-satellite{
   border: none;
   padding: 2px 10px;
-  position: absolute;
+  position: relative;
   left: 20px;
-  top : 50px;
+  top : 1px;
   border-radius: 4px;
-  
+}
+
+div#layerSwitcher #clearStylesButton{
+  border: none;
+  padding: 2px 10px;
+  position: relative;
+  left: 20px;
+  top : 6px;
+  border-radius: 4px;
 }
 
 div#layerSwitcher button:hover {

@@ -107,7 +107,9 @@ const Style6100 = new Style({
 // Vector 레이어 생성
 const vectorLayer = new VectorLayer({
   source: wfsSource,
-  style: defaultStyle,
+  style: function (feature) {
+    return feature.get('customStyle') || defaultStyle; // customStyle을 참조, 없으면 defaultStyle 사용
+  },
 });
 
 // Geoserver에서 Vector 레이어 불러오기
@@ -685,7 +687,6 @@ function calculateSum(){
   const sub6 = parseFloat($('#sub6').val()) || 0;
 
   const sum1 = sub1 + sub2 + sub3 + sub4 + sub5 + sub6;
-
   $('#sub7').text(sum1);
 
   // 보전적성값
@@ -697,7 +698,6 @@ function calculateSum(){
   const sub13 = parseFloat($('#sub13').val()) || 0;
 
   const sum2 = sub8 + sub9 + sub10 + sub11 + sub12 + sub13;
-
   $('#sub14').text(sum2);
 
   // 종합적성값
@@ -706,15 +706,60 @@ function calculateSum(){
 
 // Select 객체를 종합적성값 구간에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
+    let style;
     if (totalSum < 30) {
-      feature.setStyle(Style0030);
+      style = Style0030;
     } else if (totalSum >= 30 && totalSum < 60) {
-      feature.setStyle(Style3160);
+      style = Style3160;
     } else {
-      feature.setStyle(Style6100);
+      style = Style6100;
+    }
+    feature.setStyle(style);
+    feature.set('customStyle', style); // 스타일 정보를 feature 객체에 저장
+
+    // 로컬 스토리지에 스타일 정보 저장
+    const featureId = feature.getId();
+    const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
+    savedStyles[featureId] = style.getFill().getColor();
+    localStorage.setItem('savedStyles', JSON.stringify(savedStyles));
+  });
+}
+
+// 지도 초기화 시 기존 저장된 스타일 적용
+function loadSavedStyles() {
+  const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
+  vectorLayer.getSource().getFeatures().forEach(function (feature) {
+    const featureId = feature.getId();
+    const styleColor = savedStyles[featureId];
+    if (styleColor) {
+      let style;
+      if (styleColor === 'rgba(251, 199, 28, 0.5)') {
+        style = Style0030;
+      } else if (styleColor === 'rgba(251, 121, 28, 0.5)') {
+        style = Style3160;
+      } else if (styleColor === 'rgba(251, 28, 28, 0.5)') {
+        style = Style6100;
+      }
+      feature.setStyle(style);
+      feature.set('customStyle', style);
     }
   });
 }
+
+// 페이지 로드 시 저장된 스타일 로드
+document.addEventListener('DOMContentLoaded', loadSavedStyles);
+
+// 저장된 스타일 삭제
+function clearSavedStyles() {
+  localStorage.removeItem('savedStyles');
+  vectorLayer.getSource().getFeatures().forEach(function (feature) {
+    feature.setStyle(defaultStyle); // 기본 스타일로 초기화
+    feature.unset('customStyle');
+  });
+}
+
+// 버튼 클릭 시 저장된 스타일 삭제
+document.getElementById('clearStylesButton').addEventListener('click', clearSavedStyles);
 
 // JQuery를 이용하여 적성값 입력, 수정, 삭제
 // 개발적성

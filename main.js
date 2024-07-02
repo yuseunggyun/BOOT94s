@@ -1051,6 +1051,18 @@ function showFeatureInfo(feature) {
       소유구분 : <div style="display: inline-block;" id="owner">${properties.jinju_ow_1}</div><br>
       소유권변동사유 : <div style="display: inline-block;" id="owner_re">${properties.jinju_ch_1}</div><br>
       소유권변동일자 : <div style="display: inline-block;" id="owner_da">${properties.jinju_ch_2}</div><br>
+      경사도 : <div style="display: inline-block;" id="score1">${properties.sub1}</div><br>
+      표고 : <div style="display: inline-block;" id="score2">${properties.sub2}</div><br>
+      기개발지와의 거리 : <div style="display: inline-block;" id="score3">${properties.sub3}</div><br>
+      공공편익시설과의 거리 : <div style="display: inline-block;" id="score4">${properties.sub4}</div><br>
+      지가수준 : <div style="display: inline-block;" id="score5">${properties.sub5}</div><br>
+      도로와의 거리 : <div style="display: inline-block;" id="score6">${properties.sub6}</div><br>
+      경지정리면적 비율 : <div style="display: inline-block;" id="score7">${properties.sub8}</div><br>
+      생태·자연도상위등급 비율 : <div style="display: inline-block;" id="score8">${properties.sub9}</div><br>
+      공적규제지역면적 비율 : <div style="display: inline-block;" id="score9">${properties.sub10}</div><br>
+      공적규제지역과의 거리 : <div style="display: inline-block;" id="score10">${properties.sub11}</div><br>
+      농업진흥지역 비율 : <div style="display: inline-block;" id="score11">${properties.sub12}</div><br>
+      하천·호소·농업용저수지와의 거리 : <div style="display: inline-block;" id="score12">${properties.sub13}</div><br>
     `;
     insidebar.innerHTML = html;
   }
@@ -1136,6 +1148,78 @@ map.on('click', (e) =>
       var clickedFeature10 = feature.get('jinju_ch_2');
       $('#owner_da').text(clickedFeature10);
       $('#owner_da').attr('data-clicked-feature-jinju_ch_2', clickedFeature10);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature11 = feature.get('sub1');
+      $('#score1').text(clickedFeature11);
+      $('#score1').attr('data-clicked-feature-sub1', clickedFeature11);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature12 = feature.get('sub2');
+      $('#score2').text(clickedFeature12);
+      $('#score2').attr('data-clicked-feature-sub2', clickedFeature12);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature13 = feature.get('sub3');
+      $('#score3').text(clickedFeature13);
+      $('#score3').attr('data-clicked-feature-sub3', clickedFeature13);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature14 = feature.get('sub4');
+      $('#score4').text(clickedFeature14);
+      $('#score4').attr('data-clicked-feature-sub4', clickedFeature14);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature15 = feature.get('sub5');
+      $('#score5').text(clickedFeature15);
+      $('#score5').attr('data-clicked-feature-sub5', clickedFeature15);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature16 = feature.get('sub6');
+      $('#score6').text(clickedFeature16);
+      $('#score6').attr('data-clicked-feature-sub6', clickedFeature16);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature17 = feature.get('sub8');
+      $('#score7').text(clickedFeature17);
+      $('#score7').attr('data-clicked-feature-sub8', clickedFeature17);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature18 = feature.get('sub9');
+      $('#score8').text(clickedFeature18);
+      $('#score8').attr('data-clicked-feature-sub9', clickedFeature18);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature19 = feature.get('sub10');
+      $('#score9').text(clickedFeature19);
+      $('#score9').attr('data-clicked-feature-sub10', clickedFeature19);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature20 = feature.get('sub11');
+      $('#score10').text(clickedFeature20);
+      $('#score10').attr('data-clicked-feature-sub11', clickedFeature20);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature21 = feature.get('sub12');
+      $('#score11').text(clickedFeature21);
+      $('#score11').attr('data-clicked-feature-sub12', clickedFeature21);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature22 = feature.get('sub13');
+      $('#score12').text(clickedFeature22);
+      $('#score12').attr('data-clicked-feature-sub13', clickedFeature22);
     })
 
     $(document).ready(function(){

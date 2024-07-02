@@ -243,8 +243,8 @@ table.ymList2 span.active2 {
 }
 
 ul.sideinfo {
-  font-size: 1rem;
-  line-height: 2.0;
+  font-size: 0.9rem;
+  line-height: 1.8;
   background: #efefef;
   border: 2px solid rgb(0,152,129);
   margin: 9px 0;

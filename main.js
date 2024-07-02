@@ -6,182 +6,113 @@ import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import OSM from 'ol/source/OSM';
 import { fromLonLat } from 'ol/proj';
-import Point from 'ol/geom/Point';
 
 // geoserver에서 WFS 방식으로 가져오기 위해
 import { Vector as VectorLayer } from 'ol/layer';
 import VectorSource from 'ol/source/Vector';
 import { GeoJSON } from 'ol/format';
-import { Style } from 'ol/style';
-import { Circle } from 'ol/style';
-import { Stroke } from 'ol/style';
-import { Fill } from 'ol/style';
+import { Style, Stroke, Fill } from 'ol/style';
 
 // view와의 상호작용을 위해 
 import { Select, defaults } from 'ol/interaction';
-import { pointerMove, click, platformModifierKeyOnly } from 'ol/events/condition';
+import { pointerMove, platformModifierKeyOnly } from 'ol/events/condition';
 
 // 팝업창을 위해
-import { Overlay} from 'ol';
+import { Overlay } from 'ol';
 
 // dragbox를 위해
 import DragBox from 'ol/interaction/DragBox';
-import {getWidth} from 'ol/extent.js';
-import { bbox } from 'ol/loadingstrategy';
+import { getWidth } from 'ol/extent.js';
 
+// 지도상 거리 면적 계산기능을 위해
+import { Circle, RegularShape, Text } from 'ol/style.js';
+import { Draw, Modify } from 'ol/interaction.js';
+import { LineString, Point } from 'ol/geom.js';
+import { getArea, getLength } from 'ol/sphere.js';
+
+// 위성지도를 가져오기 위해
+import 'ol/ol.css';
+import XYZ from 'ol/source/XYZ';
 
 // url을 변수로 빼서 따로 설정해 줘도 됨
-const g_url = "http://localhost:42888";
+const g_url = "http://localhost:42888";// 내부용
+// const g_url = "http://172.20.221.180:42888";// 외부용
 
 let wfsSource = null;
 let wfsLayer = null;
 
 // 목록 클릭 시 CQL 필터 만드는 함수 추가 
 function makeFilter(method) {
-  let filter = "";
-
-  // 읍면 지역 필터
-  if ('ym01' == method)
-    filter = "jinju_do_1 LIKE '%문산읍%'";
-
-  else if ('ym02' == method)
-    filter = "jinju_do_1 LIKE '%내동면%'";
-
-  else if ('ym03' == method)
-    filter = "jinju_do_1 LIKE '%정촌면%'";
-
-  else if ('ym04' == method)
-    filter = "jinju_do_1 LIKE '%금곡면%'";
-
-  else if ('ym05' == method)
-    filter = "jinju_do_1 LIKE '%진성면%'";
-
-  else if ('ym06' == method)
-    filter = "jinju_do_1 LIKE '%일반성면%'";
-
-  else if ('ym07' == method)
-    filter = "jinju_do_1 LIKE '%이반성면%'";
-
-  else if ('ym08' == method)
-    filter = "jinju_do_1 LIKE '%사봉면%'";
-
-  else if ('ym09' == method)
-    filter = "jinju_do_1 LIKE '%지수면%'";
-
-  else if ('ym10' == method)
-    filter = "jinju_do_1 LIKE '%대곡면%'";
-
-  else if ('ym11' == method)
-    filter = "jinju_do_1 LIKE '%금산면%'";
-
-  else if ('ym12' == method)
-    filter = "jinju_do_1 LIKE '%집현면%'";
-
-  else if ('ym13' == method)
-    filter = "jinju_do_1 LIKE '%미천면%'";
-
-  else if ('ym14' == method)
-    filter = "jinju_do_1 LIKE '%명석면%'";
-
-  else if ('ym15' == method)
-    filter = "jinju_do_1 LIKE '%대평면%'";
-
-  else if ('ym16' == method)
-    filter = "jinju_do_1 LIKE '%수곡면%'";
-
-  // 동지역 필터
-  else if ('dong1' == method)
-    filter = "jinju_do_1 LIKE '%귀곡동%' OR jinju_do_1 LIKE '%판문동%'";
-
-  else if ('dong2' == method)
-    filter = "jinju_do_1 LIKE '%이현동%' OR jinju_do_1 LIKE '%유곡동%' OR jinju_do_1 LIKE '%상봉동%'";
-
-  else if ('dong3' == method)
-    filter = "jinju_do_1 LIKE '%하촌동%' OR jinju_do_1 LIKE '%장재동%' OR jinju_do_1 LIKE '%봉래동%'";
-
-  else if ('dong4' == method)
-    filter = "jinju_do_1 LIKE '%평거동%' OR jinju_do_1 LIKE '%신안동%'";
-
-  else if ('dong5' == method)
-    filter = "jinju_do_1 LIKE '%봉곡동%' OR jinju_do_1 LIKE '%인사동%' OR jinju_do_1 LIKE '%주약동%'";
-
-  else if ('dong6' == method)
-    filter = "jinju_do_1 LIKE '%계동%' OR jinju_do_1 LIKE '%중안동%' OR jinju_do_1 LIKE '%본성동%'";
-
-  else if ('dong7' == method)
-    filter = "jinju_do_1 LIKE '%평안동%' OR jinju_do_1 LIKE '%대안동%' OR jinju_do_1 LIKE '%동성동%'";
-
-  else if ('dong8' == method)
-    filter = "jinju_do_1 LIKE '%수정동%' OR jinju_do_1 LIKE '%장대동%' OR jinju_do_1 LIKE '%옥봉동%'";
-
-  else if ('dong9' == method)
-    filter = "jinju_do_1 LIKE '%초전동%' OR jinju_do_1 LIKE '%하대동%'";
-
-  else if ('dong10' == method)
-    filter = "jinju_do_1 LIKE '%망경동%' OR jinju_do_1 LIKE '%강남동%' OR jinju_do_1 LIKE '%칠암동%'";
-
-  else if ('dong11' == method)
-    filter = "jinju_do_1 LIKE '%상대동%' OR jinju_do_1 LIKE '%상평동%'";
-
-  else if ('dong12' == method)
-    filter = "jinju_do_1 LIKE '%남성동%' OR jinju_do_1 LIKE '%가좌동%'";
-
-  else if ('dong13' == method)
-    filter = "jinju_do_1 LIKE '%호탄동%' OR jinju_do_1 LIKE '%충무공동%'";
-
-  return filter;
+  const filters = {
+    // 읍면 지역 필터
+    'ym01': "jinju_do_1 LIKE '%문산읍%'",
+    'ym02': "jinju_do_1 LIKE '%내동면%'",
+    'ym03': "jinju_do_1 LIKE '%정촌면%'",
+    'ym04': "jinju_do_1 LIKE '%금곡면%'",
+    'ym05': "jinju_do_1 LIKE '%진성면%'",
+    'ym06': "jinju_do_1 LIKE '%일반성면%'",
+    'ym07': "jinju_do_1 LIKE '%이반성면%'",
+    'ym08': "jinju_do_1 LIKE '%사봉면%'",
+    'ym09': "jinju_do_1 LIKE '%지수면%'",
+    'ym10': "jinju_do_1 LIKE '%대곡면%'",
+    'ym11': "jinju_do_1 LIKE '%금산면%'",
+    'ym12': "jinju_do_1 LIKE '%집현면%'",
+    'ym13': "jinju_do_1 LIKE '%미천면%'",
+    'ym14': "jinju_do_1 LIKE '%명석면%'",
+    'ym15': "jinju_do_1 LIKE '%대평면%'",
+    'ym16': "jinju_do_1 LIKE '%수곡면%'",
+    // 동 지역 필터
+    'dong1': "jinju_do_1 LIKE '%귀곡동%' OR jinju_do_1 LIKE '%판문동%'",
+    'dong2': "jinju_do_1 LIKE '%이현동%' OR jinju_do_1 LIKE '%유곡동%' OR jinju_do_1 LIKE '%상봉동%'",
+    'dong3': "jinju_do_1 LIKE '%하촌동%' OR jinju_do_1 LIKE '%장재동%' OR jinju_do_1 LIKE '%봉래동%'",
+    'dong4': "jinju_do_1 LIKE '%평거동%' OR jinju_do_1 LIKE '%신안동%'",
+    'dong5': "jinju_do_1 LIKE '%봉곡동%' OR jinju_do_1 LIKE '%인사동%' OR jinju_do_1 LIKE '%주약동%'",
+    'dong6': "jinju_do_1 LIKE '%계동%' OR jinju_do_1 LIKE '%중안동%' OR jinju_do_1 LIKE '%본성동%'",
+    'dong7': "jinju_do_1 LIKE '%평안동%' OR jinju_do_1 LIKE '%대안동%' OR jinju_do_1 LIKE '%동성동%'",
+    'dong8': "jinju_do_1 LIKE '%수정동%' OR jinju_do_1 LIKE '%장대동%' OR jinju_do_1 LIKE '%옥봉동%'",
+    'dong9': "jinju_do_1 LIKE '%초전동%' OR jinju_do_1 LIKE '%하대동%'",
+    'dong10': "jinju_do_1 LIKE '%망경동%' OR jinju_do_1 LIKE '%강남동%' OR jinju_do_1 LIKE '%칠암동%'",
+    'dong11': "jinju_do_1 LIKE '%상대동%' OR jinju_do_1 LIKE '%상평동%'",
+    'dong12': "jinju_do_1 LIKE '%남성동%' OR jinju_do_1 LIKE '%가좌동%'",
+    'dong13': "jinju_do_1 LIKE '%호탄동%' OR jinju_do_1 LIKE '%충무공동%'"
+  };
+  return filters[method] || "";
 }
 
 // 나중에 조건에 따라 스타일을 다르게 주기 위해 스타일 개별 지정
+// 기본 스타일
 const defaultStyle = new Style({
-  fill: new Fill({
-    color: 'rgba(75, 240, 26, 0.5)',
-  }),
-  stroke: new Stroke({
-    color: 'rgba(0, 0, 0, 1.0)',
-    width: 1,
-  }),
+  fill: new Fill({ color: 'rgba(75, 240, 26, 0.5)' }),
+  stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-// 0~30 스타일
+// 0~30 값 스타일
 const Style0030 = new Style({
-  fill: new Fill({
-    color: 'rgba(251, 199, 28, 0.5)',
-  }),
-  stroke: new Stroke({
-    color: 'rgba(0, 0, 0, 1.0)',
-    width: 1,
-  }),
+  fill: new Fill({ color: 'rgba(251, 199, 28, 0.5)' }),
+  stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-// 31~60 스타일
+//31~60 값 스타일
 const Style3160 = new Style({
-  fill: new Fill({
-    color: 'rgba(251, 121, 28, 0.5)',
-  }),
-  stroke: new Stroke({
-    color: 'rgba(0, 0, 0, 1.0)',
-    width: 1,
-  }),
+  fill: new Fill({ color: 'rgba(251, 121, 28, 0.5)' }),
+  stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-// 61~100 스타일
+//61~100 값 스타일
 const Style6100 = new Style({
-  fill: new Fill({
-    color: 'rgba(251, 28, 28, 0.5)',
-  }),
-  stroke: new Stroke({
-    color: 'rgba(0, 0, 0, 1.0)',
-    width: 1,
-  }),
+  fill: new Fill({ color: 'rgba(251, 28, 28, 0.5)' }),
+  stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
 // Vector 레이어 생성
 const vectorLayer = new VectorLayer({
   source: wfsSource,
-  style: defaultStyle,
+  style: function (feature) {
+    return feature.get('customStyle') || defaultStyle; // customStyle을 참조, 없으면 defaultStyle 사용
+  },
 });
 
+// Geoserver에서 Vector 레이어 불러오기
 let newWfsSource;
 
 function makeWFSSource(method) {
@@ -189,8 +120,7 @@ function makeWFSSource(method) {
     (
       {
         format: new GeoJSON(),
-        url: encodeURI(g_url + "/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature" +
-          "&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=" + makeFilter(method))
+        url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=${makeFilter(method)}`)
       }
     );
 
@@ -198,10 +128,6 @@ function makeWFSSource(method) {
 }
 
 makeWFSSource("");
-
-wfsLayer = new VectorLayer({
-  source: wfsSource,
-});
 
 // popup 창 설정
 const popup = document.getElementById('popup');
@@ -229,16 +155,45 @@ const mouseHoverSelect = new Select({
   })
 });
 
-// OSM 지도를 osmLayer 변수에 담기
+// OSM 레이어 생성
 const osmLayer = new TileLayer({
   source: new OSM()
+});
+
+// 벡터 소스와 레이어 정의
+const polygonSource = new VectorSource();
+const vectorLayerP = new VectorLayer({
+  source: polygonSource,
+  style: new Style({
+    fill: new Fill({
+      color: 'rgba(255, 255, 255, 0.6)',
+    }),
+    stroke: new Stroke({
+      color: '#ffcc33',
+      width: 2,
+    }),
+  }),
 });
 
 // 지도 생성
 const map = new Map({
   layers: [
     osmLayer,   // 배경 지도
-    vectorLayer // 백터 레이어
+    // 위성 지도
+    new TileLayer({
+      source: new OSM(),
+      visible: true,
+      title: 'RoadMap'
+    }),
+    new TileLayer({
+      source: new XYZ({
+        url: 'http://mt1.google.com/vt/lyrs=y&x={x}&y={y}&z={z}'
+      }),
+      visible: false,
+      title: 'SatelliteMap'
+    }),
+    vectorLayer, // 백터 레이어
+    vectorLayerP
   ],
   target: 'map',
   overlays: [overlay],
@@ -247,8 +202,122 @@ const map = new Map({
     zoom: 10,
     constrainRotation: 16,
     interactions: defaults().extend([mouseHoverSelect])
-  }),
+  })
 });
+
+// 위성 지도 레이어
+const roadLayer = map.getLayers().getArray().find(layer => layer.get('title') === 'RoadMap');
+const satelliteLayer = map.getLayers().getArray().find(layer => layer.get('title') === 'SatelliteMap');
+
+document.getElementById('btn-road').addEventListener('click', function () {
+  roadLayer.setVisible(true);
+  satelliteLayer.setVisible(false);
+});
+
+document.getElementById('btn-satellite').addEventListener('click', function () {
+  roadLayer.setVisible(false);
+  satelliteLayer.setVisible(true);
+});
+
+let draw; // 전역으로 설정하여 나중에 제거할 수 있게 함
+
+function addInteraction(drawType) {
+  draw = new Draw({
+    source: polygonSource,
+    type: drawType,
+  });
+  map.addInteraction(draw);
+
+  draw.on('drawend', function (event) {
+    const feature = event.feature;
+    feature.set('id', -1);  // 기본 ID 설정
+  });
+}
+
+// '폴리곤 생성' 버튼 클릭 이벤트 핸들러
+document.getElementById('createPolygonButton').addEventListener('click', function () {
+  map.removeInteraction(draw);  // 기존 인터랙션 제거
+  addInteraction('Polygon');  // 새로운 폴리곤 그리기 인터랙션 추가
+});
+
+// 폴리곤을 서버에 저장하는 함수
+function savePolygonToServer() {
+  const features = polygonSource.getFeatures();
+  if (features.length > 0) {
+    const format = new GeoJSON();
+    const geojsonStr = format.writeFeatures(features);
+    const geojson = JSON.parse(geojsonStr);
+
+    geojson.features.forEach(feature => {
+      const data = new URLSearchParams();
+      data.append('id', feature.properties.id);
+      data.append('geom', JSON.stringify(feature.geometry));
+
+      fetch('insertPolygon.jsp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data.toString(),
+      })
+      .then(response => response.text())
+      .then(result => {
+        console.log('Polygon saved:', result);
+        alert('폴리곤이 데이터베이스에 성공적으로 저장되었습니다!');
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('데이터베이스에 폴리곤을 저장하는 데 실패했습니다.');
+      });
+    });
+  } else {
+    alert('저장할 폴리곤이 없습니다.');
+  }
+}
+
+document.getElementById('saveButton').addEventListener('click', savePolygonToServer);
+
+// 그리기 완료 후 상호작용 리셋 함수
+function resetPolygonInteraction() {
+  if (draw) {
+    map.removeInteraction(draw);
+    draw = null;
+  }
+  if (typeof mouseHoverSelect !== 'undefined') {
+    map.addInteraction(mouseHoverSelect);
+  }
+  if (typeof select !== 'undefined') {
+    map.addInteraction(select);
+  }
+}
+
+document.addEventListener('keydown', function (event) {
+  if (event.key === 'Escape') {
+    if (draw) {
+      map.removeInteraction(draw);
+      draw = null;
+    }
+  }
+});
+
+// Geoserver에서 Vector 레이어 불러오기
+let polyWfsSource;
+
+function makeWFSSource1(method) {
+  polyWfsSource = new VectorSource
+    (
+      {
+        format: new GeoJSON(),
+        url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:make&outputFormat=application/json&CQL_FILTER=${makeFilter(method)}`)
+      }
+    );
+
+  vectorLayer.setSource(polyWfsSource);
+}
+
+makeWFSSource1("");
+
+
 
 // Mouse Hover 활성화
 map.addInteraction(mouseHoverSelect);
@@ -260,7 +329,7 @@ const selectedStyle = new Style({
   stroke: new Stroke({
     color: 'rgba(255, 255, 255, 0.7)',
     width: 3,
-  }),
+  })
 });
 
 // Select 도구
@@ -269,7 +338,7 @@ const select = new Select({
     const color = feature.get('COLOR_BIO') || 'rgba(108, 169, 131, 0.5';
     selectedStyle.getFill().setColor(color);
     return selectedStyle;
-  },
+  }
 });
 
 // Select 활성화
@@ -278,27 +347,195 @@ map.addInteraction(select);
 // Select 피처 값 가져오기
 const selectedFeatures = select.getFeatures();
 
-// JQuery를 이용하여 HTML 입력 값(SUM) 가져옴
+// JQuery를 이용하여 HTML 입력 값(SUM) 가져옴 
+// 개발적성값
 function calculateSum(){
-  var sub1 = parseFloat($('#sub1').val());
-  var sub2 = parseFloat($('#sub2').val());
-  var sub3 = parseFloat($('#sub3').val());
+  const sub1 = parseFloat($('#sub1').val()) || 0;
+  const sub2 = parseFloat($('#sub2').val()) || 0;
+  const sub3 = parseFloat($('#sub3').val()) || 0;
+  const sub4 = parseFloat($('#sub4').val()) || 0;
+  const sub5 = parseFloat($('#sub5').val()) || 0;
+  const sub6 = parseFloat($('#sub6').val()) || 0;
 
-  var sum = sub1 + sub2 + sub3;
+  const sum1 = sub1 + sub2 + sub3 + sub4 + sub5 + sub6;
+  $('#sub7').text(sum1);
 
-  $('#result').text('총합: ' + sum);
+  // 보전적성값
+  const sub8 = parseFloat($('#sub8').val()) || 0;
+  const sub9 = parseFloat($('#sub9').val()) || 0;
+  const sub10 = parseFloat($('#sub10').val()) || 0;
+  const sub11 = parseFloat($('#sub11').val()) || 0;
+  const sub12 = parseFloat($('#sub12').val()) || 0;
+  const sub13 = parseFloat($('#sub13').val()) || 0;
 
-// Select 객체를 조건에 따라 다른 색상을 줌
+  const sum2 = sub8 + sub9 + sub10 + sub11 + sub12 + sub13;
+  $('#sub14').text(sum2);
+
+  // 종합적성값
+  const totalSum = sum1 - sum2;
+  $('#sub15').text(totalSum);
+
+// Select 객체를 종합적성값 구간에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
-  if (sum < 30) {
-    feature.setStyle(Style0030);
-  } else if (sum > 30 && sum < 60) {
-    feature.setStyle(Style3160);
-  } else {
-    feature.setStyle(Style6100);
-  }
+    let style;
+    if (totalSum < 30) {
+      style = Style0030;
+    } else if (totalSum >= 30 && totalSum < 60) {
+      style = Style3160;
+    } else {
+      style = Style6100;
+    }
+    feature.setStyle(style);
+    feature.set('customStyle', style); // 스타일 정보를 feature 객체에 저장
+
+    // 로컬 스토리지에 스타일 정보 저장
+    const featureId = feature.getId();
+    const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
+    savedStyles[featureId] = style.getFill().getColor();
+    localStorage.setItem('savedStyles', JSON.stringify(savedStyles));
   });
 }
+
+// 지도 초기화 시 기존 저장된 스타일 적용
+function loadSavedStyles() {
+  const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
+  vectorLayer.getSource().getFeatures().forEach(function (feature) {
+    const featureId = feature.getId();
+    const styleColor = savedStyles[featureId];
+    if (styleColor) {
+      let style;
+      if (styleColor === 'rgba(251, 199, 28, 0.5)') {
+        style = Style0030;
+      } else if (styleColor === 'rgba(251, 121, 28, 0.5)') {
+        style = Style3160;
+      } else if (styleColor === 'rgba(251, 28, 28, 0.5)') {
+        style = Style6100;
+      }
+      feature.setStyle(style);
+      feature.set('customStyle', style);
+    }
+  });
+}
+
+// 페이지 로드 시 저장된 스타일 로드
+document.addEventListener('DOMContentLoaded', loadSavedStyles);
+
+// 저장된 스타일 삭제
+function clearSavedStyles() {
+  localStorage.removeItem('savedStyles');
+  vectorLayer.getSource().getFeatures().forEach(function (feature) {
+    feature.setStyle(defaultStyle); // 기본 스타일로 초기화
+    feature.unset('customStyle');
+  });
+}
+
+// 버튼 클릭 시 저장된 스타일 삭제
+document.getElementById('clearStylesButton').addEventListener('click', clearSavedStyles);
+
+// JQuery를 이용하여 적성값 입력, 수정, 삭제
+// 개발적성
+$(document).ready(function() {
+  window.insertDevelop = function() {
+      let data = gatherDevelopData();
+      $.post('insertDevelop.jsp', data)
+          .done(function(response) {
+              alert('개발적성 입력 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성 입력 실패');
+          });
+  };
+
+  window.updateDevelop = function() {
+      let data = gatherDevelopData();
+      data.id = getDevelopId();
+      $.post('updateDevelop.jsp', data)
+          .done(function(response) {
+              alert('개발적성 수정 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성 수정 실패');
+          });
+  };
+
+  window.deleteDevelop = function() {
+      let id = getDevelopId();
+      $.post('deleteDevelop.jsp', { id: id })
+          .done(function(response) {
+              alert('개발적성 삭제 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성 삭제 실패');
+          });
+  };
+
+  // 보전적성
+  window.insertIntegrity = function() {
+      let data = gatherIntegrityData();
+      $.post('insertIntegrity.jsp', data)
+          .done(function(response) {
+              alert('보전적성 입력 성공');
+          })
+          .fail(function(error) {
+              alert('보전적성 입력 실패');
+          });
+  };
+
+  window.updateIntegrity = function() {
+      let data = gatherIntegrityData();
+      data.id = getIntegrityId();
+      $.post('updateIntegrity.jsp', data)
+          .done(function(response) {
+              alert('보전적성 수정 성공');
+          })
+          .fail(function(error) {
+              alert('보전적성 수정 실패');
+          });
+  };
+
+  window.deleteIntegrity = function() {
+      let id = getIntegrityId();
+      $.post('deleteIntegrity.jsp', { id: id })
+          .done(function(response) {
+              alert('보전적성 삭제 성공');
+          })
+          .fail(function(error) {
+              alert('보전적성 삭제 실패');
+          });
+  };
+
+  // 각 요소들의 값 가져오기
+  function gatherDevelopData() {
+      return {
+          sub1: $('#sub1').val(),
+          sub2: $('#sub2').val(),
+          sub3: $('#sub3').val(),
+          sub4: $('#sub4').val(),
+          sub5: $('#sub5').val(),
+          sub6: $('#sub6').val()
+      };
+  }
+
+  function gatherIntegrityData() {
+      return {
+          sub8: $('#sub8').val(),
+          sub9: $('#sub9').val(),
+          sub10: $('#sub10').val(),
+          sub11: $('#sub11').val(),
+          sub12: $('#sub12').val(),
+          sub13: $('#sub13').val()
+      };
+  }
+  // 개발적성 ID를 입력받는 요소에서 값을 가져옴
+  function getDevelopId() {
+    return $('#developId').val(); 
+  }
+
+  // 보전적성 ID를 입력받는 요소에서 값을 가져옴
+  function getIntegrityId() {
+    return $('#integrityId').val(); 
+  }
+});
 
 // 보조키(Ctrl)를 사용한 DragBox 기능
 const dragBox = new DragBox({
@@ -311,9 +548,9 @@ map.addInteraction(dragBox);
 // Drag하여 Select한 객체를 조건에 따라 다른 색상을 줌
 dragBox.on('boxend', function () {
   selectedFeatures.forEach(function (feature) {
-    if (sum < 30) {
+    if (sum1 < 30) {
       feature.setStyle(Style0030);
-    } else if (sum > 30 && sum < 60) {
+    } else if (sum1 > 30 && sum1 < 60) {
       feature.setStyle(Style3160);
     } else {
       feature.setStyle(Style6100);
@@ -323,7 +560,6 @@ dragBox.on('boxend', function () {
   // DragBox 부분은 geoserver에서 제공하는 문서를 보고 참고함.
   const boxExtent = dragBox.getGeometry().getExtent();
 
-  // if the extent crosses the antimeridian process each world separately
   const worldExtent = map.getView().getProjection().getExtent();
   const worldWidth = getWidth(worldExtent);
   const startWorld = Math.floor((boxExtent[0] - worldExtent[0]) / worldWidth);
@@ -382,10 +618,6 @@ selectedFeatures.on(['add', 'remove'], function () {
   }
 });
 
-
-// *** 검색창 관련 코드 *** //
-
-
 // 검색 창과 관련된 HTML 요소를 가져옴
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
@@ -408,7 +640,7 @@ let vectorLayer1 = new VectorLayer({
   }),
 });
 
-map.addLayer(vectorLayer1); // 초기에는 레이어 추가
+map.addLayer(vectorLayer1); // 초기에 레이어 추가
 
 // 검색결과 지도에 추가
 function addFeatureToMapNew(features) {
@@ -441,16 +673,15 @@ searchInput.addEventListener('keyup', function(event) {
     const geoServerUrl = `${g_url}/geoserver/jinjuWS/ows`;
 
     // 검색어
-    const searchText1 = searchText + '%'; // 검색어로 시작하는 경우
-    const searchText2 = '%' + searchText; // 검색어로 끝나는 경우
+    const searchText1 = `${searchText}%`; // 검색어로 시작하는 경우
+    const searchText2 = `%${searchText}`; // 검색어로 끝나는 경우
     const exactValue = searchText; // 정확히 일치하는 경우
 
     const filter = `(jinju_do_2 LIKE '${searchText1}' OR jinju_do_2 LIKE '${searchText2}' OR jinju_do_2 = '${exactValue}')`;
     const fullUrl = `${geoServerUrl}?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=${encodeURIComponent(filter)}`;
 
-    console.log(fullUrl); // 최종 URL 확인용 로그
+    // console.log(fullUrl); // 최종 URL 확인용 로그
 
-    
 // jQuery를 이용한 AJAX 요청
 
 fetch(fullUrl)
@@ -483,7 +714,6 @@ fetch(fullUrl)
       });
 
       addFeatureToMapNew(data); // 지도에 피처 추가하는 함수 호출
-      showFeatureInfo(feature); // 토지 정보 표시 함수 호출
 
     } else {
       searchResults.innerHTML = '<li>검색 결과가 없습니다</li>';
@@ -495,14 +725,32 @@ fetch(fullUrl)
     searchResults.innerHTML = '<li>데이터를 불러오는 중 오류가 발생했습니다</li>';
   });
 
-
-
   } else {
     searchResults.innerHTML = '';
     vectorSource1.clear();
   }
 });
 
+// 검색 결과를 처리하고 지도에 표시하는 함수
+function displaySearchResults(data) {
+  // 검색 결과 select 요소 변경 시 처리
+  const selectElement = searchResults.querySelector('select');
+  if (selectElement) {
+    selectElement.addEventListener('change', function() {
+      const selectedIndex = selectElement.value;
+      const selectedFeature = data.features[selectedIndex]; // 선택된 feature 가져오기
+
+      handleSelectChange(selectedFeature); // 선택된 항목 처리 함수 호출
+    });
+  }
+}
+
+// 선택된 항목 처리 함수 (select 요소 변경 시)
+function handleSelectChange(feature) {
+  clearSelection(); // 이전 선택 초기화
+  addFeatureToMapNew(feature); // 선택된 항목 지도에 표시 함수 호출
+  showFeatureInfo(feature); // 토지 정보 표시 함수 호출
+}
 
 // 토지 정보 표시 함수
 function showFeatureInfo(feature) {
@@ -519,11 +767,22 @@ function showFeatureInfo(feature) {
       소유구분 : <div style="display: inline-block;" id="owner">${properties.jinju_ow_1}</div><br>
       소유권변동사유 : <div style="display: inline-block;" id="owner_re">${properties.jinju_ch_1}</div><br>
       소유권변동일자 : <div style="display: inline-block;" id="owner_da">${properties.jinju_ch_2}</div><br>
+      경사도 : <div style="display: inline-block;" id="score1">${properties.sub1}</div><br>
+      표고 : <div style="display: inline-block;" id="score2">${properties.sub2}</div><br>
+      기개발지와의 거리 : <div style="display: inline-block;" id="score3">${properties.sub3}</div><br>
+      공공편익시설과의 거리 : <div style="display: inline-block;" id="score4">${properties.sub4}</div><br>
+      지가수준 : <div style="display: inline-block;" id="score5">${properties.sub5}</div><br>
+      도로와의 거리 : <div style="display: inline-block;" id="score6">${properties.sub6}</div><br>
+      경지정리면적 비율 : <div style="display: inline-block;" id="score7">${properties.sub8}</div><br>
+      생태·자연도상위등급 비율 : <div style="display: inline-block;" id="score8">${properties.sub9}</div><br>
+      공적규제지역면적 비율 : <div style="display: inline-block;" id="score9">${properties.sub10}</div><br>
+      공적규제지역과의 거리 : <div style="display: inline-block;" id="score10">${properties.sub11}</div><br>
+      농업진흥지역 비율 : <div style="display: inline-block;" id="score11">${properties.sub12}</div><br>
+      하천·호소·농업용저수지와의 거리 : <div style="display: inline-block;" id="score12">${properties.sub13}</div><br>
     `;
     insidebar.innerHTML = html;
   }
 }
-
 
 // 이전 선택 초기화 함수
 function clearSelection() {
@@ -534,141 +793,17 @@ function clearSelection() {
   }
 }
 
-
-
-
-
-// 읍면 사이드바 클릭 시 이벤트 발생
-document.getElementById('ym01').onclick = () => {
-  // console.log('ym01 clicked');
-  makeWFSSource('ym01');
-}
-
-document.getElementById('ym02').onclick = () => {
-  makeWFSSource('ym02');
-}
-
-document.getElementById('ym03').onclick = () => {
-  makeWFSSource('ym03');
-}
-
-document.getElementById('ym04').onclick = () => {
-  makeWFSSource('ym04');
-}
-
-document.getElementById('ym05').onclick = () => {
-  makeWFSSource('ym05');
-}
-
-document.getElementById('ym06').onclick = () => {
-  makeWFSSource('ym06');
-}
-
-document.getElementById('ym07').onclick = () => {
-  makeWFSSource('ym07');
-}
-
-document.getElementById('ym08').onclick = () => {
-  makeWFSSource('ym08');
-}
-
-document.getElementById('ym09').onclick = () => {
-  makeWFSSource('ym09');
-}
-
-document.getElementById('ym10').onclick = () => {
-  makeWFSSource('ym10');
-}
-
-document.getElementById('ym11').onclick = () => {
-  makeWFSSource('ym11');
-}
-
-document.getElementById('ym12').onclick = () => {
-  makeWFSSource('ym12');
-}
-
-document.getElementById('ym13').onclick = () => {
-  makeWFSSource('ym13');
-}
-
-document.getElementById('ym14').onclick = () => {
-  makeWFSSource('ym14');
-}
-
-document.getElementById('ym15').onclick = () => {
-  makeWFSSource('ym15');
-}
-
-document.getElementById('ym16').onclick = () => {
-  makeWFSSource('ym16');
-}
-
-// 동 사이드바 클릭 시 이벤트 발생
-document.getElementById('dong1').onclick = () => {
-  // console.log('dong1 clicked');
-  makeWFSSource('dong1');
-}
-
-document.getElementById('dong2').onclick = () => {
-  makeWFSSource('dong2');
-}
-
-document.getElementById('dong3').onclick = () => {
-  makeWFSSource('dong3');
-}
-
-document.getElementById('dong4').onclick = () => {
-  makeWFSSource('dong4');
-}
-
-document.getElementById('dong5').onclick = () => {
-  makeWFSSource('dong5');
-}
-
-document.getElementById('dong6').onclick = () => {
-  makeWFSSource('dong6');
-}
-
-document.getElementById('dong7').onclick = () => {
-  makeWFSSource('dong7');
-}
-
-document.getElementById('dong8').onclick = () => {
-  makeWFSSource('dong8');
-}
-
-document.getElementById('dong9').onclick = () => {
-  makeWFSSource('dong9');
-}
-
-document.getElementById('dong10').onclick = () => {
-  makeWFSSource('dong10');
-}
-
-document.getElementById('dong11').onclick = () => {
-  makeWFSSource('dong11');
-}
-
-document.getElementById('dong12').onclick = () => {
-  makeWFSSource('dong12');
-}
-
-document.getElementById('dong13').onclick = () => {
-  makeWFSSource('dong13');
-}
-
 // 지도 클릭 이벤트. 오버레이를 처리
 map.on('click', (e) =>
   {
-    console.log(e);
-
-    // 일단 창을 닫음. 이렇게 하면 자료가 없는 곳을 찍으면 창이 닫히는 효과가 나옴
-    // overlay.setPosition(undefined);
+    // console.log(e);
 
     // 점찍은 곳의 자료를 찾아냄. geoserver에서는 WFS를 위해 위치 정보 뿐 아니라 메타데이터도 같이 보내고 있음
-    map.forEachFeatureAtPixel(e.pixel, (feature, layer) =>
+    map.forEachFeatureAtPixel(e.pixel, (feature) =>
       {
+        var id = feature.get('id');
+        $('#developId').val(id); // 개발적성 ID로 설정
+        $('#integrityId').val(id); // 보전적성 ID로 설정
 
     // JQUERY를 이용한 area1 창에 정보 표시
     $(document).ready(function(){
@@ -732,10 +867,110 @@ map.on('click', (e) =>
     })
 
     $(document).ready(function(){
+      var clickedFeature11 = feature.get('sub1');
+      $('#score1').text(clickedFeature11);
+      $('#score1').attr('data-clicked-feature-sub1', clickedFeature11);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature12 = feature.get('sub2');
+      $('#score2').text(clickedFeature12);
+      $('#score2').attr('data-clicked-feature-sub2', clickedFeature12);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature13 = feature.get('sub3');
+      $('#score3').text(clickedFeature13);
+      $('#score3').attr('data-clicked-feature-sub3', clickedFeature13);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature14 = feature.get('sub4');
+      $('#score4').text(clickedFeature14);
+      $('#score4').attr('data-clicked-feature-sub4', clickedFeature14);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature15 = feature.get('sub5');
+      $('#score5').text(clickedFeature15);
+      $('#score5').attr('data-clicked-feature-sub5', clickedFeature15);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature16 = feature.get('sub6');
+      $('#score6').text(clickedFeature16);
+      $('#score6').attr('data-clicked-feature-sub6', clickedFeature16);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature17 = feature.get('sub8');
+      $('#score7').text(clickedFeature17);
+      $('#score7').attr('data-clicked-feature-sub8', clickedFeature17);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature18 = feature.get('sub9');
+      $('#score8').text(clickedFeature18);
+      $('#score8').attr('data-clicked-feature-sub9', clickedFeature18);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature19 = feature.get('sub10');
+      $('#score9').text(clickedFeature19);
+      $('#score9').attr('data-clicked-feature-sub10', clickedFeature19);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature20 = feature.get('sub11');
+      $('#score10').text(clickedFeature20);
+      $('#score10').attr('data-clicked-feature-sub11', clickedFeature20);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature21 = feature.get('sub12');
+      $('#score11').text(clickedFeature21);
+      $('#score11').attr('data-clicked-feature-sub12', clickedFeature21);
+    })
+
+    $(document).ready(function(){
+      var clickedFeature22 = feature.get('sub13');
+      $('#score12').text(clickedFeature22);
+      $('#score12').attr('data-clicked-feature-sub13', clickedFeature22);
+    })
+
+    $(document).ready(function(){
       $('#inputForm').on('submit', function(event){
         event.preventDefault();
         calculateSum();
       });
-    });    
+    // 입력 값이 변경될 때마다 calculateSum 함수 호출
+    $('#sub1, #sub2, #sub3, #sub4, #sub5, #sub6, #sub8, #sub9, #sub10, #sub11, #sub12, #sub13').on('input', calculateSum);
+    });
   });
+});
+
+// 읍면 사이드바 클릭 시 이벤트 처리
+const ymList = Array.from({ length: 16 }, (_, i) => `ym${String(i + 1).padStart(2, '0')}`);
+  ymList.forEach(ym => {
+    const ymElement = document.getElementById(ym);
+    if (ymElement) {
+      ymElement.onclick = () => {
+        console.log(`Clicked: ${ym}`);  // 클릭된 ID 확인용 로그
+        makeWFSSource(ym);
+      };
+    } else {
+      console.error(`Element not found: ${ym}`);  // 요소가 없을 경우 로그 출력
+    }
+  });
+  
+// 동 사이드바 클릭 시 이벤트 발생
+const dongList = Array.from({ length: 13 }, (_, i) => `dong${i + 1}`);
+dongList.forEach(dong => {
+  const dongElement = document.getElementById(dong);
+  if (dongElement) {
+    dongElement.onclick = () => {
+      console.log(`Clicked: ${dong}`);
+      makeWFSSource(dong);
+    };
+  }
 });

@@ -39,7 +39,6 @@ const g_url = "http://localhost:42888";// 내부용
 // const g_url = "http://172.20.221.180:42888";// 외부용
 
 let wfsSource = null;
-let wfsLayer = null;
 
 // 목록 클릭 시 CQL 필터 만드는 함수 추가 
 function makeFilter(method) {
@@ -104,7 +103,7 @@ const Style6100 = new Style({
   stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-// Vector 레이어 생성
+// 벡터 레이어 생성
 const vectorLayer = new VectorLayer({
   source: wfsSource,
   style: function (feature) {
@@ -112,26 +111,52 @@ const vectorLayer = new VectorLayer({
   },
 });
 
-// Geoserver에서 Vector 레이어 불러오기
+// Geoserver에서 "진주" 벡터 레이어 가져오기
 let newWfsSource;
-
 function makeWFSSource(method) {
-  newWfsSource = new VectorSource
-    (
-      {
-        format: new GeoJSON(),
-        url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=${makeFilter(method)}`)
-      }
-    );
+  newWfsSource = new VectorSource({
+    format: new GeoJSON(),
+    url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=${makeFilter(method)}`)
+  });
 
   vectorLayer.setSource(newWfsSource);
 }
 
-makeWFSSource("");
+// 폴리곤 레이어 소스 정의
+const polygonSource = new VectorSource();
+const polygonLayer = new VectorLayer({
+  source: polygonSource,
+  style: new Style({
+    fill: new Fill({
+      color: 'rgba(255, 255, 255, 0.6)',
+    }),
+    stroke: new Stroke({
+      color: '#ffcc33',
+      width: 2,
+    }),
+  }),
+});
+
+
+
+
+
+// geoserver에서 "폴리곤" 벡터 레이어 가져오기
+function makePolygonWFSSource() {
+  const polyWfsSource = new VectorSource({
+    format: new GeoJSON(),
+    url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:make&outputFormat=application/json`)
+  });
+
+  polygonLayer.setSource(polyWfsSource);
+}
+
+makeWFSSource(""); // 초기 로드 시 필터 없는 기존 레이어 로드
+makePolygonWFSSource(); // 초기 로드 시 필터 없는 폴리곤 레이어 로드
+
 
 // popup 창 설정
 const popup = document.getElementById('popup');
-
 const overlay = new Overlay({
   element: popup,
   autoPan: {
@@ -160,21 +185,6 @@ const osmLayer = new TileLayer({
   source: new OSM()
 });
 
-// 벡터 소스와 레이어 정의
-const polygonSource = new VectorSource();
-const vectorLayerP = new VectorLayer({
-  source: polygonSource,
-  style: new Style({
-    fill: new Fill({
-      color: 'rgba(255, 255, 255, 0.6)',
-    }),
-    stroke: new Stroke({
-      color: '#ffcc33',
-      width: 2,
-    }),
-  }),
-});
-
 // 지도 생성
 const map = new Map({
   layers: [
@@ -192,15 +202,14 @@ const map = new Map({
       visible: false,
       title: 'SatelliteMap'
     }),
-    vectorLayer, // 백터 레이어
-    vectorLayerP
+    vectorLayer, // "진주" 레이어
+    polygonLayer // "폴리곤" 레이어
   ],
   target: 'map',
   overlays: [overlay],
   view: new View({
     center: fromLonLat([128.1298, 35.2052]),
     zoom: 10,
-    constrainRotation: 16,
     interactions: defaults().extend([mouseHoverSelect])
   })
 });
@@ -219,11 +228,45 @@ document.getElementById('btn-satellite').addEventListener('click', function () {
   satelliteLayer.setVisible(true);
 });
 
-let draw; // 전역으로 설정하여 나중에 제거할 수 있게 함
+// 선택 상호작용 추가
+const selectInteraction = new Select();
+map.addInteraction(selectInteraction);
 
+
+// 폴리곤을 담을 소스 생성
+const polygonSource1 = new VectorSource();
+
+// 폴리곤 레이어 생성
+const polygonLayer1 = new VectorLayer({
+  source: polygonSource1,
+  style: new Style({
+    fill: new Fill({
+      color: 'rgba(255, 255, 255, 0.6)',
+    }),
+    stroke: new Stroke({
+      color: '#ffcc33',
+      width: 2,
+    }),
+  }),
+});
+
+// 폴리곤 레이어를 지도에 추가
+map.addLayer(polygonLayer1);
+
+
+// '폴리곤 생성' 버튼 클릭 이벤트
+document.getElementById('createPolygonButton').addEventListener('click', function () {
+  if (draw) {
+    map.removeInteraction(draw);  // 기존 인터랙션 제거
+  }
+  addInteraction('Polygon');  // 새로운 폴리곤 그리기 인터랙션 추가
+});
+
+// 폴리곤 그리기 상호작용 추가 함수
+let draw;
 function addInteraction(drawType) {
   draw = new Draw({
-    source: polygonSource,
+    source: polygonSource1,
     type: drawType,
   });
   map.addInteraction(draw);
@@ -234,15 +277,14 @@ function addInteraction(drawType) {
   });
 }
 
-// '폴리곤 생성' 버튼 클릭 이벤트 핸들러
-document.getElementById('createPolygonButton').addEventListener('click', function () {
-  map.removeInteraction(draw);  // 기존 인터랙션 제거
-  addInteraction('Polygon');  // 새로운 폴리곤 그리기 인터랙션 추가
-});
+
+
+
+ 
 
 // 폴리곤을 서버에 저장하는 함수
 function savePolygonToServer() {
-  const features = polygonSource.getFeatures();
+  const features = polygonSource1.getFeatures();
   if (features.length > 0) {
     const format = new GeoJSON();
     const geojsonStr = format.writeFeatures(features);
@@ -250,10 +292,9 @@ function savePolygonToServer() {
 
     geojson.features.forEach(feature => {
       const data = new URLSearchParams();
-      data.append('id', feature.properties.id);
       data.append('geom', JSON.stringify(feature.geometry));
 
-      fetch('insertPolygon.jsp', {
+      fetch('createPolygon.jsp', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -275,7 +316,30 @@ function savePolygonToServer() {
   }
 }
 
+// 선택된 폴리곤 삭제하는 함수
+function deleteSelectedPolygons() {
+  const selectedFeatures = selectInteraction.getFeatures();
+  if (selectedFeatures.getLength() > 0) {
+    selectedFeatures.forEach((feature) => {
+      polygonSource.removeFeature(feature);
+    });
+    selectedFeatures.clear();
+    alert('선택된 폴리곤이 삭제되었습니다.');
+  } else {
+    alert('삭제할 폴리곤이 선택되지 않았습니다.');
+  }
+}
+
+// "폴리곤 저장" 버튼 클릭 시 폴리곤을 DB에 보냄
 document.getElementById('saveButton').addEventListener('click', savePolygonToServer);
+
+// "폴리곤 삭제" 버튼 클릭 시 선택된 폴리곤을 삭제
+document.getElementById('removeButton').addEventListener('click', deleteSelectedPolygons);
+
+// 페이지 로드 시 상호작용 추가
+document.addEventListener('DOMContentLoaded', function () {
+  map.addInteraction(selectInteraction);
+});
 
 // 그리기 완료 후 상호작용 리셋 함수
 function resetPolygonInteraction() {
@@ -299,25 +363,6 @@ document.addEventListener('keydown', function (event) {
     }
   }
 });
-
-// Geoserver에서 Vector 레이어 불러오기
-let polyWfsSource;
-
-function makeWFSSource1(method) {
-  polyWfsSource = new VectorSource
-    (
-      {
-        format: new GeoJSON(),
-        url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:make&outputFormat=application/json&CQL_FILTER=${makeFilter(method)}`)
-      }
-    );
-
-  vectorLayer.setSource(polyWfsSource);
-}
-
-makeWFSSource1("");
-
-
 
 // Mouse Hover 활성화
 map.addInteraction(mouseHoverSelect);

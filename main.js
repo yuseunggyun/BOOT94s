@@ -104,7 +104,7 @@ const Style6100 = new Style({
   stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-// Vector 레이어 생성
+// 기존 벡터 레이어 생성
 const vectorLayer = new VectorLayer({
   source: wfsSource,
   style: function (feature) {
@@ -112,26 +112,47 @@ const vectorLayer = new VectorLayer({
   },
 });
 
-// Geoserver에서 Vector 레이어 불러오기
+// 기존 레이어를 위한 WFS 소스 생성
 let newWfsSource;
-
 function makeWFSSource(method) {
-  newWfsSource = new VectorSource
-    (
-      {
+  newWfsSource = new VectorSource({
         format: new GeoJSON(),
         url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=${makeFilter(method)}`)
-      }
-    );
+      });
 
   vectorLayer.setSource(newWfsSource);
 }
 
-makeWFSSource("");
+// 폴리곤 레이어 소스 정의 및 필터 없는 함수
+const polygonSource = new VectorSource();
+const polygonLayer = new VectorLayer({
+  source: polygonSource,
+  style: new Style({
+    fill: new Fill({
+      color: 'rgba(255, 255, 255, 0.6)',
+    }),
+    stroke: new Stroke({
+      color: '#ffcc33',
+      width: 2,
+    }),
+  }),
+});
+
+// 폴리곤 레이어를 위한 WFS 소스 생성
+function makePolygonWFSSource() {
+  const polyWfsSource = new VectorSource({
+    format: new GeoJSON(),
+    url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:make&outputFormat=application/json`)
+  });
+
+  polygonLayer.setSource(polyWfsSource);
+}
+
+makeWFSSource(""); // 초기 로드 시 필터 없는 기존 레이어 로드
+makePolygonWFSSource(); // 초기 로드 시 필터 없는 폴리곤 레이어 로드
 
 // popup 창 설정
 const popup = document.getElementById('popup');
-
 const overlay = new Overlay({
   element: popup,
   autoPan: {
@@ -177,7 +198,8 @@ const map = new Map({
       visible: false,
       title: 'SatelliteMap'
     }),
-    vectorLayer // 백터 레이어
+    vectorLayer, // 기존 백터 레이어
+    polygonLayer // 폴리곤 레이어
   ],
   target: 'map',
   overlays: [overlay],
@@ -203,361 +225,91 @@ document.getElementById('btn-satellite').addEventListener('click', function () {
   satelliteLayer.setVisible(true);
 });
 
-// 거리 및 면적 계산 기능 (Geoserver에서 참고함)
-const showSegments = document.getElementById('segments');
-const clearPrevious = document.getElementById('clear');
-
-const lineStyle = new Style({
-  fill: new Fill({
-    color: 'rgba(255, 255, 255, 0.2)',
-  }),
-  stroke: new Stroke({
-    color: 'rgba(255, 0, 0, 0.8)',
-    lineDash: [10, 10],
-    width: 2,
-  }),
-  image: new Circle({
-    radius: 5,
-    stroke: new Stroke({
-      color: 'rgba(255, 0, 0, 0.8)',
-      width: 3
-    }),
-    fill: new Fill({
-      color: 'rgba(0, 0, 0, 0.3)',
-    }),
-  }),
-});
-
-const labelTextStyle = new Style({
-  text: new Text({
-    font: '14px Calibri,sans-serif',
-    fill: new Fill({
-      color: 'rgba(255, 0, 0, 1)',
-    }),
-    backgroundFill: new Fill({
-      color: 'rgba(255, 255, 255, 1)',
-    }),
-    backgroundStroke: new Stroke({
-      color: 'rgba(255, 0, 0, 0.8)', // 빨간색 테두리
-      width: 1, // 테두리 굵기
-    }),
-    padding: [3, 3, 3, 3],
-    textBaseline: 'bottom',
-    offsetY: -15,
-  }),
-  image: new RegularShape({
-    radius: 8,
-    points: 3,
-    angle: Math.PI,
-    displacement: [0, 10],
-    fill: new Fill({
-      color: 'rgba(255, 0, 0, 0.8)',
-    }),
-  }),
-});
-
-const tooltipTextStyle = new Style({
-  text: new Text({
-    font: '12px Calibri,sans-serif',
-    fill: new Fill({
-      color: 'rgba(255, 0, 0, 1)',
-    }),
-    backgroundFill: new Fill({
-      color: 'rgba(255, 255, 255, 1)',
-    }),
-    padding: [2, 2, 2, 2],
-    textAlign: 'left',
-    offsetX: 15,
-  }),
-});
-
-const modifyPointStyle = new Style({
-  image: new Circle({
-    radius: 5,
-    stroke: new Stroke({
-      color: 'rgba(255, 0, 0, 0.7)',
-    }),
-    fill: new Fill({
-      color: 'rgba(0, 0, 0, 0.3)',
-    }),
-  }),
-  text: new Text({
-    text: '종료점',
-    font: '12px Calibri,sans-serif',
-    fill: new Fill({
-      color: 'rgba(255, 0, 0, 1)',
-    }),
-    backgroundFill: new Fill({
-      color: 'rgba(255, 255, 255, 1)',
-    }),
-    padding: [2, 2, 2, 2],
-    textAlign: 'left',
-    offsetX: 15,
-  }),
-});
-
-const segmentTextStyle = new Style({
-  text: new Text({
-    font: '12px Calibri,sans-serif',
-    fill: new Fill({
-      color: 'rgba(255, 0, 0, 1)',
-    }),
-    backgroundFill: new Fill({
-      color: 'rgba(255, 255, 255, 1)',
-    }),
-    padding: [2, 2, 2, 2],
-    textBaseline: 'bottom',
-    offsetY: -12,
-  }),
-  image: new RegularShape({
-    radius: 6,
-    points: 3,
-    angle: Math.PI,
-    displacement: [0, 8],
-    fill: new Fill({
-      color: 'rgba(255, 0, 0, 0.8)',
-    }),
-  }),
-});
-
-const segmentStyles = [segmentTextStyle];
-
-const formatLength = function (line) {
-  const length = getLength(line);
-  let output;
-  if (length > 100) {
-    output = Math.round((length / 1000) * 100) / 100 + ' km';
-  } else {
-    output = Math.round(length * 100) / 100 + ' m';
-  }
-  return output;
-};
-
-const formatArea = function (polygon) {
-  const area = getArea(polygon);
-  let output;
-  if (area > 10000) {
-    output = Math.round((area / 1000000) * 100) / 100 + ' km\xB2';
-  } else {
-    output = Math.round(area * 100) / 100 + ' m\xB2';
-  }
-  return output;
-};
-
-const source = new VectorSource();
-const modify = new Modify({ source: source, style: modifyPointStyle });
-let tipPoint;
-
-function styleFunction(feature, segments, drawType, tip) {
-  const styles = [];
-  const geometry = feature.getGeometry();
-  const type = geometry.getType();
-  let point, label, line;
-  if (!drawType || drawType === type || type === 'Point') {
-    styles.push(lineStyle);
-    if (type === 'Polygon') {
-      point = geometry.getInteriorPoint();
-      label = formatArea(geometry);
-      line = new LineString(geometry.getCoordinates()[0]);
-    } else if (type === 'LineString') {
-      point = new Point(geometry.getLastCoordinate());
-      label = formatLength(geometry);
-      line = geometry;
-    }
-  }
-  if (segments && line) {
-    let count = 0;
-    line.forEachSegment(function (a, b) {
-      const segment = new LineString([a, b]);
-      const label = formatLength(segment);
-      if (segmentStyles.length - 1 < count) {
-        segmentStyles.push(segmentTextStyle.clone());
-      }
-      const segmentPoint = new Point(segment.getCoordinateAt(0.5));
-      segmentStyles[count].setGeometry(segmentPoint);
-      segmentStyles[count].getText().setText(label);
-      styles.push(segmentStyles[count]);
-      count++;
-    });
-  }
-  if (label) {
-    labelTextStyle.setGeometry(point);
-    labelTextStyle.getText().setText(label);
-    styles.push(labelTextStyle);
-  }
-  if (
-    tip &&
-    type === 'Point' &&
-    !modify.getOverlay().getSource().getFeatures().length
-  ) {
-    tipPoint = geometry;
-    tooltipTextStyle.getText().setText(tip);
-    styles.push(tooltipTextStyle);
-  }
-  return styles;
-}
-
-const vector = new VectorLayer({
-  source: source,
-  style: function (feature) {
-    return styleFunction(feature, showSegments.checked);
-  },
-});
-
-map.addLayer(vector);
-map.addInteraction(modify);
-
-let draw; // global so we can remove it later
-
-function addInteraction(drawType) {
-  //호버 비활성화
-  map.removeInteraction(mouseHoverSelect);
-  // 선택 기능 비활성화
-  map.removeInteraction(select);
-  const activeTip = '다음점' + (drawType === 'Polygon' ? 'polygon' : '(종료시 더블클릭)');
-  const idleTip = '시작점';
-  let tip = idleTip;
-  draw = new Draw({
-    source: source,
-    type: drawType,
-    style: function (feature) {
-      return styleFunction(feature, showSegments.checked, drawType, tip);
-    },
-  });
-  draw.on('drawstart', function () {
-    if (clearPrevious.checked) {
-      source.clear();
-    }
-    modify.setActive(false);
-    tip = activeTip;
-
-  });
-  draw.on('drawend', function (event) {
-    event.feature.set('keep', true);
-    modifyPointStyle.setGeometry(tipPoint);
-    modify.setActive(true);
-    map.once('pointermove', function () {
-      modifyPointStyle.setGeometry();
-    });
-    tip = idleTip;
-
-  });
-  modify.setActive(true);
-  map.addInteraction(draw);
-}
-
-function setDrawType(type) {
-  if (draw) {
-    map.removeInteraction(draw);
-    draw = null;
-  }
-  addInteraction(type);
-}
-
-document.getElementById('areaButton').addEventListener('click', function () {
-  setDrawType('Polygon');
-});
-
-showSegments.addEventListener('change', function () {
-  vector.changed();
-  if (draw) {
-    draw.getOverlay().changed();
-  }
-});
-
-document.addEventListener('keydown', function (event) {
-  if (event.key === 'Escape') {
-    if (draw) {
-      map.removeInteraction(draw);
-      draw = null;
-    }
-  }
-  //호버 활성화
-  map.addInteraction(mouseHoverSelect);
-  // 선택 기능 활성화
-  map.addInteraction(select);
-});
-
-clearPrevious.addEventListener('change', function () {
-  if (clearPrevious.checked) {
-    source.clear();
-  }
-});
-
-// 새로운 폴리곤 생성 저장 삭제
-const createPolygonButton = document.getElementById('createPolygonButton');
-const saveButton = document.getElementById('saveButton');
-const removeButton = document.getElementById('removeButton');
-
-// 스타일을 정의합니다.
-const polygonStyle = new Style({
-  fill: new Fill({
-    color: 'rgba(0, 0, 0, 0.2)',
-  }),
-  stroke: new Stroke({
-    color: 'rgba(255, 255, 255, 0.8)',
-    lineDash: [10, 10],
-    width: 2,
-  }),
-  image: new Circle({
-    radius: 5,
-    stroke: new Stroke({
-      color: 'rgba(0, 0, 0, 0.8)',
-      width: 3
-    }),
-    fill: new Fill({
-      color: 'rgba(0, 0, 0, 0.3)',
-    }),
-  }),
-});
-
-// 새로운 폴리곤 스타일 정의
-const noStyle = null;  // 스타일을 적용하지 않기 위해 null로 설정
-
-let isDistanceMode = false;  // 거리 재기 모드인지 여부를 나타내는 플래그
-
-document.getElementById('distanceButton').addEventListener('click', function () {
-  setDrawType('LineString');
-  isDistanceMode = true;  // 거리 재기 모드 활성화
-});
-
-// 벡터 레이어의 소스를 정의합니다.
-const polygonSource = new VectorSource();
-
-// 선택 상호작용을 정의합니다.
+// 선택 상호작용 추가
 const selectInteraction = new Select();
 map.addInteraction(selectInteraction);
 
-// 그리기 interaction을 관리할 변수를 선언합니다.
-let polygonDraw;
-
-// 그리기 interaction을 추가하는 함수입니다.
-function setPolygonInteraction(drawType) {
-  //호버 비활성화
-  if (typeof mouseHoverSelect !== 'undefined') {
-    map.removeInteraction(mouseHoverSelect);
-  }
-  // 선택 기능 비활성화
-  if (typeof select !== 'undefined') {
-    map.removeInteraction(select);
-  }
-  polygonDraw = new Draw({
+// 폴리곤 그리기 상호작용 추가 함수
+let draw;
+function addInteraction(drawType) {
+  draw = new Draw({
     source: polygonSource,
     type: drawType,
-    style: isDistanceMode ? noStyle : polygonStyle,  // 거리 재기 모드에서는 스타일 적용 안 함
   });
-  polygonDraw.on('drawend', function (event) {
-    event.feature.set('keep', true);
-    resetPolygonInteraction(); // 그리기 완료 후 상호작용 리셋
-  });
-  map.addInteraction(polygonDraw);
+  map.addInteraction(draw);
 }
+
+// '폴리곤 생성' 버튼 클릭 이벤트
+document.getElementById('createPolygonButton').addEventListener('click', function () {
+  map.removeInteraction(draw);  // 기존 인터랙션 제거
+  addInteraction('Polygon');  // 새로운 폴리곤 그리기 인터랙션 추가
+});
+
+// 폴리곤을 서버에 저장하는 함수
+function savePolygonToServer() {
+  const features = polygonSource.getFeatures();
+  if (features.length > 0) {
+    const format = new GeoJSON();
+    const geojsonStr = format.writeFeatures(features);
+    const geojson = JSON.parse(geojsonStr);
+
+    geojson.features.forEach(feature => {
+      const data = new URLSearchParams();
+      data.append('id', feature.properties.id);
+      data.append('geom', JSON.stringify(feature.geometry));
+
+      fetch('createPolygon.jsp', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: data.toString(),
+      })
+      .then(response => response.text())
+      .then(result => {
+        console.log('Polygon saved:', result);
+        alert('폴리곤이 데이터베이스에 성공적으로 저장되었습니다!');
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        alert('데이터베이스에 폴리곤을 저장하는 데 실패했습니다.');
+      });
+    });
+  } else {
+    alert('저장할 폴리곤이 없습니다.');
+  }
+}
+
+// 선택된 폴리곤 삭제하는 함수
+function deleteSelectedPolygons() {
+  const selectedFeatures = selectInteraction.getFeatures();
+  if (selectedFeatures.getLength() > 0) {
+    selectedFeatures.forEach((feature) => {
+      polygonSource.removeFeature(feature);
+    });
+    selectedFeatures.clear();
+    alert('선택된 폴리곤이 삭제되었습니다.');
+  } else {
+    alert('삭제할 폴리곤이 선택되지 않았습니다.');
+  }
+}
+
+// "폴리곤 저장" 버튼 클릭 시 폴리곤을 DB에 보냄
+document.getElementById('saveButton').addEventListener('click', savePolygonToServer);
+
+// "폴리곤 삭제" 버튼 클릭 시 선택된 폴리곤을 삭제
+document.getElementById('removeButton').addEventListener('click', deleteSelectedPolygons);
+
+// 페이지 로드 시 상호작용 추가
+document.addEventListener('DOMContentLoaded', function () {
+  map.addInteraction(selectInteraction);
+});
 
 // 그리기 완료 후 상호작용 리셋 함수
 function resetPolygonInteraction() {
-  if (polygonDraw) {
-    map.removeInteraction(polygonDraw);
-    polygonDraw = null;
+  if (draw) {
+    map.removeInteraction(draw);
+    draw = null;
   }
   if (typeof mouseHoverSelect !== 'undefined') {
     map.addInteraction(mouseHoverSelect);
@@ -567,86 +319,14 @@ function resetPolygonInteraction() {
   }
 }
 
-// 그리기 유형을 설정하는 함수
-function addPolygonDrawType(type) {
-  if (polygonDraw) {
-    map.removeInteraction(polygonDraw);
-    polygonDraw = null;
-  }
-  setPolygonInteraction(type);
-}
-
-// '폴리곤 생성' 버튼 클릭 시 그리기 유형을 폴리곤으로 설정
-createPolygonButton.addEventListener('click', function () {
-  addPolygonDrawType('Polygon');
-  isDistanceMode = false; // 거리 재기 모드 비활성화
-});
-
-// '폴리곤 저장' 버튼 클릭 시 폴리곤을 로컬 스토리지에 저장
-saveButton.addEventListener('click', function () {
-  const features = polygonSource.getFeatures();
-  if (features.length > 0) {
-    const format = new GeoJSON();
-    const geojsonStr = format.writeFeatures(features);
-    localStorage.setItem('savedPolygons', geojsonStr);
-    alert('폴리곤이 저장되었습니다!');
-  } else {
-    alert('저장할 폴리곤이 없습니다.');
-  }
-});
-
-// '폴리곤 삭제' 버튼 클릭 시 선택한 폴리곤을 제거합니다.
-removeButton.addEventListener('click', function () {
-  const selectedFeatures = selectInteraction.getFeatures();
-  if (selectedFeatures.getLength() > 0) {
-    selectedFeatures.forEach(function (feature) {
-      polygonSource.removeFeature(feature);
-    });
-    selectedFeatures.clear();
-    alert('선택된 폴리곤이 삭제되었습니다.');
-  } else {
-    alert('삭제할 폴리곤이 선택되지 않았습니다.');
-  }
-});
-
-// 로컬 스토리지에서 저장된 폴리곤을 불러오는 함수입니다.
-function loadSavedPolygons() {
-  const savedPolygons = localStorage.getItem('savedPolygons');
-  if (savedPolygons) {
-    const format = new GeoJSON();
-    const features = format.readFeatures(savedPolygons, {
-      featureProjection: map.getView().getProjection(),
-    });
-    polygonSource.addFeatures(features);
-  }
-}
-
-// 페이지 로드 시 저장된 폴리곤을 불러옵니다.
-loadSavedPolygons();
-
-// Escape 키를 누를 때 그리기 interaction을 종료합니다.
 document.addEventListener('keydown', function (event) {
-  if (event.key === 'Escape' && polygonDraw) {
-    map.removeInteraction(polygonDraw);
-    polygonDraw = null;
-  }
-  //호버 활성화
-  if (typeof mouseHoverSelect !== 'undefined') {
-    map.addInteraction(mouseHoverSelect);
-  }
-  // 선택 기능 활성화
-  if (typeof select !== 'undefined') {
-   map.addInteraction(select);
+  if (event.key === 'Escape') {
+    if (draw) {
+      map.removeInteraction(draw);
+      draw = null;
+    }
   }
 });
-
-// 폴리곤 소스를 위한 벡터 레이어를 추가합니다.
-const polygonLayer = new VectorLayer({
-  source: polygonSource,
-  style: polygonStyle,
-});
-
-map.addLayer(polygonLayer);
 
 // Mouse Hover 활성화
 map.addInteraction(mouseHoverSelect);

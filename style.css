@@ -235,15 +235,15 @@ table.ymList2 span.active2 {
 
 .insidebar {
   text-align: center;
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   color: rgb(35,160,250);
   background-color: rgba(252, 209, 79, 0.7);
-  margin: 10px 0px 10px 0px;
+  margin: 0px 0px 2px 0px;
   float: top;
 }
 
 ul.sideinfo {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   line-height: 1.8;
   background: #efefef;
   border: 2px solid rgb(0,152,129);
@@ -275,14 +275,7 @@ ul.sideinfo {
   width: 350px;
   margin-top: 10px;
 }
-div.area3 h2.insidebar1 {
-  text-align: center;
-  font-size: 1.3rem;
-  color: rgb(35,160,250);
-  background-color: rgba(252, 209, 79, 0.7);
-  margin: 10px 5px 10px 5px;
-  float: top;
-}
+
 ul.sideinfo1 {
   line-height: 2.0;
   margin: 5px 0;
@@ -293,7 +286,7 @@ ul.sideinfo1 {
 /* 개발적성평가 점수 스타일 */
 div.area3 table.maindevelop {
   font-size: 0.9rem;
-  margin: -10px 10px 10px 10px;
+  margin: 0px 10px 10px 10px;
 }
 div.area3 table.maindevelop td {
   font-size: 0.85rem;
@@ -350,14 +343,25 @@ table.maindevelop td {
   font-size: 0.75rem;
   padding: 2px 7px;
 }
+table.maindevelop th{
+  padding: 5px 0px;
+}
 
 button.developbutton {
   font-size: 0.82rem;
   position: relative;
-  left: 103px;
-  padding: 1.4px;
-  background: rgba(126, 126, 126, 0.5);
+  left: 105px;
+  top: -3px;
+  padding: 1px;
+  background: rgba(211, 211, 211, 0.5);
+  box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+  border-radius: 3px;
 }
+button.developbutton:hover {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 3px;
+  padding : 2px;
+  }
 
 /*평가지표 테이블 보전*/
 table.mainintegrity {
@@ -372,21 +376,56 @@ table.mainintegrity  td {
   padding: 2px 7px;
 }
 
+table.mainintegrity th{
+  padding: 5px 3px;
+}
+
 button.integritybutton {
   font-size: 0.82rem;
   position: relative;
-  left: 104px;
-  padding: 1.4px;
-  background: rgba(126, 126, 126, 0.5);
+  left: 105px;
+  top: 12px;
+  padding: 1px;
+  background: rgba(211, 211, 211, 0.5);
+  box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+  border-radius: 3px;
 }
+
+button.integritybutton:hover {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 3px;
+  padding : 2px;
+  }
 
 /*종합적성값*/
 table.maintotal {
-  font-size: 0.9rem;
+  font-size: 1rem;
   border-collapse: collapse;
   position: relative;
-  top: 30px;
+  top: 15px;
 }
+
+/*범례 테이블 스타일*/
+table.legend {
+  border-collapse: collapse;
+  width: 95%;
+  font-size: 0.9rem;
+  margin-left: 10px;
+  border: none;
+}
+
+table.legend tr.legend2{
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+table.legend tr.legend3{
+  text-align: center;
+  font-size: 0.8rem;
+  width: 100px;
+}
+
+
 
 #mapArea {
   position: absolute;

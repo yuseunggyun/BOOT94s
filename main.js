@@ -39,7 +39,6 @@ const g_url = "http://localhost:42888";// 내부용
 // const g_url = "http://172.20.221.180:42888";// 외부용
 
 let wfsSource = null;
-let wfsLayer = null;
 
 // 목록 클릭 시 CQL 필터 만드는 함수 추가 
 function makeFilter(method) {
@@ -104,7 +103,7 @@ const Style6100 = new Style({
   stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-// 기존 벡터 레이어 생성
+// 벡터 레이어 생성
 const vectorLayer = new VectorLayer({
   source: wfsSource,
   style: function (feature) {
@@ -112,21 +111,36 @@ const vectorLayer = new VectorLayer({
   },
 });
 
-// 기존 레이어를 위한 WFS 소스 생성
+// Geoserver에서 "진주" 벡터 레이어 가져오기
 let newWfsSource;
 function makeWFSSource(method) {
   newWfsSource = new VectorSource({
-        format: new GeoJSON(),
-        url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=${makeFilter(method)}`)
-      });
+    format: new GeoJSON(),
+    url: encodeURI(`${g_url}/geoserver/jinjuWS/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=jinjuWS:jj&maxFeatures=1000&outputFormat=application/json&CQL_FILTER=${makeFilter(method)}`)
+  });
 
   vectorLayer.setSource(newWfsSource);
 }
 
-// 폴리곤 레이어 소스 정의 및 필터 없는 함수
+// 폴리곤 레이어(make) 소스 정의
 const polygonSource = new VectorSource();
 const polygonLayer = new VectorLayer({
   source: polygonSource,
+    style: new Style({
+    fill: new Fill({
+      color: 'rgba(255, 255, 255, 0.6)',
+    }),
+    stroke: new Stroke({
+      color: '#ffcc33',
+      width: 2,
+    }),
+  }),
+});
+
+// 폴리곤 생성 소스 및 레이어 정의
+const polygonSource1 = new VectorSource();
+const polygonLayer1 = new VectorLayer({
+  source: polygonSource1,
   style: new Style({
     fill: new Fill({
       color: 'rgba(255, 255, 255, 0.6)',
@@ -138,7 +152,7 @@ const polygonLayer = new VectorLayer({
   }),
 });
 
-// 폴리곤 레이어를 위한 WFS 소스 생성
+// geoserver에서 "폴리곤" 벡터 레이어 가져오기
 function makePolygonWFSSource() {
   const polyWfsSource = new VectorSource({
     format: new GeoJSON(),
@@ -198,15 +212,14 @@ const map = new Map({
       visible: false,
       title: 'SatelliteMap'
     }),
-    vectorLayer, // 기존 백터 레이어
-    polygonLayer // 폴리곤 레이어
+    vectorLayer, // "진주" 레이어
+    polygonLayer // "폴리곤" 레이어
   ],
   target: 'map',
   overlays: [overlay],
   view: new View({
     center: fromLonLat([128.1298, 35.2052]),
     zoom: 10,
-    constrainRotation: 16,
     interactions: defaults().extend([mouseHoverSelect])
   })
 });
@@ -229,25 +242,39 @@ document.getElementById('btn-satellite').addEventListener('click', function () {
 const selectInteraction = new Select();
 map.addInteraction(selectInteraction);
 
-// 폴리곤 그리기 상호작용 추가 함수
-let draw;
-function addInteraction(drawType) {
-  draw = new Draw({
-    source: polygonSource,
-    type: drawType,
-  });
-  map.addInteraction(draw);
-}
-
 // '폴리곤 생성' 버튼 클릭 이벤트
 document.getElementById('createPolygonButton').addEventListener('click', function () {
-  map.removeInteraction(draw);  // 기존 인터랙션 제거
+  if(draw) {
+    map.removeInteraction(draw);  // 기존 인터랙션 제거
+  }
   addInteraction('Polygon');  // 새로운 폴리곤 그리기 인터랙션 추가
 });
 
+// 폴리곤 그리기 상호작용 추가 함수
+let draw; // 전역 변수로 draw 초기화
+function addInteraction(drawType) {
+  draw = new Draw({
+    source: polygonSource1,
+    type: drawType, // 사용자 정의 변수 drawType을 사용하여 도형 유형 설정
+  });
+
+  // 폴리곤이 그려질 때, 이를 화면에 유지합니다.
+  draw.on('drawend', function(event) {
+    console.log('폴리곤 그리기 완료:', event.feature);
+    map.removeInteraction(draw);
+    alert('폴리곤 그리기가 완료되었습니다');
+  });
+
+  map.addInteraction(draw); // 맵에 인터랙션 상호작용 추가
+  alert('폴리곤 그리기를 시작합니다.');
+}
+
+// 생성한 폴리곤 레이어를 지도에 추가
+map.addLayer(polygonLayer1);
+
 // 폴리곤을 서버에 저장하는 함수
 function savePolygonToServer() {
-  const features = polygonSource.getFeatures();
+  const features = polygonSource1.getFeatures();
   if (features.length > 0) {
     const format = new GeoJSON();
     const geojsonStr = format.writeFeatures(features);
@@ -255,7 +282,6 @@ function savePolygonToServer() {
 
     geojson.features.forEach(feature => {
       const data = new URLSearchParams();
-      data.append('id', feature.properties.id);
       data.append('geom', JSON.stringify(feature.geometry));
 
       fetch('createPolygon.jsp', {
@@ -280,15 +306,58 @@ function savePolygonToServer() {
   }
 }
 
-// 선택된 폴리곤 삭제하는 함수
+// 선택된 폴리곤을 서버에서 삭제하는 함수
+function deletePolygonsFromServer(features) {
+  if (features.length > 0) {
+    features.forEach(feature => {
+      const id = feature.get('id'); // 실제 데이터베이스 id를 가져옴
+      console.log('Deleting polygon with id:', id); // 디버깅을 위한 출력
+      const data = new URLSearchParams();
+      data.append('id', id);
+
+      fetch('deletePolygon.jsp', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+          },
+          body: data.toString(),
+      })
+      .then(response => response.text())
+      .then(result => {
+          console.log('Polygon deleted:', result);
+          alert('폴리곤이 데이터베이스에서 성공적으로 삭제되었습니다!');
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('데이터베이스에서 폴리곤을 삭제하는 데 실패했습니다.');
+      });
+    });
+  } else {
+      alert('삭제할 폴리곤이 없습니다.');
+  }
+}
+
+// 선택된 폴리곤 삭제(지도에서)
 function deleteSelectedPolygons() {
   const selectedFeatures = selectInteraction.getFeatures();
   if (selectedFeatures.getLength() > 0) {
-    selectedFeatures.forEach((feature) => {
-      polygonSource.removeFeature(feature);
-    });
-    selectedFeatures.clear();
-    alert('선택된 폴리곤이 삭제되었습니다.');
+      const featuresToDelete = selectedFeatures.getArray().slice();
+      featuresToDelete.forEach((feature) => {
+        polygonSource1.removeFeature(feature);
+      });
+      selectedFeatures.clear();
+      alert('선택된 폴리곤이 삭제되었습니다.');
+  } else {
+      alert('삭제할 폴리곤이 선택되지 않았습니다.');
+  }
+}
+
+// 선택된 폴리곤 삭제(서버에서)
+function deleteSelectedPolygonsFromDB() {
+  const selectedFeatures = selectInteraction.getFeatures();
+  if (selectedFeatures.getLength() > 0) {
+    const featuresToDelete = selectedFeatures.getArray().slice();
+    deletePolygonsFromServer(featuresToDelete); // 서버에서 삭제
   } else {
     alert('삭제할 폴리곤이 선택되지 않았습니다.');
   }
@@ -297,8 +366,11 @@ function deleteSelectedPolygons() {
 // "폴리곤 저장" 버튼 클릭 시 폴리곤을 DB에 보냄
 document.getElementById('saveButton').addEventListener('click', savePolygonToServer);
 
-// "폴리곤 삭제" 버튼 클릭 시 선택된 폴리곤을 삭제
+// "폴리곤 삭제(지도에서)" 버튼 클릭 시 선택된 폴리곤을 삭제
 document.getElementById('removeButton').addEventListener('click', deleteSelectedPolygons);
+
+// "폴리곤 삭제(서버에서)" 버튼 클릭 시 선택된 폴리곤을 DB에서 삭제
+document.getElementById('deleteButton').addEventListener('click', deleteSelectedPolygonsFromDB);
 
 // 페이지 로드 시 상호작용 추가
 document.addEventListener('DOMContentLoaded', function () {

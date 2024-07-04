@@ -236,8 +236,8 @@ table.ymList2 span.active2 {
 .insidebar {
   text-align: center;
   font-size: 1.1rem;
-  color: rgb(35,160,250);
-  background-color: rgba(252, 209, 79, 0.7);
+  color: rgb(255, 255, 255);
+  background-color: rgba(60, 130, 161, 0.7);
   margin: 0px 0px 2px 0px;
   float: top;
 }
@@ -315,8 +315,8 @@ div.area3 table.mainintegrity th.integrityscore {
   border-top-right-radius: 13px;
   border-bottom-left-radius: 13px;
   border-bottom-right-radius: 13px; 
-  background: rgba(252, 209, 79, 0.7);
-  color: rgb(35,160,250);
+  background: rgba(60, 130, 161, 0.7);
+  color: rgb(255,255,255);
   /* padding: 2px 43.35px; */
   cursor: pointer;
 }
@@ -327,8 +327,8 @@ div.area3 table.mainintegrity th.integrityscore {
   border-top-right-radius: 13px;
   border-bottom-left-radius: 13px;
   border-bottom-right-radius: 13px; 
-  background: rgba(252, 209, 79, 0.7);
-  color: rgb(35,160,250);
+  background: rgba(60, 130, 161, 0.7);
+  color: rgb(255,255,255);
   /* padding: 2px 43.35px; */
   cursor: pointer;
 }
@@ -445,11 +445,11 @@ table.legend tr.legend3{
 
 /*위성영상*/
 #layerSwitcher {
-  width: 182px;
+  width: 65px;
   height: 7.5%;
   position: absolute;
   top: 5px;
-  right: 150px;
+  right: 268px;
   z-index: 1;
   background: rgba(255, 255, 255, 0.8);
   padding: 10px;
@@ -460,25 +460,26 @@ table.legend tr.legend3{
 }
 div#layerSwitcher #btn-road{
   border: none;
-  padding: 2px 30px;
+  padding: 0px 5px;
   position: relative;
-  left: 32px;
-  top : -5px;
+  left: 8px;
+  top : -8px;
   border-radius: 4px; 
 }
 
 div#layerSwitcher #btn-satellite{
   border: none;
-  padding: 2px 30px;
+  padding: 0px 5px;
   position: relative;
-  left: 32px;
-  top : 1px;
+  left: 8px;
+  top : -8px;
   border-radius: 4px;
 }
 
+/*색상삭제 버튼*/
 div#layerSwitcher #clearStylesButton{
   border: none;
-  padding: 2px 30px;
+  padding: 2px 15px;
   position: relative;
   left: 32px;
   top : 6px;
@@ -488,7 +489,7 @@ div#layerSwitcher #clearStylesButton{
 div#layerSwitcher button:hover {
 background: rgba(126, 126, 126, 0.5);
 border-radius: 10%;
-padding : 2px 3px;
+padding : 2px 5px;
 }
 
 /* (info 스타일 추가) */
@@ -513,9 +514,9 @@ padding : 2px 3px;
 #area2 {
   position: absolute;
   top: 5px;  
-  right: 10px;
+  right: 8px;
   background: rgba(255, 255, 255, 0.8);
-  padding: 27px 10px;
+  padding: 9.5px 70px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1;
@@ -526,26 +527,27 @@ padding : 2px 3px;
   color: rgba(26, 26, 26, 0.7);
   font-size: 0.9rem;
   position: relative;
-  top: -15px;
   
 }
 
 #area2 #distanceButton{
   position: absolute;
-  top: 45px;
-  left: 25px;
+  top: 35px;
+  left: 15px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
+  padding : 2px 3px;
 }
 
 #area2 #areaButton {
   position: absolute;
-  top: 45px;
-  left: 80px;
+  top: 35px;
+  left: 70px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
+  padding : 2px 3px;
 
 }
 
@@ -557,15 +559,18 @@ padding : 2px 3px;
 
 #area2 #choice {
   font-size: 0.7em;
-  margin-top: -15px;
+  margin-top: 15px;
+  position: relative;
+  left: 50px;
+  bottom: 5px;
 }
 
 #area4 {
 position: absolute;
 top: 95px;  
-right: 145px;
+right: 2px;
 background: rgba(255, 255, 255, 0.8);
-padding: 5px 5px;
+padding: 3px 14px 3px 40px;
 margin: 2px 5px;
 border-radius: 4px;
 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -573,14 +578,20 @@ z-index: 1;
 font-size: 0.78rem;
 }
 
+#h3name {
+  position: absolute;
+  left: 12px;
+  top: 6px;
+}
+
 #area4 div.polygonbuttons button{
-  padding: 2px 3px;
+  padding: 0px 5px;
+  margin: 0px 2px;
 }
 
 #area4 div.polygonbuttons button:hover {
   background: rgba(126, 126, 126, 0.5);
   border-radius: 10%;
-  padding : 2px 3px;
 }
 
 

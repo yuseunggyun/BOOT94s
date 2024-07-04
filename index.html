@@ -20,14 +20,6 @@
 
   <!--검색창 이미지-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-  <!--거리 계산 아이콘-->
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200">
-
-  <!--면적 계산 아이콘-->
-  <link rel="stylesheet"
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 </head>
 
 <body>
@@ -164,6 +156,8 @@
             소유권변동사유 : <div style="display: inline-block;" id="owner_re"></div><br>
             소유권변동일자 : <div style="display: inline-block;" id="owner_da"></div><br>
           </div>
+          <br>
+
           <div class="landinfo">
             <h2 class="insidebar"> 각 지표별 점수 </h2>
             <h3 style="text-align: center;">개발 적성 지표</h3>
@@ -271,26 +265,26 @@
               </tr>
               <tr>
                 <td><label for="sub10">공적규제지역면적 비율 :</label></td>
-                <td style="width: 85px;"><input type="number" id="sub10" name="sub10" min="0" max="100" style="width:50px"
-                    oninput="validateInput(this)"></td>
+                <td style="width: 85px;"><input type="number" id="sub10" name="sub10" min="0" max="100"
+                    style="width:50px" oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <td><label for="sub11">공적규제지역과의 거리 :</label></td>
-                <td style="width: 85px;"><input type="number" id="sub11" name="sub11" min="0" max="100" style="width:50px"
-                    oninput="validateInput(this)"></td>
+                <td style="width: 85px;"><input type="number" id="sub11" name="sub11" min="0" max="100"
+                    style="width:50px" oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <th rowspan="3" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">선택지표</th>
               </tr>
               <tr>
                 <td><label for="sub12">농업진흥지역 비율 :</label></td>
-                <td style="width: 85px;"><input type="number" id="sub12" name="sub12" min="0" max="100" style="width:50px"
-                    oninput="validateInput(this)"></td>
+                <td style="width: 85px;"><input type="number" id="sub12" name="sub12" min="0" max="100"
+                    style="width:50px" oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <td><label for="sub13">하천·호소·농업용저수지와의 거리:</label></td>
-                <td style="width: 85px;"><input type="number" id="sub13" name="sub13" min="0" max="100" style="width:50px"
-                    oninput="validateInput(this)"></td>
+                <td style="width: 85px;"><input type="number" id="sub13" name="sub13" min="0" max="100"
+                    style="width:50px" oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <th colspan="2" class="integrityscore" style="text-align: center;"><label for="sub14">종합 보전 점수: </label>
@@ -322,7 +316,10 @@
                 <th colspan="5">범&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;례</th>
               </tr>
               <tr class="legend2">
-                <td colspan="5">보전적성 강함&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(0, 102, 0);font-size: 1.2rem;">←</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(255, 0, 0); font-size: 1.2rem;">→</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 개발적성 강함</td>
+                <td colspan="5">보전적성 강함&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                    style="color: rgb(0, 102, 0);font-size: 1.2rem;">←</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                    style="color: rgb(255, 0, 0); font-size: 1.2rem;">→</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 개발적성
+                  강함</td>
               </tr>
               <tr class="legend3">
                 <td style="background: rgb(0, 102, 0); color: white;">가등급</td>
@@ -358,11 +355,8 @@
         <div id="info"></div>
         <!-- 지도 레이어 전환 버튼 -->
         <div id="layerSwitcher">
-          <button id="btn-road">일반 지도</button>
-          <br>
-          <button id="btn-satellite">위성 지도</button>
-          <br>
-          <button id="clearStylesButton">색상 삭제</button>
+          <button id="btn-road"><img src="map.png" width="40"></button>
+          <button id="btn-satellite"><img src="map1.png" width="40"></button>
         </div>
       </div>
     </div>
@@ -378,17 +372,15 @@
   <div id="area2">
     <form>
       <label for="type">
-        <h2>측정 유형 &nbsp;</h2>
+        <h2>측 &nbsp;정&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 유 &nbsp;형 &nbsp;</h2>
       </label>
       <div id="type">
         <button type="button" id="distanceButton">
-          <span class="material-symbols-outlined">straighten</span>
+          <img src="distance.png" width="40">
         </button>
         <button type="button" id="areaButton">
-          <span class="material-symbols-outlined">pageless</span>
+          <img src="area.png" width="40">
         </button>
-        <br>
-        <br>
       </div>
       <div id="choice">
         <label for="segments">- 측정 길이 표시:&nbsp;</label>
@@ -399,17 +391,19 @@
       </div>
     </form>
   </div>
-    <!--폴리곤 생성-->
+  <!--폴리곤 생성-->
   <div id="area4">
+    <h3 style="writing-mode: vertical-lr;" id="h3name"> 폴리곤</h3>
     <div class="polygonbuttons">
-      <button id="createPolygonButton" style="margin: 0px 3px;"><img src="polygon.png" width="30"></button>
-      <button id="saveButton" style="margin: 0px 3px;"><img src="polygonSV.png" width="30"></button>
-      <button id="removeButton" style="margin: 0px 3px;"><img src="polygonRM.png" width="30"></button>
-      <button id="deleteButton" style="margin: 0px 3px;"><img src="polygonDB.png" width="30"></button>
+      <button id="createPolygonButton" ><img src="polygon.png" width="35"></button>
+      <button id="saveButton"><img src="polygonSV.png" width="35"></button>
+      <button id="clearStylesButton"><img src="polygonCL.png" width="42"></button>
+      <button id="removeButton"><img src="polygonRM.png" width="35"></button>
+      <button id="deleteButton"><img src="polygonDB.png" width="42"></button>
     </div>
   </div>
- 
- 
+
+
 
   <!-- 동적검색을 위한 script -->
   <script>

@@ -538,7 +538,7 @@ clearPrevious.addEventListener('change', function () {
 });
 
 // 폴리곤 그리기 상호작용 추가 함수
-let drawInteraction; // 전역 변수로 draw 초기화
+let drawInteraction = null; // 전역 변수로 draw 초기화
 function addDrawInteraction(drawType) {
   drawInteraction = new Draw({
     source: polygonSource1,
@@ -567,6 +567,18 @@ document.getElementById('createPolygonButton').addEventListener('click', functio
   }
   addDrawInteraction('Polygon');  // 새로운 폴리곤 그리기 인터랙션 추가
 });
+
+// ESC 키를 눌렀을 때 폴리곤 그리기 인터랙션 종료
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    if (drawInteraction) {
+      map.removeInteraction(drawInteraction);
+      drawInteraction = null;  // 현재 인터랙션 초기화
+    }
+  }
+});
+
+
 
 // 생성한 폴리곤 레이어를 지도에 추가
 map.addLayer(polygonLayer1);
@@ -959,8 +971,6 @@ $(document).ready(function() {
   }
 });
 
-
-
 // 첫 번째 초기화 버튼 이벤트 리스너 추가
 document.getElementById('resetButton').addEventListener('click', function () {
   // 개발적성 입력 필드를 0으로 설정
@@ -988,6 +998,8 @@ document.getElementById('resetButton1').addEventListener('click', function () {
 
 
 
+
+
 // 보조키(Ctrl)를 사용한 DragBox 기능
 const dragBox = new DragBox({
   condition: platformModifierKeyOnly,
@@ -1012,10 +1024,6 @@ dragBox.on('boxend', function () {
     }
   });
 
-
-
-
-  
   // DragBox 부분은 geoserver에서 제공하는 문서를 보고 참고함.
   const boxExtent = dragBox.getGeometry().getExtent();
 

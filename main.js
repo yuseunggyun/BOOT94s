@@ -81,9 +81,10 @@ function makeFilter(method) {
 // 나중에 조건에 따라 스타일을 다르게 주기 위해 스타일 개별 지정
 // 기본 스타일
 const defaultStyle = new Style({
-  fill: new Fill({ color: 'rgba(75, 240, 26, 0.5)' }),
-  stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
+  fill: new Fill({ color: 'rgba(255, 255, 255, 0)' }),
+  stroke: new Stroke({ color: 'rgba(0, 153, 255, 1)', width: 2})
 });
+
 
 // 0~20 값 스타일
 const Style0020 = new Style({
@@ -115,12 +116,40 @@ const Style8100 = new Style({
   stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-// 벡터 레이어 생성
+// 종합적성값에 따른 스타일 반환 함수
+function getStyleByTotalSum(totalsum) {
+  // console.log("Calculating style for totalsum:", totalsum);
+  if (totalsum < 20) {
+    return Style0020;
+  } else if (totalsum >= 20 && totalsum < 40) {
+    return Style2140;
+  } else if (totalsum >= 40 && totalsum < 60) {
+    return Style4160;
+  } else if (totalsum >= 60 && totalsum < 80) {
+    return Style6180;
+  } else {
+    return Style8100;
+  }
+}
+
+// 벡터 레이어를 위한 커스텀 스타일 함수
+function vectorLayerStyleFunction(feature) {
+  const totalsum = feature.get('totalsum');
+  // console.log("Vector layer feature totalsum:", totalsum);
+  return getStyleByTotalSum(totalsum) || defaultStyle;
+}
+
+// 폴리곤 레이어를 위한 커스텀 스타일 함수
+function polygonLayerStyleFunction(feature) {
+  const totalsum = feature.get('totalsum');
+  // console.log("Polygon layer feature totalsum:", totalsum);
+  return getStyleByTotalSum(totalsum) || defaultStyle;
+}
+
+// 커스텀 스타일 함수로 벡터 레이어 생성
 const vectorLayer = new VectorLayer({
   source: wfsSource,
-  style: function (feature) {
-    return feature.get('customStyle') || defaultStyle; // customStyle을 참조, 없으면 defaultStyle 사용
-  },
+  style: vectorLayerStyleFunction
 });
 
 // Geoserver에서 "진주" 벡터 레이어 가져오기
@@ -138,15 +167,7 @@ function makeWFSSource(method) {
 const polygonSource = new VectorSource();
 const polygonLayer = new VectorLayer({
   source: polygonSource,
-    style: new Style({
-    fill: new Fill({
-      color: 'rgba(255, 255, 255, 0.6)',
-    }),
-    stroke: new Stroke({
-      color: '#ffcc33',
-      width: 2,
-    }),
-  }),
+    style: polygonLayerStyleFunction    
 });
 
 // 폴리곤 생성 소스 및 레이어 정의
@@ -193,11 +214,11 @@ const mouseHoverSelect = new Select({
   condition: pointerMove,
   style: new Style({
     stroke: new Stroke({
-      color: 'rgba(0, 0, 255, 1.0)',
+      color: 'rgba(0, 153, 255, 2)',
       width: 3
     }),
     fill: new Fill({
-      color: 'rgba(79, 252, 211, 0.5)'
+      color: 'rgba(47, 81, 109, 0.7)'
     })
   })
 });
@@ -568,6 +589,16 @@ document.getElementById('createPolygonButton').addEventListener('click', functio
   addDrawInteraction('Polygon');  // 새로운 폴리곤 그리기 인터랙션 추가
 });
 
+// ESC 키를 눌렀을 때 폴리곤 그리기 인터랙션 종료
+document.addEventListener('keydown', function(event) {
+  if (event.key === 'Escape') {
+    if (drawInteraction) {
+      map.removeInteraction(drawInteraction);
+      drawInteraction = null;  // 현재 인터랙션 초기화
+    }
+  }
+});
+
 // 생성한 폴리곤 레이어를 지도에 추가
 map.addLayer(polygonLayer1);
 
@@ -693,7 +724,7 @@ const selectedStyle = new Style({
     color: 'rgba(255, 255, 255, 0.6)',
   }),
   stroke: new Stroke({
-    color: 'rgba(255, 255, 255, 0.7)',
+    color: 'rgba(0, 153, 255, 0.7)',
     width: 3,
   })
 });
@@ -701,7 +732,7 @@ const selectedStyle = new Style({
 // Select 도구
 const select = new Select({
   style: function (feature) {
-    const color = feature.get('COLOR_BIO') || 'rgba(108, 169, 131, 0.5';
+    const color = feature.get('COLOR_BIO') || 'rgba(255, 255, 255, 0.5';
     selectedStyle.getFill().setColor(color);
     return selectedStyle;
   }
@@ -741,58 +772,67 @@ function calculateSum(){
   const totalSum = sum1 - sum2;
   $('#sub15').text(totalSum);
 
+  // console.log("Setting totalsum for selected features to:", totalSum);
+
 // Select 객체를 종합적성값 구간에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
-    let style;
-    if (totalSum < 20) {
-      style = Style0020;
-    } else if (totalSum >= 20 && totalSum < 40) {
-      style = Style2140;
-    } else if (totalSum >= 40 && totalSum < 60) {
-      style = Style4160;
-    } else if (totalSum >= 60 && totalSum < 80) {
-      style = Style6180;
-    } else {
-      style = Style8100;
-    }
-    feature.setStyle(style);
-    feature.set('customStyle', style); // 스타일 정보를 feature 객체에 저장
+    feature.set('totalsum', totalSum);
+    // console.log("Feature ID:", feature.getId(), "totalsum:", feature.get('totalsum'));
+    feature.setStyle(vectorLayerStyleFunction(feature));
+  });
 
-    // 로컬 스토리지에 스타일 정보 저장
-    const featureId = feature.getId();
-    const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
-    savedStyles[featureId] = style.getFill().getColor();
-    localStorage.setItem('savedStyles', JSON.stringify(savedStyles));
+  selectedFeatures.forEach(function (feature) {
+    feature.set('totalsum', totalSum);
+    // console.log("Polygon Feature ID:", feature.getId(), "totalsum:", feature.get('totalsum'));
+    feature.setStyle(polygonLayerStyleFunction(feature));
   });
 }
 
-// 지도 초기화 시 기존 저장된 스타일 적용
+// 저장된 스타일 로드 및 적용
 function loadSavedStyles() {
   const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
   vectorLayer.getSource().getFeatures().forEach(function (feature) {
     const featureId = feature.getId();
     const styleColor = savedStyles[featureId];
     if (styleColor) {
-      let style;
-      if (styleColor === 'rgba(0, 102, 0, 0.5)') {
-        style = Style0020;
-      } else if (styleColor === 'rgba(102, 153, 0, 0.5)') {
-        style = Style2140;
-      } else if (styleColor === 'rgba(255, 255, 0, 0.5)') {
-        style = Style4160;
-      } else if (styleColor === 'rgba(255, 153, 0, 0.5)') {
-        style = Style6180;
-      } else if (styleColor === 'rgba(255, 0, 0, 0.5)') {
-        style = Style8100;    
-      }
-      feature.setStyle(style);
-      feature.set('customStyle', style);
+      feature.setStyle(vectorLayerStyleFunction(feature));
+      feature.set('customStyle', vectorLayerStyleFunction(feature));
+    }
+  });
+
+  polygonLayer.getSource().getFeatures().forEach(function (feature) {
+    const featureId = feature.getId();
+    const styleColor = savedStyles[featureId];
+    if (styleColor) {
+      feature.setStyle(polygonLayerStyleFunction(feature));
+      feature.set('customStyle', polygonLayerStyleFunction(feature));
     }
   });
 }
 
-// 페이지 로드 시 저장된 스타일 로드
 document.addEventListener('DOMContentLoaded', loadSavedStyles);
+
+// 스타일을 스토리지에 저장
+selectedFeatures.forEach(function (feature) {
+  const style = vectorLayerStyleFunction(feature);
+  feature.set('customStyle', style);
+  const featureId = feature.getId();
+  const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
+  savedStyles[featureId] = style.getFill().getColor();
+  localStorage.setItem('savedStyles', JSON.stringify(savedStyles));
+});
+
+polygonSource.getFeatures().forEach(function (feature) {
+  const style = polygonLayerStyleFunction(feature);
+  feature.set('customStyle', style);
+  const featureId = feature.getId();
+  const savedStyles = JSON.parse(localStorage.getItem('savedStyles')) || {};
+  savedStyles[featureId] = style.getFill().getColor();
+  localStorage.setItem('savedStyles', JSON.stringify(savedStyles));
+});
+
+// 버튼 클릭 시 저장된 스타일 삭제
+document.getElementById('clearStylesButton').addEventListener('click', clearSavedStyles);
 
 // 저장된 스타일 삭제
 function clearSavedStyles() {
@@ -803,8 +843,14 @@ function clearSavedStyles() {
   });
 }
 
-// 버튼 클릭 시 저장된 스타일 삭제
-document.getElementById('clearStylesButton').addEventListener('click', clearSavedStyles);
+$(document).ready(function(){
+  $('#inputForm').on('submit', function(event){
+    event.preventDefault();
+    calculateSum();
+  });
+
+  $('#sub1, #sub2, #sub3, #sub4, #sub5, #sub6, #sub8, #sub9, #sub10, #sub11, #sub12, #sub13').on('input', calculateSum);
+});
 
 // JQuery를 이용하여 적성값 입력, 수정, 삭제
 // 개발적성
@@ -957,6 +1003,31 @@ $(document).ready(function() {
   function getIntegrityId() {
     return $('#integrityId').val(); 
   }
+});
+
+// 첫 번째 초기화 버튼 이벤트 리스너 추가
+document.getElementById('resetButton').addEventListener('click', function () {
+  // 개발적성 입력 필드를 0으로 설정
+  $('#sub1, #sub2, #sub3, #sub4, #sub5, #sub6').val(0);
+
+  // 개발적성 결과 값 설정
+  $('#sub7').text(0);
+
+  // 필요하다면 calculateSum 함수를 호출하여 값을 다시 계산
+  calculateSum();
+});
+
+// 두 번째 초기화 버튼 이벤트 리스너 추가
+document.getElementById('resetButton1').addEventListener('click', function () {
+  // 보전적성 입력 필드를 0으로 설정
+  $('#sub8, #sub9, #sub10, #sub11, #sub12, #sub13').val(0);
+
+  // 보전적성 결과 값 설정
+  $('#sub14').text(0);
+  $('#sub15').text(0);
+
+  // 필요하다면 calculateSum 함수를 호출하여 값을 다시 계산
+  calculateSum();
 });
 
 // 보조키(Ctrl)를 사용한 DragBox 기능
@@ -1406,4 +1477,20 @@ dongList.forEach(dong => {
       makeWFSSource(dong);
     };
   }
+});
+
+// 지도에 마우스 이동 이벤트 추가
+const mouseCoord = document.getElementById('mouseCoord');
+
+// 좌표값을 업데이트하는 함수
+function updateMousePosition(coordinate) {
+  const [x,y] = coordinate;
+  const coord = `좌표: ${x.toFixed(0)}, ${y.toFixed(0)}`;
+  mouseCoord.innerHTML = coord;
+}
+
+// 지도에 마우스 이동 이벤트 추가
+map.on('pointermove', function(evt) {
+  const coordinate = evt.coordinate;
+  updateMousePosition(coordinate);
 });

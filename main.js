@@ -85,21 +85,33 @@ const defaultStyle = new Style({
   stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-// 0~30 값 스타일
-const Style0030 = new Style({
-  fill: new Fill({ color: 'rgba(251, 199, 28, 0.5)' }),
+// 0~20 값 스타일
+const Style0020 = new Style({
+  fill: new Fill({ color: 'rgba(0, 102, 0, 0.5)' }),
   stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-//31~60 값 스타일
-const Style3160 = new Style({
-  fill: new Fill({ color: 'rgba(251, 121, 28, 0.5)' }),
+//21~40 값 스타일
+const Style2140 = new Style({
+  fill: new Fill({ color: 'rgba(102, 153, 0, 0.5)' }),
   stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
-//61~100 값 스타일
-const Style6100 = new Style({
-  fill: new Fill({ color: 'rgba(251, 28, 28, 0.5)' }),
+//41~60 값 스타일
+const Style4160 = new Style({
+  fill: new Fill({ color: 'rgba(255, 255, 0, 0.5)' }),
+  stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
+});
+
+//61~80 값 스타일
+const Style6180 = new Style({
+  fill: new Fill({ color: 'rgba(255, 153, 0, 0.5)' }),
+  stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
+});
+
+//81~100 값 스타일
+const Style8100 = new Style({
+  fill: new Fill({ color: 'rgba(255, 0, 0, 0.5)' }),
   stroke: new Stroke({ color: 'rgba(0, 0, 0, 1.0)', width: 1 })
 });
 
@@ -213,7 +225,7 @@ const map = new Map({
       title: 'SatelliteMap'
     }),
     vectorLayer, // "진주" 레이어
-    polygonLayer // "폴리곤" 레이어
+    polygonLayer, // "폴리곤" 레이어
   ],
   target: 'map',
   overlays: [overlay],
@@ -237,7 +249,6 @@ document.getElementById('btn-satellite').addEventListener('click', function () {
   roadLayer.setVisible(false);
   satelliteLayer.setVisible(true);
 });
-
 
 // 거리 및 면적 계산 기능 (Geoserver에서 참고함)
 const showSegments = document.getElementById('segments');
@@ -526,9 +537,6 @@ clearPrevious.addEventListener('change', function () {
   }
 });
 
-
-
-
 // 폴리곤 그리기 상호작용 추가 함수
 let drawInteraction; // 전역 변수로 draw 초기화
 function addDrawInteraction(drawType) {
@@ -668,8 +676,6 @@ document.addEventListener('DOMContentLoaded', function () {
   map.addInteraction(selectInteraction);
 });
 
-
-
 document.addEventListener('keydown', function (event) {
   if (event.key === 'Escape') {
     if (drawInteraction) {
@@ -738,12 +744,16 @@ function calculateSum(){
 // Select 객체를 종합적성값 구간에 따라 다른 색상을 줌
   selectedFeatures.forEach(function (feature) {
     let style;
-    if (totalSum < 30) {
-      style = Style0030;
-    } else if (totalSum >= 30 && totalSum < 60) {
-      style = Style3160;
+    if (totalSum < 20) {
+      style = Style0020;
+    } else if (totalSum >= 20 && totalSum < 40) {
+      style = Style2140;
+    } else if (totalSum >= 40 && totalSum < 60) {
+      style = Style4160;
+    } else if (totalSum >= 60 && totalSum < 80) {
+      style = Style6180;
     } else {
-      style = Style6100;
+      style = Style8100;
     }
     feature.setStyle(style);
     feature.set('customStyle', style); // 스타일 정보를 feature 객체에 저장
@@ -764,12 +774,16 @@ function loadSavedStyles() {
     const styleColor = savedStyles[featureId];
     if (styleColor) {
       let style;
-      if (styleColor === 'rgba(251, 199, 28, 0.5)') {
-        style = Style0030;
-      } else if (styleColor === 'rgba(251, 121, 28, 0.5)') {
-        style = Style3160;
-      } else if (styleColor === 'rgba(251, 28, 28, 0.5)') {
-        style = Style6100;
+      if (styleColor === 'rgba(0, 102, 0, 0.5)') {
+        style = Style0020;
+      } else if (styleColor === 'rgba(102, 153, 0, 0.5)') {
+        style = Style2140;
+      } else if (styleColor === 'rgba(255, 255, 0, 0.5)') {
+        style = Style4160;
+      } else if (styleColor === 'rgba(255, 153, 0, 0.5)') {
+        style = Style6180;
+      } else if (styleColor === 'rgba(255, 0, 0, 0.5)') {
+        style = Style8100;    
       }
       feature.setStyle(style);
       feature.set('customStyle', style);
@@ -795,95 +809,143 @@ document.getElementById('clearStylesButton').addEventListener('click', clearSave
 // JQuery를 이용하여 적성값 입력, 수정, 삭제
 // 개발적성
 $(document).ready(function() {
-  window.insertDevelop = function() {
-      let data = gatherDevelopData();
-      $.post('insertDevelop.jsp', data)
-          .done(function(response) {
-              alert('개발적성 입력 성공');
-          })
-          .fail(function(error) {
-              alert('개발적성 입력 실패');
-          });
-  };
+  // window.insertDevelop = function() {
+  //     let data = gatherDevelopData();
+  //     $.post('insertDevelop.jsp', data)
+  //         .done(function(response) {
+  //             alert('개발적성 입력 성공');
+  //         })
+  //         .fail(function(error) {
+  //             alert('개발적성 입력 실패');
+  //         });
+  // };
 
+//   window.insertDevelop = function() {
+//     let data = gatherDevelopData();
+//     $.post('insertDevelopPolygon.jsp', data)
+//         .done(function(response) {
+//             alert('개발적성 입력 성공');
+//         })
+//         .fail(function(error) {
+//             alert('개발적성 입력 실패');
+//         });
+// };
+
+// 개발적성 수정
   window.updateDevelop = function() {
-      let data = gatherDevelopData();
-      data.id = getDevelopId();
+    let data = gatherDevelopData();
+    data.id = getDevelopId();
+
+    // 선택된 버튼 확인
+    const updateType = document.querySelector('input[name="updateType"]:checked').value;
+
+    if (updateType === "updateDevelop") {
+      // updateDevelop.jsp로 전송
       $.post('updateDevelop.jsp', data)
           .done(function(response) {
-              alert('개발적성 수정 성공');
+              alert('개발적성값(지적도) 수정 성공');
           })
           .fail(function(error) {
-              alert('개발적성 수정 실패');
+              alert('개발적성값(지적도) 수정 실패');
           });
-  };
+    
+    } else if (updateType === "updateDevelopPolygon") {
+    // updateDevelopPolygon.jsp로 전송
+    $.post('updateDevelopPolygon.jsp', data)
+        .done(function(response) {
+            alert('개발적성값(폴리곤) 수정 성공');
+        })
+        .fail(function(error) {
+            alert('개발적성값(폴리곤) 수정 실패');
+        });
+    }}
 
-  window.deleteDevelop = function() {
-      let id = getDevelopId();
-      $.post('deleteDevelop.jsp', { id: id })
-          .done(function(response) {
-              alert('개발적성 삭제 성공');
-          })
-          .fail(function(error) {
-              alert('개발적성 삭제 실패');
-          });
-  };
+  // window.deleteDevelop = function() {
+  //     let id = getDevelopId();
+  //     $.post('deleteDevelop.jsp', { id: id })
+  //         .done(function(response) {
+  //             alert('개발적성 삭제 성공');
+  //         })
+  //         .fail(function(error) {
+  //             alert('개발적성 삭제 실패');
+  //         });
+  // };
 
   // 보전적성
-  window.insertIntegrity = function() {
-      let data = gatherIntegrityData();
-      $.post('insertIntegrity.jsp', data)
-          .done(function(response) {
-              alert('보전적성 입력 성공');
-          })
-          .fail(function(error) {
-              alert('보전적성 입력 실패');
-          });
-  };
+  // window.insertIntegrity = function() {
+  //     let data = gatherIntegrityData();
+  //     $.post('insertIntegrity.jsp', data)
+  //         .done(function(response) {
+  //             alert('보전적성 입력 성공');
+  //         })
+  //         .fail(function(error) {
+  //             alert('보전적성 입력 실패');
+  //         });
+  // };
 
+  // 보전적성 수정
   window.updateIntegrity = function() {
-      let data = gatherIntegrityData();
-      data.id = getIntegrityId();
-      $.post('updateIntegrity.jsp', data)
-          .done(function(response) {
-              alert('보전적성 수정 성공');
-          })
-          .fail(function(error) {
-              alert('보전적성 수정 실패');
-          });
-  };
+    let data = gatherIntegrityData();
+    data.id = getIntegrityId();
+    
+    // 선택된 버튼 확인
+    const updateType2 = document.querySelector('input[name="updateType2"]:checked').value;
 
-  window.deleteIntegrity = function() {
-      let id = getIntegrityId();
-      $.post('deleteIntegrity.jsp', { id: id })
-          .done(function(response) {
-              alert('보전적성 삭제 성공');
-          })
-          .fail(function(error) {
-              alert('보전적성 삭제 실패');
-          });
-  };
+    if (updateType2 === "updateIntegrity") {
+      // updateIntegrity.jsp로 전송
+      $.post('updateIntegrity.jsp', data)
+        .done(function(response) {
+            alert('보전적성값(지적도) 수정 성공');
+        })
+        .fail(function(error) {
+            alert('보전적성값(지적도) 수정 실패');
+        });
+    
+    } else if (updateType2 === "updateIntegrityPolygon") {
+    // updateIntegrityPolygon.jsp로 전송
+      $.post('updateIntegrityPolygon.jsp', data)
+        .done(function(response) {
+            alert('보전적성값(폴리곤) 수정 성공');
+        })
+        .fail(function(error) {
+            alert('보전적성값(폴리곤) 수정 실패');
+        });
+    }}
+
+  // window.deleteIntegrity = function() {
+  //     let id = getIntegrityId();
+  //     $.post('deleteIntegrity.jsp', { id: id })
+  //         .done(function(response) {
+  //             alert('보전적성 삭제 성공');
+  //         })
+  //         .fail(function(error) {
+  //             alert('보전적성 삭제 실패');
+  //         });
+  // };
 
   // 각 요소들의 값 가져오기
   function gatherDevelopData() {
       return {
-          sub1: $('#sub1').val(),
-          sub2: $('#sub2').val(),
-          sub3: $('#sub3').val(),
-          sub4: $('#sub4').val(),
-          sub5: $('#sub5').val(),
-          sub6: $('#sub6').val()
+        sub1: $('#sub1').val(),
+        sub2: $('#sub2').val(),
+        sub3: $('#sub3').val(),
+        sub4: $('#sub4').val(),
+        sub5: $('#sub5').val(),
+        sub6: $('#sub6').val(),
+        sub7: $('#sub7').text(),
+        sub15: $('#sub15').text()
       };
   }
 
   function gatherIntegrityData() {
       return {
-          sub8: $('#sub8').val(),
-          sub9: $('#sub9').val(),
-          sub10: $('#sub10').val(),
-          sub11: $('#sub11').val(),
-          sub12: $('#sub12').val(),
-          sub13: $('#sub13').val()
+        sub8: $('#sub8').val(),
+        sub9: $('#sub9').val(),
+        sub10: $('#sub10').val(),
+        sub11: $('#sub11').val(),
+        sub12: $('#sub12').val(),
+        sub13: $('#sub13').val(),
+        sub14: $('#sub14').text()
       };
   }
   // 개발적성 ID를 입력받는 요소에서 값을 가져옴
@@ -897,6 +959,35 @@ $(document).ready(function() {
   }
 });
 
+
+
+// 첫 번째 초기화 버튼 이벤트 리스너 추가
+document.getElementById('resetButton').addEventListener('click', function () {
+  // 개발적성 입력 필드를 0으로 설정
+  $('#sub1, #sub2, #sub3, #sub4, #sub5, #sub6').val(0);
+
+  // 개발적성 결과 값 설정
+  $('#sub7').text(0);
+
+  // 필요하다면 calculateSum 함수를 호출하여 값을 다시 계산
+  calculateSum();
+});
+
+// 두 번째 초기화 버튼 이벤트 리스너 추가
+document.getElementById('resetButton1').addEventListener('click', function () {
+  // 보전적성 입력 필드를 0으로 설정
+  $('#sub8, #sub9, #sub10, #sub11, #sub12, #sub13').val(0);
+
+  // 보전적성 결과 값 설정
+  $('#sub14').text(0);
+  $('#sub15').text(0);
+
+  // 필요하다면 calculateSum 함수를 호출하여 값을 다시 계산
+  calculateSum();
+});
+
+
+
 // 보조키(Ctrl)를 사용한 DragBox 기능
 const dragBox = new DragBox({
   condition: platformModifierKeyOnly,
@@ -908,15 +999,23 @@ map.addInteraction(dragBox);
 // Drag하여 Select한 객체를 조건에 따라 다른 색상을 줌
 dragBox.on('boxend', function () {
   selectedFeatures.forEach(function (feature) {
-    if (sum1 < 30) {
-      feature.setStyle(Style0030);
-    } else if (sum1 > 30 && sum1 < 60) {
-      feature.setStyle(Style3160);
+    if (totalSum < 20) {
+      feature.setStyle(Style0020);
+    } else if (totalSum >= 20 && totalSum < 40) {
+      feature.setStyle(Style2140);
+    } else if (totalSum >= 40 && totalSum < 60) {
+      feature.setStyle(Style4160);
+    } else if (totalSum >= 60 && totalSum < 80) {
+      feature.setStyle(Style6180);  
     } else {
-      feature.setStyle(Style6100);
+      feature.setStyle(Style8100);
     }
   });
 
+
+
+
+  
   // DragBox 부분은 geoserver에서 제공하는 문서를 보고 참고함.
   const boxExtent = dragBox.getGeometry().getExtent();
 
@@ -1139,6 +1238,7 @@ function showFeatureInfo(feature) {
       공적규제지역과의 거리 : <div style="display: inline-block;" id="score10">${properties.sub11}</div><br>
       농업진흥지역 비율 : <div style="display: inline-block;" id="score11">${properties.sub12}</div><br>
       하천·호소·농업용저수지와의 거리 : <div style="display: inline-block;" id="score12">${properties.sub13}</div><br>
+      종합적성값 : <div style="display: inline-block;" id="score13">${properties.sub15}</div><br>
     `;
     insidebar.innerHTML = html;
   }
@@ -1296,6 +1396,12 @@ map.on('click', (e) =>
       var clickedFeature22 = feature.get('sub13');
       $('#score12').text(clickedFeature22);
       $('#score12').attr('data-clicked-feature-sub13', clickedFeature22);
+    });
+
+    $(document).ready(function(){
+      var clickedFeature23 = feature.get('sub15');
+      $('#score13').text(clickedFeature23);
+      $('#score13').attr('data-clicked-feature-sub15', clickedFeature23);
     });
 
     $(document).ready(function(){

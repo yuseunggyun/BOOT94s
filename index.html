@@ -134,6 +134,8 @@
               <td><span id="dong13">호탄동&middot;충무공동</span></td>
             </tr>
           </table>
+           <!-- 마우스 동작시 좌표값 표시 -->
+           <div id="mouseCoord">좌표:</div>
         </div> <!-- ymname 닫힘 -->
       </div> <!-- header 닫힘 -->
     </div> <!-- area 닫힘 -->
@@ -174,6 +176,8 @@
             공적규제지역과의 거리 : <div style="display: inline-block;" id="score10"></div><br>
             농업진흥지역 비율 : <div style="display: inline-block;" id="score11"></div><br>
             하천&middot;호소&middot;농업용저수지와의 거리 : <div style="display: inline-block;" id="score12"></div><br>
+            <hr style="margin: 0px -10px;">
+            <b>종합 적성 값 : <div style="display: inline-block;" id="score13"></div></b><br>
           </div>
         </ul>
       </div>
@@ -239,10 +243,17 @@
                 </td>
               </tr>
             </table>
-            <div style="text-align: center; ">
-              <button type="button" class="developbutton" onclick="insertDevelop()">입력</button>
-              <button type="button" class="developbutton" onclick="updateDevelop()">수정</button>
-              <button type="button" class="developbutton" onclick="deleteDevelop()">삭제</button>
+            <div>
+              <form id="updateForm1">
+                <label class="develop1">
+                  <input type="radio" name="updateType" value="updateDevelop" checked>&nbsp;&nbsp;연속지적도
+                </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label class="develop1">
+                  <input type="radio" name="updateType" value="updateDevelopPolygon">&nbsp;&nbsp;생성 폴리곤
+                </label>
+                <button type="button" class="developbutton" onclick="updateDevelop()">수정</button>
+                <button type="button" id="resetButton">초기화</button>
+              </form>
               <!-- 개발적성 ID 입력 요소 -->
               <input type="hidden" id="developId">
             </div>
@@ -294,10 +305,17 @@
                 </td>
               </tr>
             </table>
-            <div style="text-align: center;">
-              <button type="button" class="integritybutton" onclick="insertIntegrity()">입력</button>
-              <button type="button" class="integritybutton" onclick="updateIntegrity()">수정</button>
-              <button type="button" class="integritybutton" onclick="deleteIntegrity()">삭제</button>
+            <div>
+              <form id="updateForm2">
+                <label class="integrity1">
+                  <input type="radio" name="updateType2" value="updateIntegrity" checked>&nbsp;&nbsp;연속지적도
+                </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label class="integrity1">
+                  <input type="radio" name="updateType2" value="updateIntegrityPolygon">&nbsp;&nbsp;생성 폴리곤
+                </label>
+                <button type="button" class="integrityButton" onclick="updateIntegrity()">수정</button>
+                <button type="button" id="resetButton1">초기화</button>
+              </form>
               <!-- 보전적성 ID 입력 요소 -->
               <input type="hidden" id="integrityId">
             </div>
@@ -395,15 +413,13 @@
   <div id="area4">
     <h3 style="writing-mode: vertical-lr;" id="h3name"> 폴리곤</h3>
     <div class="polygonbuttons">
-      <button id="createPolygonButton" ><img src="polygon.png" width="35"></button>
+      <button id="createPolygonButton"><img src="polygon.png" width="35"></button>
       <button id="saveButton"><img src="polygonSV.png" width="35"></button>
       <button id="clearStylesButton"><img src="polygonCL.png" width="42"></button>
       <button id="removeButton"><img src="polygonRM.png" width="35"></button>
       <button id="deleteButton"><img src="polygonDB.png" width="42"></button>
     </div>
   </div>
-
-
 
   <!-- 동적검색을 위한 script -->
   <script>
@@ -440,7 +456,7 @@
           let data = xhr.responseText.trim().split('\n'); // 데이터 줄 단위로 나누기
           let filteredData = data.filter(line => line.includes(query));
 
-          if (filteredData.length >= 22) {
+          if (filteredData.length >= 23) {
 
             let pnu = data[0] || 0;
             let doValue = data[1] || 0;
@@ -464,6 +480,7 @@
             let score10 = data[19] || 0;
             let score11 = data[20] || 0;
             let score12 = data[21] || 0;
+            let score13 = data[22] || 0;
 
             let html = `
               PNU : <div style="display: inline-block;" id="pnu">${pnu}</div><br>
@@ -488,6 +505,7 @@
               공적규제지역과의 거리 : <div style="display: inline-block;" id="score10">${score10}</div><br>
               농입진흥지역 비율 : <div style="display: inline-block;" id="score11">${score11}</div><br>
               하천·호소·농업용저수지와의 거리 : <div style="display: inline-block;" id="score12">${score12}</div><br>
+              종합적성값 : <div style="display: inline-block;" id="score13">${score13}</div><br>
               `;
 
             let insidebar = document.querySelector(".landinfo");

@@ -818,6 +818,8 @@ function clearSavedStyles() {
 // 버튼 클릭 시 저장된 스타일 삭제
 document.getElementById('clearStylesButton').addEventListener('click', clearSavedStyles);
 
+
+
 // JQuery를 이용하여 적성값 입력, 수정, 삭제
 // 개발적성
 $(document).ready(function() {
@@ -1447,4 +1449,21 @@ dongList.forEach(dong => {
       makeWFSSource(dong);
     };
   }
+});
+
+
+// 지도에 마우스 이동 이벤트 추가
+const mouseCoord = document.getElementById('mouseCoord');
+
+// 좌표값을 업데이트하는 함수
+function updateMousePosition(coordinate) {
+  const [x,y] = coordinate;
+  const coord = `좌표: ${x.toFixed(0)}, ${y.toFixed(0)}`;
+  mouseCoord.innerHTML = coord;
+}
+
+// 지도에 마우스 이동 이벤트 추가
+map.on('pointermove', function(evt) {
+  const coordinate = evt.coordinate;
+  updateMousePosition(coordinate);
 });

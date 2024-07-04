@@ -831,29 +831,34 @@ $(document).ready(function() {
 //         });
 // };
 
+// 개발적성 수정
   window.updateDevelop = function() {
     let data = gatherDevelopData();
     data.id = getDevelopId();
-    $.post('updateDevelop.jsp', data)
-        .done(function(response) {
-            alert('개발적성 수정 성공');
-        })
-        .fail(function(error) {
-            alert('개발적성 수정 실패');
-        });
-  };
 
-  window.updateDevelop = function() {
-    let data = gatherDevelopData();
-    data.id = getDevelopId();
+    // 선택된 버튼 확인
+    const updateType = document.querySelector('input[name="updateType"]:checked').value;
+
+    if (updateType === "updateDevelop") {
+      // updateDevelop.jsp로 전송
+      $.post('updateDevelop.jsp', data)
+          .done(function(response) {
+              alert('개발적성값(지적도) 수정 성공');
+          })
+          .fail(function(error) {
+              alert('개발적성값(지적도) 수정 실패');
+          });
+    
+    } else if (updateType === "updateDevelopPolygon") {
+    // updateDevelopPolygon.jsp로 전송
     $.post('updateDevelopPolygon.jsp', data)
         .done(function(response) {
-            alert('개발적성 수정 성공');
+            alert('개발적성값(폴리곤) 수정 성공');
         })
         .fail(function(error) {
-            alert('개발적성 수정 실패');
+            alert('개발적성값(폴리곤) 수정 실패');
         });
-  };
+    }}
 
   // window.deleteDevelop = function() {
   //     let id = getDevelopId();
@@ -878,29 +883,34 @@ $(document).ready(function() {
   //         });
   // };
 
+  // 보전적성 수정
   window.updateIntegrity = function() {
     let data = gatherIntegrityData();
     data.id = getIntegrityId();
-    $.post('updateIntegrity.jsp', data)
+    
+    // 선택된 버튼 확인
+    const updateType2 = document.querySelector('input[name="updateType2"]:checked').value;
+
+    if (updateType2 === "updateIntegrity") {
+      // updateIntegrity.jsp로 전송
+      $.post('updateIntegrity.jsp', data)
         .done(function(response) {
-            alert('보전적성 수정 성공');
+            alert('보전적성값(지적도) 수정 성공');
         })
         .fail(function(error) {
-            alert('보전적성 수정 실패');
+            alert('보전적성값(지적도) 수정 실패');
         });
-  };
-
-  window.updateIntegrity = function() {
-    let data = gatherIntegrityData();
-    data.id = getIntegrityId();
-    $.post('updateIntegrityPolygon.jsp', data)
-      .done(function(response) {
-          alert('보전적성 수정 성공');
-      })
-      .fail(function(error) {
-          alert('보전적성 수정 실패');
-      });
-  };
+    
+    } else if (updateType2 === "updateIntegrityPolygon") {
+    // updateIntegrityPolygon.jsp로 전송
+      $.post('updateIntegrityPolygon.jsp', data)
+        .done(function(response) {
+            alert('보전적성값(폴리곤) 수정 성공');
+        })
+        .fail(function(error) {
+            alert('보전적성값(폴리곤) 수정 실패');
+        });
+    }}
 
   // window.deleteIntegrity = function() {
   //     let id = getIntegrityId();
@@ -921,7 +931,9 @@ $(document).ready(function() {
         sub3: $('#sub3').val(),
         sub4: $('#sub4').val(),
         sub5: $('#sub5').val(),
-        sub6: $('#sub6').val()
+        sub6: $('#sub6').val(),
+        sub7: $('#sub7').text(),
+        sub15: $('#sub15').text()
       };
   }
 
@@ -932,7 +944,8 @@ $(document).ready(function() {
         sub10: $('#sub10').val(),
         sub11: $('#sub11').val(),
         sub12: $('#sub12').val(),
-        sub13: $('#sub13').val()
+        sub13: $('#sub13').val(),
+        sub14: $('#sub14').text()
       };
   }
   // 개발적성 ID를 입력받는 요소에서 값을 가져옴
@@ -1192,6 +1205,7 @@ function showFeatureInfo(feature) {
       공적규제지역과의 거리 : <div style="display: inline-block;" id="score10">${properties.sub11}</div><br>
       농업진흥지역 비율 : <div style="display: inline-block;" id="score11">${properties.sub12}</div><br>
       하천·호소·농업용저수지와의 거리 : <div style="display: inline-block;" id="score12">${properties.sub13}</div><br>
+      종합적성값 : <div style="display: inline-block;" id="score13">${properties.sub15}</div><br>
     `;
     insidebar.innerHTML = html;
   }
@@ -1349,6 +1363,12 @@ map.on('click', (e) =>
       var clickedFeature22 = feature.get('sub13');
       $('#score12').text(clickedFeature22);
       $('#score12').attr('data-clicked-feature-sub13', clickedFeature22);
+    });
+
+    $(document).ready(function(){
+      var clickedFeature23 = feature.get('sub15');
+      $('#score13').text(clickedFeature23);
+      $('#score13').attr('data-clicked-feature-sub15', clickedFeature23);
     });
 
     $(document).ready(function(){

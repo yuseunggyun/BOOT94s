@@ -7,7 +7,7 @@
     int sub11 = Integer.parseInt(request.getParameter("sub11"));
     int sub12 = Integer.parseInt(request.getParameter("sub12"));
     int sub13 = Integer.parseInt(request.getParameter("sub13"));
-    int sub14 = sub8 + sub9 + sub10 + sub11 + sub12 + sub13;
+    int sub14 = Integer.parseInt(request.getParameter("sub14"));
 %>
 <% 	// 접속할 DBMS 주소 		
     String url = "jdbc:postgresql://172.30.0.7/jinju";
@@ -34,7 +34,7 @@
         con = DriverManager.getConnection(url, user, pwd);
         
         // 실행할 쿼리문 			
-        String query = "update jj set sub8 = '" + sub8 + "', sub9 = '" + sub9 + "', sub10 = '" + sub10 + "', sub11 = '" + sub11 + "', sub12 = '" + sub12 + "', sub13 = '" + sub13 + "', sub14 = '" + sub14 + "' WHERE id = " + id;
+        String query = "update jj set sub8 = '" + sub8 + "', sub9 = '" + sub9 + "', sub10 = '" + sub10 + "', sub11 = '" + sub11 + "', sub12 = '" + sub12 + "', sub13 = '" + sub13 + "', sub14 = '" + sub14 + "'WHERE id = " + id;
 
         // DBMS에 쿼리할 준비를 한다.
         pstmt = con.prepareStatement(query);

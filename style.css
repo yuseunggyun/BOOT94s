@@ -235,15 +235,15 @@ table.ymList2 span.active2 {
 
 .insidebar {
   text-align: center;
-  font-size: 1.3rem;
-  color: rgb(35,160,250);
-  background-color: rgba(252, 209, 79, 0.7);
-  margin: 10px 0px 10px 0px;
+  font-size: 1.1rem;
+  color: rgb(255, 255, 255);
+  background-color: rgba(60, 130, 161, 0.7);
+  margin: 0px 0px 2px 0px;
   float: top;
 }
 
 ul.sideinfo {
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   line-height: 1.8;
   background: #efefef;
   border: 2px solid rgb(0,152,129);
@@ -262,6 +262,8 @@ ul.sideinfo {
   z-index: 1px;
 }
 
+
+
 /*평가지표 스타일*/
 .area3 {
   background: #efefef;
@@ -275,14 +277,7 @@ ul.sideinfo {
   width: 350px;
   margin-top: 10px;
 }
-div.area3 h2.insidebar1 {
-  text-align: center;
-  font-size: 1.3rem;
-  color: rgb(35,160,250);
-  background-color: rgba(252, 209, 79, 0.7);
-  margin: 10px 5px 10px 5px;
-  float: top;
-}
+
 ul.sideinfo1 {
   line-height: 2.0;
   margin: 5px 0;
@@ -293,7 +288,7 @@ ul.sideinfo1 {
 /* 개발적성평가 점수 스타일 */
 div.area3 table.maindevelop {
   font-size: 0.9rem;
-  margin: -10px 10px 10px 10px;
+  margin: 0px 10px 10px 10px;
 }
 div.area3 table.maindevelop td {
   font-size: 0.85rem;
@@ -322,8 +317,8 @@ div.area3 table.mainintegrity th.integrityscore {
   border-top-right-radius: 13px;
   border-bottom-left-radius: 13px;
   border-bottom-right-radius: 13px; 
-  background: rgba(252, 209, 79, 0.7);
-  color: rgb(35,160,250);
+  background: rgba(60, 130, 161, 0.7);
+  color: rgb(255,255,255);
   /* padding: 2px 43.35px; */
   cursor: pointer;
 }
@@ -334,8 +329,8 @@ div.area3 table.mainintegrity th.integrityscore {
   border-top-right-radius: 13px;
   border-bottom-left-radius: 13px;
   border-bottom-right-radius: 13px; 
-  background: rgba(252, 209, 79, 0.7);
-  color: rgb(35,160,250);
+  background: rgba(60, 130, 161, 0.7);
+  color: rgb(255,255,255);
   /* padding: 2px 43.35px; */
   cursor: pointer;
 }
@@ -350,14 +345,49 @@ table.maindevelop td {
   font-size: 0.75rem;
   padding: 2px 7px;
 }
+table.maindevelop th{
+  padding: 5px 0px;
+}
+
+label.develop1 {
+  font-size: 0.9rem;
+  position: relative;
+  left: 30px;
+  bottom: 5px;
+}
 
 button.developbutton {
   font-size: 0.82rem;
   position: relative;
-  left: 103px;
-  padding: 1.4px;
-  background: rgba(126, 126, 126, 0.5);
+  left: 50px;
+  top: -3px;
+  padding: 1px;
+  background: rgba(211, 211, 211, 0.5);
+  box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+  border-radius: 3px;
 }
+
+button.developbutton:hover {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 3px;
+  padding : 2px;
+  }
+  
+  button#resetButton {
+    font-size: 0.82rem;
+    position: relative;
+    left: 55px;
+    top: -3px;
+    padding: 1px;
+    background: rgba(211, 211, 211, 0.5);
+    box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+    border-radius: 3px;
+  }
+  button#resetButton:hover {
+    background: rgba(126, 126, 126, 0.5);
+    border-radius: 3px;
+    padding : 2px;
+    }
 
 /*평가지표 테이블 보전*/
 table.mainintegrity {
@@ -372,21 +402,105 @@ table.mainintegrity  td {
   padding: 2px 7px;
 }
 
-button.integritybutton {
+table.mainintegrity th{
+  padding: 5px 3px;
+}
+
+
+label.integrity1 {
+  font-size: 0.9rem;
+  position: relative;
+  left: 30px;
+  top: 10px;
+}
+
+button.integrityButton {
   font-size: 0.82rem;
   position: relative;
-  left: 104px;
-  padding: 1.4px;
-  background: rgba(126, 126, 126, 0.5);
+  left: 50px;
+  top: 10px;
+  padding: 1px;
+  background: rgba(211, 211, 211, 0.5);
+  box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+  border-radius: 3px;
 }
+
+button.integrityButton:hover {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 3px;
+  padding : 2px;
+  }
+  
+  button#resetButton1 {
+    font-size: 0.82rem;
+    position: relative;
+    left: 55px;
+    top: 10px;
+    padding: 1px;
+    background: rgba(211, 211, 211, 0.5);
+    box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+    border-radius: 3px;
+  }
+  button#resetButton1:hover {
+    background: rgba(126, 126, 126, 0.5);
+    border-radius: 3px;
+    padding : 2px;
+    }
+
+    button#resetButton2 {
+      font-size: 0.82rem;
+      position: relative;
+      left: 8px;
+      top: 40px;
+      padding: 1px 8px;
+      background: rgba(211, 211, 211, 0.5);
+      box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+      border-radius: 3px;
+      z-index: 1;
+    }
+    button#resetButton2.container1.active {
+      background: rgba(126, 126, 126, 0.5);
+      border-radius: 3px;
+      z-index: 1;
+      }
+
+
+
 
 /*종합적성값*/
 table.maintotal {
-  font-size: 0.9rem;
+  font-size: 1rem;
   border-collapse: collapse;
   position: relative;
-  top: 30px;
+  top: 15px;
 }
+table.maintotal p#sub15 {
+  position: relative;
+  right: 100px;
+}
+
+
+/*범례 테이블 스타일*/
+table.legend {
+  border-collapse: collapse;
+  width: 95%;
+  font-size: 0.9rem;
+  margin-left: 10px;
+  border: none;
+}
+
+table.legend tr.legend2{
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+table.legend tr.legend3{
+  text-align: center;
+  font-size: 0.8rem;
+  width: 100px;
+}
+
+
 
 #mapArea {
   position: absolute;
@@ -406,42 +520,59 @@ table.maintotal {
 
 /*위성영상*/
 #layerSwitcher {
-  width: 113px;
+  width: 65px;
   height: 7.5%;
   position: absolute;
-  top: 10px;
-  right: 290px;
+  top: 5px;
+  right: 286px;
   z-index: 1;
   background: rgba(255, 255, 255, 0.8);
-  padding: 10px;
+  padding: 36px 1px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  font-size: 0.8rem;
-  
+  font-size: 0.8rem; 
 }
+
+
+
+
+
+/* 마우스 이동시 좌표값 */
+#mouseCoord{
+  text-align: center;
+  width: 100%;
+  position: absolute;
+  bottom: -1px;
+  background: white;
+  padding: 2px 0px;
+  border: 0.4px solid rgb(110, 110, 110);
+  font-size: 14px;
+}
+
 div#layerSwitcher #btn-road{
   border: none;
-  padding: 2px 10px;
+  padding: 5px 5px;
   position: relative;
-  left: 20px;
-  top : -5px;
+  left: 5px;
+  bottom: 30px;
   border-radius: 4px; 
 }
 
 div#layerSwitcher #btn-satellite{
   border: none;
-  padding: 2px 10px;
+  padding: 5px 5px;
   position: relative;
-  left: 20px;
-  top : 1px;
+  left: 5px;
+  bottom: 15px;
   border-radius: 4px;
 }
 
+/*색상삭제 버튼*/
 div#layerSwitcher #clearStylesButton{
   border: none;
-  padding: 2px 10px;
+  padding: 2px 15px;
   position: relative;
-  left: 20px;
+  left: 32px;
   top : 6px;
   border-radius: 4px;
 }
@@ -449,7 +580,7 @@ div#layerSwitcher #clearStylesButton{
 div#layerSwitcher button:hover {
 background: rgba(126, 126, 126, 0.5);
 border-radius: 10%;
-padding : 2px 3px;
+padding : 2px 5px;
 }
 
 /* (info 스타일 추가) */
@@ -470,51 +601,95 @@ padding : 2px 3px;
   pointer-events: none;
 }
 
+
+
 /*maptype  거리 및 면적 계산 스타일 부분*/
 #area2 {
   position: absolute;
-  top: 10px;  
-  right: 10px;
+  top: 5px;  
+  right: 8px;
   background: rgba(255, 255, 255, 0.8);
-  padding: 10px;
+  padding: 35px 8px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1;
-  font-size: 0.9rem;
 }
 
 #area2 h2 {
-  text-align: center;
-  color: rgba(26, 26, 26, 0.7);
+  color: rgba(26, 26, 26, 0.9);
+  font-size: 0.8rem;
+  position: relative;
+  left: 15px;
+  bottom: 30px;
 }
 
 #area2 #distanceButton{
   position: absolute;
-  top: 40px;
-  left: 80px;
+  top: 35px;
+  left: px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
+  padding : 5px 8px;
 }
 
 #area2 #areaButton {
   position: absolute;
-  top: 40px;
-  left: 150px;
+  top: 35px;
+  left: 70px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
+  padding : 5px 8px;
+
 }
 
 #area2 button:hover{
   background: rgba(126, 126, 126, 0.5);
   border-radius: 10%;
-  padding : 2px 3px;
+
 }
 
 #area2 #choice {
-  font-size: 0.9em;
-  margin-bottom: 5px;
+  font-size: 0.75em;
+  margin-top: 15px;
+  position: relative;
+  left: 2px;
+  top: 25px;
+}
+
+#area4 {
+position: absolute;
+top: 5px;  
+right: 148px;
+background: rgba(255, 255, 255, 0.8);
+padding: 17px 8px;
+/* margin: 2px 5px; */
+border-radius: 4px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+z-index: 1;
+font-size: 0.78rem;
+}
+
+#h3name {
+  position: absolute;
+  left: 40px;
+  top: 6px;
+  font-size: 0.8rem;
+  color: rgba(26, 26, 26, 0.9);
+}
+
+#area4 div.polygonbuttons button{
+  padding: 5px 10px;
+  margin: 0px 0px;
+  border: none;
+  position: relative;
+  top: 10px;
+}
+
+#area4 div.polygonbuttons button:hover {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 10%;
 }
 
 #popup {

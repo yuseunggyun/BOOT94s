@@ -20,6 +20,7 @@
 
   <!--검색창 이미지-->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 </head>
 
 <body>
@@ -134,6 +135,8 @@
               <td><span id="dong13">호탄동&middot;충무공동</span></td>
             </tr>
           </table>
+           <!-- 마우스 동작시 좌표값 표시 -->
+           <div id="mouseCoord">좌표:</div>
         </div> <!-- ymname 닫힘 -->
       </div> <!-- header 닫힘 -->
     </div> <!-- area 닫힘 -->
@@ -174,7 +177,8 @@
             공적규제지역과의 거리 : <div style="display: inline-block;" id="score10"></div><br>
             농업진흥지역 비율 : <div style="display: inline-block;" id="score11"></div><br>
             하천&middot;호소&middot;농업용저수지와의 거리 : <div style="display: inline-block;" id="score12"></div><br>
-            종합 적성 값 : <div style="display: inline-block;" id="score13"></div><br>
+            <hr style="margin: 0px -10px;">
+            <b>종합 적성 값 : <div style="display: inline-block;" id="score13"></div></b><br>
           </div>
         </ul>
       </div>
@@ -242,11 +246,11 @@
             </table>
             <div>
               <form id="updateForm1">
-                <label>
-                    <input type="radio" name="updateType" value="updateDevelop" checked>연속지적도
-                </label>
-                <label>
-                    <input type="radio" name="updateType" value="updateDevelopPolygon">생성 폴리곤
+                <label class="develop1">
+                  <input type="radio" name="updateType" value="updateDevelop" checked>&nbsp;&nbsp;연속지적도
+                </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label class="develop1">
+                  <input type="radio" name="updateType" value="updateDevelopPolygon">&nbsp;&nbsp;생성 폴리곤
                 </label>
                 <button type="button" class="developbutton" onclick="updateDevelop()">수정</button>
                 <button type="button" id="resetButton">초기화</button>
@@ -273,26 +277,26 @@
               </tr>
               <tr>
                 <td><label for="sub10">공적규제지역면적 비율 :</label></td>
-                <td style="width: 85px;"><input type="number" id="sub10" name="sub10" min="0" max="100" style="width:50px"
-                    oninput="validateInput(this)"></td>
+                <td style="width: 85px;"><input type="number" id="sub10" name="sub10" min="0" max="100"
+                    style="width:50px" oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <td><label for="sub11">공적규제지역과의 거리 :</label></td>
-                <td style="width: 85px;"><input type="number" id="sub11" name="sub11" min="0" max="100" style="width:50px"
-                    oninput="validateInput(this)"></td>
+                <td style="width: 85px;"><input type="number" id="sub11" name="sub11" min="0" max="100"
+                    style="width:50px" oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <th rowspan="3" class="indicator" style="writing-mode: vertical-lr; text-align: center; ">선택지표</th>
               </tr>
               <tr>
                 <td><label for="sub12">농업진흥지역 비율 :</label></td>
-                <td style="width: 85px;"><input type="number" id="sub12" name="sub12" min="0" max="100" style="width:50px"
-                    oninput="validateInput(this)"></td>
+                <td style="width: 85px;"><input type="number" id="sub12" name="sub12" min="0" max="100"
+                    style="width:50px" oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <td><label for="sub13">하천·호소·농업용저수지와의 거리:</label></td>
-                <td style="width: 85px;"><input type="number" id="sub13" name="sub13" min="0" max="100" style="width:50px"
-                    oninput="validateInput(this)"></td>
+                <td style="width: 85px;"><input type="number" id="sub13" name="sub13" min="0" max="100"
+                    style="width:50px" oninput="validateInput(this)"></td>
               </tr>
               <tr>
                 <th colspan="2" class="integrityscore" style="text-align: center;"><label for="sub14">종합 보전 점수: </label>
@@ -304,14 +308,15 @@
             </table>
             <div>
               <form id="updateForm2">
-                <label>
-                    <input type="radio" name="updateType2" value="updateIntegrity" checked>연속지적도
-                </label>
-                <label>
-                    <input type="radio" name="updateType2" value="updateIntegrityPolygon">생성 폴리곤
+                <label class="integrity1">
+                  <input type="radio" name="updateType2" value="updateIntegrity" checked>&nbsp;&nbsp;연속지적도
+                </label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                <label class="integrity1">
+                  <input type="radio" name="updateType2" value="updateIntegrityPolygon">&nbsp;&nbsp;생성 폴리곤
                 </label>
                 <button type="button" class="integrityButton" onclick="updateIntegrity()">수정</button>
                 <button type="button" id="resetButton1">초기화</button>
+                <button type="button" id="resetButton2" onclick="updateAll()">적용</button>
               </form>
               <!-- 보전적성 ID 입력 요소 -->
               <input type="hidden" id="integrityId">
@@ -331,7 +336,10 @@
                 <th colspan="5">범&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;례</th>
               </tr>
               <tr class="legend2">
-                <td colspan="5">보전적성 강함&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(0, 102, 0);font-size: 1.2rem;">←</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: rgb(255, 0, 0); font-size: 1.2rem;">→</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 개발적성 강함</td>
+                <td colspan="5">보전적성 강함&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                    style="color: rgb(0, 102, 0);font-size: 1.2rem;">←</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span
+                    style="color: rgb(255, 0, 0); font-size: 1.2rem;">→</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 개발적성
+                  강함</td>
               </tr>
               <tr class="legend3">
                 <td style="background: rgb(0, 102, 0); color: white;">가등급</td>
@@ -367,11 +375,9 @@
         <div id="info"></div>
         <!-- 지도 레이어 전환 버튼 -->
         <div id="layerSwitcher">
-          <button id="btn-road"><img src="map.png" width="40"></button>
-          <button id="btn-satellite"><img src="map1.png" width="40"></button>
+          <button id="btn-road"><img src="map.png" width="45"></button>
+          <button id="btn-satellite"><img src="map1.png" width="45"></button>
         </div>
-        <!-- 마우스 동작시 좌표값 표시 -->
-        <div id="mouseCoord">좌표:</div>
       </div>
     </div>
   </div> <!-- container 닫기 -->
@@ -405,18 +411,17 @@
       </div>
     </form>
   </div>
-    <!--폴리곤 생성-->
+  <!--폴리곤 생성-->
   <div id="area4">
-    <h3 style="writing-mode: vertical-lr;" id="h3name"> 폴리곤</h3>
+    <h3 id="h3name"> 폴&nbsp;&nbsp;리&nbsp;&nbsp;곤</h3>
     <div class="polygonbuttons">
-      <button id="createPolygonButton" ><img src="polygon.png" width="35"></button>
-      <button id="saveButton"><img src="polygonSV.png" width="35"></button>
-      <button id="clearStylesButton"><img src="polygonCL.png" width="42"></button>
+      <button id="createPolygonButton"><img src="polygon.png" width="35"></button>
+      <button id="saveButton"><img src="polygonSV.png" width="35"></button><br>
       <button id="removeButton"><img src="polygonRM.png" width="35"></button>
-      <button id="deleteButton"><img src="polygonDB.png" width="42"></button>
+      <button id="deleteButton"><img src="polygonDB.png" width="38"></button>
     </div>
   </div>
- 
+
   <!-- 동적검색을 위한 script -->
   <script>
     let searchIcon = document.querySelector(".search");

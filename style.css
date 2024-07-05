@@ -447,6 +447,25 @@ button.integrityButton:hover {
     padding : 2px;
     }
 
+    button#resetButton2 {
+      font-size: 0.82rem;
+      position: relative;
+      left: 8px;
+      top: 40px;
+      padding: 1px 8px;
+      background: rgba(211, 211, 211, 0.5);
+      box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+      border-radius: 3px;
+    }
+    button#resetButton2.container1.active {
+      background: rgba(126, 126, 126, 0.5);
+      border-radius: 3px;
+      padding : 2px;
+      }
+
+
+
+
 /*종합적성값*/
 table.maintotal {
   font-size: 1rem;
@@ -504,14 +523,18 @@ table.legend tr.legend3{
   height: 7.5%;
   position: absolute;
   top: 5px;
-  right: 268px;
+  right: 286px;
   z-index: 1;
   background: rgba(255, 255, 255, 0.8);
-  padding: 10px;
+  padding: 36px 1px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   font-size: 0.8rem; 
 }
+
+
+
+
 
 /* 마우스 이동시 좌표값 */
 #mouseCoord{
@@ -527,19 +550,19 @@ table.legend tr.legend3{
 
 div#layerSwitcher #btn-road{
   border: none;
-  padding: 0px 5px;
+  padding: 5px 5px;
   position: relative;
-  left: 8px;
-  top : -8px;
+  left: 5px;
+  bottom: 30px;
   border-radius: 4px; 
 }
 
 div#layerSwitcher #btn-satellite{
   border: none;
-  padding: 0px 5px;
+  padding: 5px 5px;
   position: relative;
-  left: 8px;
-  top : -8px;
+  left: 5px;
+  bottom: 15px;
   border-radius: 4px;
 }
 
@@ -585,28 +608,28 @@ padding : 2px 5px;
   top: 5px;  
   right: 8px;
   background: rgba(255, 255, 255, 0.8);
-  padding: 9.5px 70px;
+  padding: 35px 8px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   z-index: 1;
 }
 
 #area2 h2 {
-  text-align: center;
-  color: rgba(26, 26, 26, 0.7);
-  font-size: 0.9rem;
+  color: rgba(26, 26, 26, 0.9);
+  font-size: 0.8rem;
   position: relative;
-  
+  left: 15px;
+  bottom: 30px;
 }
 
 #area2 #distanceButton{
   position: absolute;
   top: 35px;
-  left: 15px;
+  left: px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
-  padding : 2px 3px;
+  padding : 5px 8px;
 }
 
 #area2 #areaButton {
@@ -616,31 +639,31 @@ padding : 2px 5px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
-  padding : 2px 3px;
+  padding : 5px 8px;
 
 }
 
 #area2 button:hover{
   background: rgba(126, 126, 126, 0.5);
   border-radius: 10%;
-  padding : 2px 3px;
+
 }
 
 #area2 #choice {
-  font-size: 0.7em;
+  font-size: 0.75em;
   margin-top: 15px;
   position: relative;
-  left: 50px;
-  bottom: 5px;
+  left: 2px;
+  top: 25px;
 }
 
 #area4 {
 position: absolute;
-top: 95px;  
-right: 2px;
+top: 5px;  
+right: 148px;
 background: rgba(255, 255, 255, 0.8);
-padding: 3px 14px 3px 40px;
-margin: 2px 5px;
+padding: 17px 8px;
+/* margin: 2px 5px; */
 border-radius: 4px;
 box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 z-index: 1;
@@ -649,13 +672,18 @@ font-size: 0.78rem;
 
 #h3name {
   position: absolute;
-  left: 12px;
+  left: 40px;
   top: 6px;
+  font-size: 0.8rem;
+  color: rgba(26, 26, 26, 0.9);
 }
 
 #area4 div.polygonbuttons button{
-  padding: 0px 5px;
-  margin: 0px 2px;
+  padding: 5px 10px;
+  margin: 0px 0px;
+  border: none;
+  position: relative;
+  top: 10px;
 }
 
 #area4 div.polygonbuttons button:hover {

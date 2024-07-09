@@ -119,15 +119,15 @@ function getStyleByTotalSum(totalsum) {
     return defaultStyle;
   }
 
-  if (totalsum < 20) {
+  if (totalsum <= 20) {
     return Style0020;
-  } else if (totalsum >= 20 && totalsum < 40) {
+  } else if (totalsum > 20 && totalsum <= 40) {
     return Style2140;
-  } else if (totalsum >= 40 && totalsum < 60) {
+  } else if (totalsum > 40 && totalsum <= 60) {
     return Style4160;
-  } else if (totalsum >= 60 && totalsum < 80) {
+  } else if (totalsum > 60 && totalsum <= 80) {
     return Style6180;
-  } else if (totalsum >= 80 && totalsum <= 100) {
+  } else if (totalsum > 80 && totalsum <= 100) {
     return Style8100;
   } else {
     return defaultStyle;
@@ -985,16 +985,19 @@ dragBox.on('boxend', function () {
     if (totalSum == null) {
       return defaultStyle;
     }
-    if (totalSum < 20) {
-      feature.setStyle(Style0020);
-    } else if (totalSum >= 20 && totalSum < 40) {
-      feature.setStyle(Style2140);
-    } else if (totalSum >= 40 && totalSum < 60) {
-      feature.setStyle(Style4160);
-    } else if (totalSum >= 60 && totalSum < 80) {
-      feature.setStyle(Style6180);  
+    
+    if (totalSum <= 20) {
+      return Style0020;
+    } else if (totalSum > 20 && totalSum <= 40) {
+      return Style2140;
+    } else if (totalSum > 40 && totalSum <= 60) {
+      return Style4160;
+    } else if (totalSum > 60 && totalSum <= 80) {
+      return Style6180;
+    } else if (totalSum > 80 && totalSum <= 100) {
+      return Style8100;
     } else {
-      feature.setStyle(Style8100);
+      return defaultStyle;
     }
   });
 

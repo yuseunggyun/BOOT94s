@@ -175,7 +175,6 @@ table.ymList span.active1 {
   line-height: 1.4.5
 }
 
-
 /*진주 시가 스타일 및 하위 호버 스타일 설정*/
 table.ymList2 {
   background: #cfcfcf;
@@ -219,7 +218,6 @@ table.ymList2 span.active2 {
   z-index: 3;
   position: relative;
   margin-left: 1px;
-
 }
 
 .insidebar {
@@ -250,8 +248,6 @@ ul.sideinfo {
   border-left: 1.5px solid rgba(0, 152, 129, 1);
   z-index: 1px;
 }
-
-
 
 /*평가지표 스타일*/
 .area3 {
@@ -394,7 +390,6 @@ table.mainintegrity th {
   padding: 5px 3px;
 }
 
-
 label.integrity1 {
   font-size: 0.9rem;
   position: relative;
@@ -454,9 +449,6 @@ button#resetButton2.container1.active {
   z-index: 1;
 }
 
-
-
-
 /*종합적성값*/
 table.maintotal {
   font-size: 1rem;
@@ -469,7 +461,6 @@ table.maintotal p#sub15 {
   position: relative;
   right: 100px;
 }
-
 
 /*범례 테이블 스타일*/
 table.legend {
@@ -490,8 +481,6 @@ table.legend tr.legend3 {
   font-size: 0.8rem;
   width: 100px;
 }
-
-
 
 #mapArea {
   position: absolute;
@@ -588,8 +577,6 @@ div#layerSwitcher button:hover {
   visibility: hidden;
   pointer-events: none;
 }
-
-
 
 /*maptype  거리 및 면적 계산 스타일 부분*/
 #area2 {

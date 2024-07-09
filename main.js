@@ -479,7 +479,7 @@ const vector = new VectorLayer({
 map.addLayer(vector);
 map.addInteraction(modify);
 
-let draw1; // global so we can remove it later
+let draw1;
 
 function addInteraction(drawType) {
   //호버 비활성화
@@ -1075,11 +1075,9 @@ selectedFeatures.on(['add', 'remove'], function () {
 // 검색 창과 관련된 HTML 요소를 가져옴
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
-const insidebar = document.querySelector(".landinfo");
 
 let selectedFeatureExtent = null;
 let selectedListItem = null; // 현재 선택된 li 요소를 저장하는 변수
-
 let vectorSource1 = new ol.source.Vector();
 let vectorLayer1 = new ol.layer.Vector({
   source: vectorSource1,
@@ -1251,141 +1249,37 @@ map.on('click', (e) =>
 
     // JQUERY를 이용한 area1 창에 정보 표시
     $(document).ready(function(){
-      var clickedFeature1 = feature.get('pnu');
-      $('#pnu').text(clickedFeature1);
-      $('#pnu').attr('data-clicked-feature-pnu', clickedFeature1);
-    });
+      var featureMappings = [
+          { id: 'pnu', key: 'pnu' },
+          { id: 'do', key: 'jinju_do_1' },
+          { id: 'cada', key: 'jinju_cada' },
+          { id: 'jibun', key: 'jinju_jibu' },
+          { id: 'jimok', key: 'jinju_ji_1' },
+          { id: 'are', key: 'jinju_area' },
+          { id: 'price', key: 'jinju_pric' },
+          { id: 'owner', key: 'jinju_ow_1' },
+          { id: 'owner_re', key: 'jinju_ch_1' },
+          { id: 'owner_da', key: 'jinju_ch_2' },
+          { id: 'score1', key: 'sub1' },
+          { id: 'score2', key: 'sub2' },
+          { id: 'score3', key: 'sub3' },
+          { id: 'score4', key: 'sub4' },
+          { id: 'score5', key: 'sub5' },
+          { id: 'score6', key: 'sub6' },
+          { id: 'score7', key: 'sub8' },
+          { id: 'score8', key: 'sub9' },
+          { id: 'score9', key: 'sub10' },
+          { id: 'score10', key: 'sub11' },
+          { id: 'score11', key: 'sub12' },
+          { id: 'score12', key: 'sub13' },
+          { id: 'score13', key: 'sub15' }
+      ];
 
-    $(document).ready(function(){
-      var clickedFeature2 = feature.get('jinju_do_1');
-      $('#do').text(clickedFeature2);
-      $('#do').attr('data-clicked-feature-jinju_do_1', clickedFeature2);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature3 = feature.get('jinju_cada');
-      $('#cada').text(clickedFeature3);
-      $('#cada').attr('data-clicked-feature-jinju_cada', clickedFeature3);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature4 = feature.get('jinju_jibu');
-      $('#jibun').text(clickedFeature4);
-      $('#jibun').attr('data-clicked-feature-jinju_jibu', clickedFeature4);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature5 = feature.get('jinju_ji_1');
-      $('#jimok').text(clickedFeature5);
-      $('#jimok').attr('data-clicked-feature-jinju_ji_1', clickedFeature5);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature6 = feature.get('jinju_area');
-      $('#are').text(clickedFeature6);
-      $('#are').attr('data-clicked-feature-jinju_area', clickedFeature6);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature7 = feature.get('jinju_pric');
-      $('#price').text(clickedFeature7);
-      $('#price').attr('data-clicked-feature-jinju_pric', clickedFeature7);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature8 = feature.get('jinju_ow_1');
-      $('#owner').text(clickedFeature8);
-      $('#owner').attr('data-clicked-feature-jinju_ow_1', clickedFeature8);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature9 = feature.get('jinju_ch_1');
-      $('#owner_re').text(clickedFeature9);
-      $('#owner_re').attr('data-clicked-feature-jinju_ch_1', clickedFeature9);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature10 = feature.get('jinju_ch_2');
-      $('#owner_da').text(clickedFeature10);
-      $('#owner_da').attr('data-clicked-feature-jinju_ch_2', clickedFeature10);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature11 = feature.get('sub1');
-      $('#score1').text(clickedFeature11);
-      $('#score1').attr('data-clicked-feature-sub1', clickedFeature11);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature12 = feature.get('sub2');
-      $('#score2').text(clickedFeature12);
-      $('#score2').attr('data-clicked-feature-sub2', clickedFeature12);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature13 = feature.get('sub3');
-      $('#score3').text(clickedFeature13);
-      $('#score3').attr('data-clicked-feature-sub3', clickedFeature13);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature14 = feature.get('sub4');
-      $('#score4').text(clickedFeature14);
-      $('#score4').attr('data-clicked-feature-sub4', clickedFeature14);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature15 = feature.get('sub5');
-      $('#score5').text(clickedFeature15);
-      $('#score5').attr('data-clicked-feature-sub5', clickedFeature15);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature16 = feature.get('sub6');
-      $('#score6').text(clickedFeature16);
-      $('#score6').attr('data-clicked-feature-sub6', clickedFeature16);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature17 = feature.get('sub8');
-      $('#score7').text(clickedFeature17);
-      $('#score7').attr('data-clicked-feature-sub8', clickedFeature17);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature18 = feature.get('sub9');
-      $('#score8').text(clickedFeature18);
-      $('#score8').attr('data-clicked-feature-sub9', clickedFeature18);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature19 = feature.get('sub10');
-      $('#score9').text(clickedFeature19);
-      $('#score9').attr('data-clicked-feature-sub10', clickedFeature19);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature20 = feature.get('sub11');
-      $('#score10').text(clickedFeature20);
-      $('#score10').attr('data-clicked-feature-sub11', clickedFeature20);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature21 = feature.get('sub12');
-      $('#score11').text(clickedFeature21);
-      $('#score11').attr('data-clicked-feature-sub12', clickedFeature21);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature22 = feature.get('sub13');
-      $('#score12').text(clickedFeature22);
-      $('#score12').attr('data-clicked-feature-sub13', clickedFeature22);
-    });
-
-    $(document).ready(function(){
-      var clickedFeature23 = feature.get('sub15');
-      $('#score13').text(clickedFeature23);
-      $('#score13').attr('data-clicked-feature-sub15', clickedFeature23);
+      featureMappings.forEach(function(mapping) {
+        var clickedFeature = feature.get(mapping.key);
+        $('#' + mapping.id).text(clickedFeature);
+        $('#' + mapping.id).attr('data-clicked-feature-' + mapping.key, clickedFeature);
+      });
     });
 
     $(document).ready(function(){

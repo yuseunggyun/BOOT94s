@@ -35,8 +35,8 @@ import 'ol/ol.css';
 import XYZ from 'ol/source/XYZ';
 
 // url을 변수로 빼서 따로 설정해 줘도 됨
-const g_url = "http://localhost:42888";// 내부용
-// const g_url = "http://172.20.221.180:42888";// 외부용
+// const g_url = "http://localhost:42888";// 내부용
+const g_url = "http://172.20.221.180:42888";// 외부용
 
 let wfsSource = null;
 
@@ -81,8 +81,8 @@ function makeFilter(method) {
 // 나중에 조건에 따라 스타일을 다르게 주기 위해 스타일 개별 지정
 // 기본 스타일
 const defaultStyle = new Style({
-  fill: new Fill({ color: 'rgba(89, 89, 241, 0.5)' }),
-  stroke: new Stroke({ color: 'rgba(0, 153, 255, 1)', width: 1})
+  fill: new Fill({ color: 'rgba(255, 51, 255, 0.5)' }),
+  stroke: new Stroke({ color: 'rgba(36, 24, 35, 0.8)', width: 1.2})
 });
 
 
@@ -151,6 +151,7 @@ function polygonLayerStyleFunction(feature) {
   return getStyleByTotalSum(totalsum) || defaultStyle;
 }
 
+// 생성 폴리곤 레이어를 위한 커스텀 스타일 함수
 function polygonLayer1StyleFunction(feature) {
   const totalsum = feature.get('sub15');
   // console.log("Polygon layer feature totalsum:", totalsum);
@@ -217,8 +218,8 @@ const mouseHoverSelect = new Select({
   condition: pointerMove,
   style: new Style({
     stroke: new Stroke({
-      color: 'rgba(0, 153, 255, 2)',
-      width: 3
+      color: 'rgba(0, 184, 255, 1)',
+      width: 2
     }),
     fill: new Fill({
       color: 'rgba(47, 81, 109, 0.7)'
@@ -255,7 +256,7 @@ const map = new Map({
   overlays: [overlay],
   view: new View({
     center: fromLonLat([128.1298, 35.2052]),
-    zoom: 10,
+    zoom: 12,
     interactions: defaults().extend([mouseHoverSelect])
   })
 });
@@ -722,12 +723,13 @@ document.addEventListener('keydown', function (event) {
 // Mouse Hover 활성화
 map.addInteraction(mouseHoverSelect);
 
+// 선택된 객체 스타일
 const selectedStyle = new Style({
   fill: new Fill({
     color: 'rgba(255, 255, 255, 0.6)',
   }),
   stroke: new Stroke({
-    color: 'rgba(0, 153, 255, 0.7)',
+    color: 'rgba(33, 150, 243, 0.7)',
     width: 3,
   })
 });
@@ -735,7 +737,7 @@ const selectedStyle = new Style({
 // Select 도구
 const select = new Select({
   style: function (feature) {
-    const color = feature.get('COLOR_BIO') || 'rgba(255, 255, 255, 0.5';
+    const color = feature.get('COLOR_BIO') || 'rgba(255, 255, 255, 0.6';
     selectedStyle.getFill().setColor(color);
     return selectedStyle;
   }

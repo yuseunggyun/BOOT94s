@@ -1237,69 +1237,6 @@ fetch(fullUrl)
   }
 });
 
-// 검색 결과를 처리하고 지도에 표시하는 함수
-function displaySearchResults(data) {
-  // 검색 결과 select 요소 변경 시 처리
-  const selectElement = searchResults.querySelector('select');
-  if (selectElement) {
-    selectElement.addEventListener('change', function() {
-      const selectedIndex = selectElement.value;
-      const selectedFeature = data.features[selectedIndex]; // 선택된 feature 가져오기
-
-      handleSelectChange(selectedFeature); // 선택된 항목 처리 함수 호출
-    });
-  }
-}
-
-// 선택된 항목 처리 함수 (select 요소 변경 시)
-function handleSelectChange(feature) {
-  clearSelection(); // 이전 선택 초기화
-  addFeatureToMapNew(feature); // 선택된 항목 지도에 표시 함수 호출
-  showFeatureInfo(feature); // 토지 정보 표시 함수 호출
-}
-
-// 토지 정보 표시 함수
-function showFeatureInfo(feature) {
-  const properties = feature.properties;
-  if (properties) {
-    const html = `
-      PNU : <div style="display: inline-block;" id="pnu">${properties.pnu}</div><br>
-      소재지 : <div style="display: inline-block;" id="do">${properties.jinju_do_1}</div><br>
-      대장구분 : <div style="display: inline-block;" id="cada">${properties.jinju_cada}</div><br>
-      지번 : <div style="display: inline-block;" id="jibun">${properties.jinju_jibu}</div><br>
-      지목 : <div style="display: inline-block;" id="jimok">${properties.jinju_ji_1}</div><br>
-      면적(㎡) : <div style="display: inline-block;" id="are">${properties.jinju_area}</div><br>
-      공시지가(원) : <div style="display: inline-block;" id="price">${properties.jinju_pric}</div><br>
-      소유구분 : <div style="display: inline-block;" id="owner">${properties.jinju_ow_1}</div><br>
-      소유권변동사유 : <div style="display: inline-block;" id="owner_re">${properties.jinju_ch_1}</div><br>
-      소유권변동일자 : <div style="display: inline-block;" id="owner_da">${properties.jinju_ch_2}</div><br>
-      경사도 : <div style="display: inline-block;" id="score1">${properties.sub1}</div><br>
-      표고 : <div style="display: inline-block;" id="score2">${properties.sub2}</div><br>
-      기개발지와의 거리 : <div style="display: inline-block;" id="score3">${properties.sub3}</div><br>
-      공공편익시설과의 거리 : <div style="display: inline-block;" id="score4">${properties.sub4}</div><br>
-      지가수준 : <div style="display: inline-block;" id="score5">${properties.sub5}</div><br>
-      도로와의 거리 : <div style="display: inline-block;" id="score6">${properties.sub6}</div><br>
-      경지정리면적 비율 : <div style="display: inline-block;" id="score7">${properties.sub8}</div><br>
-      생태·자연도상위등급 비율 : <div style="display: inline-block;" id="score8">${properties.sub9}</div><br>
-      공적규제지역면적 비율 : <div style="display: inline-block;" id="score9">${properties.sub10}</div><br>
-      공적규제지역과의 거리 : <div style="display: inline-block;" id="score10">${properties.sub11}</div><br>
-      농업진흥지역 비율 : <div style="display: inline-block;" id="score11">${properties.sub12}</div><br>
-      하천·호소·농업용저수지와의 거리 : <div style="display: inline-block;" id="score12">${properties.sub13}</div><br>
-      종합적성값 : <div style="display: inline-block;" id="score13">${properties.sub15}</div><br>
-    `;
-    insidebar.innerHTML = html;
-  }
-}
-
-// 이전 선택 초기화 함수
-function clearSelection() {
-  // 이전에 선택된 항목의 배경색 초기화
-  if (selectedListItem) {
-    selectedListItem.style.backgroundColor = '';
-    selectedListItem = null;
-  }
-}
-
 // 지도 클릭 이벤트. 오버레이를 처리
 map.on('click', (e) =>
   {

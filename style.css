@@ -27,38 +27,33 @@ body {
   height: 100%
 }
 
+/*가장 좌측 행정구역 및 로고 부분 영역 설정*/
 .area {
   float: left;
   position: relative;
-  /* z-index: 30; */
   width: 313px;
   height: 100%;
-  /* background-color: #98e4b1; */
   /* 아래 분기 선 설정*/
   border-bottom: 1px solid #d4d4d4;
-  z-index:3;
+  z-index: 3;
 }
 
 /* 헤더 부분 스타일 설정 */
 #lxLogo {
   background-image: url('./lxland.png');
   height: 100px;
+  /*이미지를 반복 배열되지 않게*/
   background-repeat: no-repeat;
   background-size: contain;
-
-  /* 영역 안에 포함되도록 사이즈 조절 */
-  /* background-position: center center; */
   margin: 15px 20px -56px 20px;
 }
 
 #jinjuLogo {
   background-image: url('./jinju.png');
   height: 55px;
+  /*이미지를 반복 배열되지 않게*/
   background-repeat: no-repeat;
   background-size: contain;
-  /* 영역 안에 포함되도록 사이즈 조절 */
-  /* background-position: center center; */
-  /* 위 오른 아래 왼쪽 */
   margin: 5px 45px 0px 45px;
 }
 
@@ -67,8 +62,6 @@ body {
   width: 313px;
   height: 100%;
   background: #ffffff;
-  /*분리선*/
-  /* border-bottom: 1px solid #d4d4d4; */
 }
 
 /* 동적 검색 스타일*/
@@ -77,14 +70,15 @@ body {
   height: 50px;
   /*검색창 모서리 볼더값*/
   border-radius: 15px;
-  /* background: rgb(255, 255, 0); */
   border: 3px solid rgba(0, 152, 129, 1);
   position: relative;
-  transition: 0.7s;
-  overflow: hidden;
   left: 5px;
+  transition: 0.7s;
+  /*일정범위 넘어간 곳은 보이지 않게*/
+  overflow: hidden;
 }
 
+/*동적 검색창의 길이 설정*/
 .container1.active {
   width: 300px;
 }
@@ -93,6 +87,7 @@ body {
   position: absolute;
   left: 25px;
   top: 50%;
+  /*HTML요소를 2차원 벡터의 특징에 따라 이동*/
   transform: translate(-50%, -50%);
 }
 
@@ -139,7 +134,7 @@ body {
   height: 81%;
   z-index: 2;
   background: rgba(255, 255, 255, 1);
-   /* 위 오른 아래 왼쪽 */
+  /* 위 오른 아래 왼쪽 */
 }
 
 /*행정구역명 스타일 적용*/
@@ -169,14 +164,12 @@ table.ymList span {
 }
 
 table.ymList span.active1 {
-  border-top-left-radius: 13px;
-  border-top-right-radius: 13px;
-  border-bottom-left-radius: 13px;
-  border-bottom-right-radius: 13px;
+  border-radius: 13px;
   background: rgba(0, 152, 129, 1);
   color: #ffffff;
   padding: 2px 43.35px;
   cursor: pointer;
+  /*요소끼리 서로 한줄에 바로 옆에 위치할 수 있고 속성 지정 가능*/
   display: inline-block;
   width: 66px;
   line-height: 1.4.5
@@ -188,7 +181,7 @@ table.ymList2 {
   background: #cfcfcf;
   border-top: 2px solid rgba(0, 152, 129, 1);
   font-size: 0.85em;
-  width : 100.5%;
+  width: 100.5%;
   height: 100%;
 }
 
@@ -202,12 +195,9 @@ table.ymList2 span {
 }
 
 table.ymList2 span.active2 {
-  border-top-left-radius: 13px;
-  border-top-right-radius: 13px;
-  border-bottom-left-radius: 13px;
-  border-bottom-right-radius: 13px;
+  border-radius: 13px;
   background: rgba(0, 152, 129, 1);
-  color: #ffffff; 
+  color: #ffffff;
   cursor: pointer;
   display: inline-block;
   width: 158px;
@@ -229,7 +219,6 @@ table.ymList2 span.active2 {
   z-index: 3;
   position: relative;
   margin-left: 1px;
-  /* background-color: white; */
 
 }
 
@@ -246,7 +235,7 @@ ul.sideinfo {
   font-size: 0.85rem;
   line-height: 1.8;
   background: #efefef;
-  border: 2px solid rgb(0,152,129);
+  border: 2px solid rgb(0, 152, 129);
   margin: 9px 0;
   padding: 10px;
   width: 288px;
@@ -267,7 +256,7 @@ ul.sideinfo {
 /*평가지표 스타일*/
 .area3 {
   background: #efefef;
-  border: 2px solid rgb(0,152,129);
+  border: 2px solid rgb(0, 152, 129);
   float: right;
   height: 100%;
   top: 0;
@@ -290,9 +279,11 @@ div.area3 table.maindevelop {
   font-size: 0.9rem;
   margin: 0px 10px 10px 10px;
 }
+
 div.area3 table.maindevelop td {
   font-size: 0.85rem;
 }
+
 div.area3 table.maindevelop th.developscore {
   font-size: 0.9rem;
   padding: 5px;
@@ -303,9 +294,11 @@ div.area3 table.mainintegrity {
   font-size: 0.9rem;
   margin: -10px 10px 10px 10px;
 }
+
 div.area3 table.mainintegrity td {
   font-size: 0.85rem;
 }
+
 div.area3 table.mainintegrity th.integrityscore {
   font-size: 0.9rem;
   padding: 5px;
@@ -313,31 +306,24 @@ div.area3 table.mainintegrity th.integrityscore {
 
 /*상세정보만 스타일 적용*/
 .active-info {
-  border-top-left-radius: 13px;
-  border-top-right-radius: 13px;
-  border-bottom-left-radius: 13px;
-  border-bottom-right-radius: 13px; 
+  border-radius: 13px;
   background: rgba(60, 130, 161, 0.7);
-  color: rgb(255,255,255);
-  /* padding: 2px 43.35px; */
+  color: rgb(255, 255, 255);
   cursor: pointer;
 }
 
 /*평가지표만 스타일 적용*/
 .active-info1 {
-  border-top-left-radius: 13px;
-  border-top-right-radius: 13px;
-  border-bottom-left-radius: 13px;
-  border-bottom-right-radius: 13px; 
+  border-radius: 13px;
   background: rgba(60, 130, 161, 0.7);
-  color: rgb(255,255,255);
-  /* padding: 2px 43.35px; */
+  color: rgb(255, 255, 255);
   cursor: pointer;
 }
 
 /*평가지표 테이블 개발*/
 table.maindevelop {
   font-size: 0.75rem;
+  /*테이블 외곽선 단선으로*/
   border-collapse: collapse;
 }
 
@@ -345,7 +331,8 @@ table.maindevelop td {
   font-size: 0.75rem;
   padding: 2px 7px;
 }
-table.maindevelop th{
+
+table.maindevelop th {
   padding: 5px 0px;
 }
 
@@ -370,24 +357,25 @@ button.developbutton {
 button.developbutton:hover {
   background: rgba(126, 126, 126, 0.5);
   border-radius: 3px;
-  padding : 2px;
-  }
-  
-  button#resetButton {
-    font-size: 0.82rem;
-    position: relative;
-    left: 55px;
-    top: -3px;
-    padding: 1px;
-    background: rgba(211, 211, 211, 0.5);
-    box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
-    border-radius: 3px;
-  }
-  button#resetButton:hover {
-    background: rgba(126, 126, 126, 0.5);
-    border-radius: 3px;
-    padding : 2px;
-    }
+  padding: 2px;
+}
+
+button#resetButton {
+  font-size: 0.82rem;
+  position: relative;
+  left: 55px;
+  top: -3px;
+  padding: 1px;
+  background: rgba(211, 211, 211, 0.5);
+  box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+  border-radius: 3px;
+}
+
+button#resetButton:hover {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 3px;
+  padding: 2px;
+}
 
 /*평가지표 테이블 보전*/
 table.mainintegrity {
@@ -397,12 +385,12 @@ table.mainintegrity {
   top: 15px;
 }
 
-table.mainintegrity  td {
+table.mainintegrity td {
   font-size: 0.75rem;
   padding: 2px 7px;
 }
 
-table.mainintegrity th{
+table.mainintegrity th {
   padding: 5px 3px;
 }
 
@@ -428,41 +416,43 @@ button.integrityButton {
 button.integrityButton:hover {
   background: rgba(126, 126, 126, 0.5);
   border-radius: 3px;
-  padding : 2px;
-  }
-  
-  button#resetButton1 {
-    font-size: 0.82rem;
-    position: relative;
-    left: 55px;
-    top: 10px;
-    padding: 1px;
-    background: rgba(211, 211, 211, 0.5);
-    box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
-    border-radius: 3px;
-  }
-  button#resetButton1:hover {
-    background: rgba(126, 126, 126, 0.5);
-    border-radius: 3px;
-    padding : 2px;
-    }
+  padding: 2px;
+}
 
-    button#resetButton2 {
-      font-size: 0.82rem;
-      position: relative;
-      left: 8px;
-      top: 40px;
-      padding: 1px 8px;
-      background: rgba(211, 211, 211, 0.5);
-      box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
-      border-radius: 3px;
-      z-index: 1;
-    }
-    button#resetButton2.container1.active {
-      background: rgba(126, 126, 126, 0.5);
-      border-radius: 3px;
-      z-index: 1;
-      }
+button#resetButton1 {
+  font-size: 0.82rem;
+  position: relative;
+  left: 55px;
+  top: 10px;
+  padding: 1px;
+  background: rgba(211, 211, 211, 0.5);
+  box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+  border-radius: 3px;
+}
+
+button#resetButton1:hover {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 3px;
+  padding: 2px;
+}
+
+button#resetButton2 {
+  font-size: 0.82rem;
+  position: relative;
+  left: 8px;
+  top: 40px;
+  padding: 1px 8px;
+  background: rgba(211, 211, 211, 0.5);
+  box-shadow: 0 2px 4px rgba(82, 82, 82, 0.3);
+  border-radius: 3px;
+  z-index: 1;
+}
+
+button#resetButton2.container1.active {
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 3px;
+  z-index: 1;
+}
 
 
 
@@ -474,6 +464,7 @@ table.maintotal {
   position: relative;
   top: 15px;
 }
+
 table.maintotal p#sub15 {
   position: relative;
   right: 100px;
@@ -489,12 +480,12 @@ table.legend {
   border: none;
 }
 
-table.legend tr.legend2{
+table.legend tr.legend2 {
   text-align: center;
   font-size: 0.8rem;
 }
 
-table.legend tr.legend3{
+table.legend tr.legend3 {
   text-align: center;
   font-size: 0.8rem;
   width: 100px;
@@ -505,12 +496,12 @@ table.legend tr.legend3{
 #mapArea {
   position: absolute;
   height: 100%;
-  left:315px;
+  left: 315px;
   top: 0;
   right: 0;
   bottom: 0;
   z-index: 1;
-  border-left: 2px solid  rgba(0, 152, 129, 1);
+  border-left: 2px solid rgba(0, 152, 129, 1);
 }
 
 #map {
@@ -530,15 +521,12 @@ table.legend tr.legend3{
   padding: 36px 1px;
   border-radius: 4px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-  font-size: 0.8rem; 
+  font-size: 0.8rem;
 }
 
 
-
-
-
 /* 마우스 이동시 좌표값 */
-#mouseCoord{
+#mouseCoord {
   text-align: center;
   width: 100%;
   position: absolute;
@@ -549,16 +537,16 @@ table.legend tr.legend3{
   font-size: 14px;
 }
 
-div#layerSwitcher #btn-road{
+div#layerSwitcher #btn-road {
   border: none;
   padding: 5px 5px;
   position: relative;
   left: 5px;
   bottom: 30px;
-  border-radius: 4px; 
+  border-radius: 4px;
 }
 
-div#layerSwitcher #btn-satellite{
+div#layerSwitcher #btn-satellite {
   border: none;
   padding: 5px 5px;
   position: relative;
@@ -568,19 +556,19 @@ div#layerSwitcher #btn-satellite{
 }
 
 /*색상삭제 버튼*/
-div#layerSwitcher #clearStylesButton{
+div#layerSwitcher #clearStylesButton {
   border: none;
   padding: 2px 15px;
   position: relative;
   left: 32px;
-  top : 6px;
+  top: 6px;
   border-radius: 4px;
 }
 
 div#layerSwitcher button:hover {
-background: rgba(126, 126, 126, 0.5);
-border-radius: 10%;
-padding : 2px 5px;
+  background: rgba(126, 126, 126, 0.5);
+  border-radius: 10%;
+  padding: 2px 5px;
 }
 
 /* (info 스타일 추가) */
@@ -606,7 +594,7 @@ padding : 2px 5px;
 /*maptype  거리 및 면적 계산 스타일 부분*/
 #area2 {
   position: absolute;
-  top: 5px;  
+  top: 5px;
   right: 8px;
   background: rgba(255, 255, 255, 0.8);
   padding: 35px 8px;
@@ -623,14 +611,13 @@ padding : 2px 5px;
   bottom: 30px;
 }
 
-#area2 #distanceButton{
+#area2 #distanceButton {
   position: absolute;
   top: 35px;
-  left: px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
-  padding : 5px 8px;
+  padding: 5px 8px;
 }
 
 #area2 #areaButton {
@@ -640,11 +627,11 @@ padding : 2px 5px;
   border: none;
   color: rgba(26, 26, 26, 0.7);
   border-radius: 4px;
-  padding : 5px 8px;
+  padding: 5px 8px;
 
 }
 
-#area2 button:hover{
+#area2 button:hover {
   background: rgba(126, 126, 126, 0.5);
   border-radius: 10%;
 
@@ -659,16 +646,15 @@ padding : 2px 5px;
 }
 
 #area4 {
-position: absolute;
-top: 5px;  
-right: 148px;
-background: rgba(255, 255, 255, 0.8);
-padding: 17px 8px;
-/* margin: 2px 5px; */
-border-radius: 4px;
-box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-z-index: 1;
-font-size: 0.78rem;
+  position: absolute;
+  top: 5px;
+  right: 148px;
+  background: rgba(255, 255, 255, 0.8);
+  padding: 17px 8px;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  font-size: 0.78rem;
 }
 
 #h3name {
@@ -679,7 +665,7 @@ font-size: 0.78rem;
   color: rgba(26, 26, 26, 0.9);
 }
 
-#area4 div.polygonbuttons button{
+#area4 div.polygonbuttons button {
   padding: 5px 10px;
   margin: 0px 0px;
   border: none;
@@ -698,14 +684,11 @@ font-size: 0.78rem;
   height: 160px;
   padding: 5px;
   border: 1px solid rgba(128, 128, 128, 0);
-  border-top-left-radius: 10px;
-  border-top-right-radius: 10px;
-  border-bottom-left-radius: 10px;
-  border-bottom-right-radius: 10px;
-  background-color: rgba(168, 229, 252, 0.5);  
+  border-radius: 10px;
+  background-color: rgba(168, 229, 252, 0.5);
 }
 
 #search-results li:hover {
-  background-color: rgba(7, 225, 105, 0.2); 
-  cursor: pointer; 
+  background-color: rgba(7, 225, 105, 0.2);
+  cursor: pointer;
 }

@@ -1086,6 +1086,8 @@ selectedFeatures.on(['add', 'remove'], function () {
 
 /* 검색 창 기능 */
 // 검색 창과 관련된 HTML 요소를 가져옴
+
+// 벡터 레이어를 위한 커스텀 스타일 함수
 const searchInput = document.getElementById('search');
 const searchResults = document.getElementById('search-results');
 
@@ -1134,6 +1136,13 @@ function addFeatureToMapNew(features) {
   vectorSource1.clear();
   const geojsonFormat = new ol.format.GeoJSON();
   const olFeatures = geojsonFormat.readFeatures(features);
+
+  // 종합적성값에 따른 스타일 적용
+  olFeatures.forEach(feature => {
+    const totalsum = feature.get('sub15');
+    const style = getStyleByTotalSum(totalsum);
+    feature.setStyle(style);
+  });
 
   vectorSource1.addFeatures(olFeatures);
 
